@@ -1,44 +1,27 @@
 {
-  "name": "nbcu-app",
-  "version": "1.0.0",
-  "description": "Northern Birch Credit Union - Insurance Distribution Platform",
+  "name": "nb-site",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --noEmit",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev",
-    "db:reset": "prisma migrate reset --force",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio",
-    "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down",
-    "setup": "npm install && docker compose up -d && sleep 3 && npm run db:push && npm run db:seed"
+    "dev": "vite --port 8080",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.30.1",
-    "@prisma/client": "^5.22.0",
-    "next": "15.5.20",
-    "react": "19.2.7",
-    "react-dom": "19.2.7",
-    "zod": "^3.23.8",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2"
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^22.9.0",
-    "@types/react": "19.2.17",
-    "@types/react-dom": "19.2.3",
-    "eslint": "^9.15.0",
-    "eslint-config-next": "15.5.20",
-    "prisma": "^5.22.0",
-    "tsx": "^4.19.2",
-    "typescript": "^5.6.3"
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "vite": "^7.3.1"
   }
 }
