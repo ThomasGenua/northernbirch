@@ -4,10 +4,42 @@ import './index.css';
 const C={navy:"#1B2A4A",accent:"#2E86C1",dark:"#0C1829",green:"#27AE60",amber:"#D4A547",red:"#E74C3C",birch:"#C8B88A",birchLight:"#F5F0E6",cream:"#FDFBF7",purple:"#8E44AD",lightBlue:"#EBF5FB"};
 const ff="'Playfair Display',Georgia,serif",fs="'DM Sans',sans-serif";
 
+// ============ POSTED RATES (single source: RatesPage + homepage banking cards read this) ============
+const RATE={m3:"4.39%",m5:"4.34%",m5hr:"3.89%",mvar:"Prime - 0.50%",heloc:"Prime + 0.50%",hisa:"2.00%",gic1:"2.70%",gic5:"2.50%",mc:"19.99%",mcLow:"12.99%",chq:"$0"};
+
+// ============ CORE BANKING PRODUCTS (homepage cards, nav, search) ============
+const BANKING=[
+  {k:"mortgages",t:"Mortgages",p:"mortgages",c:C.green,d:"Fixed, variable, and high-ratio mortgages -- including co-op apartment financing few lenders offer.",rate:RATE.m5,rl:"5-year fixed",b:["Free pre-approval, held 120 days","Co-op and multi-unit financing","C$3,500 cash back offer available"],cta:"Explore Mortgages",kw:"mortgage home loan pre-approval renewal refinance fixed variable high ratio co-op heloc"},
+  {k:"cards",t:"Credit Cards",p:"cards",c:C.purple,d:"Collabria Mastercard cards with cash back, low-rate, and travel rewards options.",rate:RATE.mcLow,rl:"Low Rate APR",b:["No-annual-fee options","Cash back up to 2%","Lock and unlock in the app"],cta:"Apply for a Credit Card",kw:"credit card mastercard collabria cash back rewards low rate apply"},
+  {k:"chequing",t:"Chequing Accounts",p:"accounts",c:C.accent,d:"No-fee everyday banking with unlimited e-Transfers and free member cheques.",rate:RATE.chq,rl:"Monthly fee",b:["$0 monthly fee for members","Unlimited e-Transfers","THE EXCHANGE ATM network"],cta:"Compare Accounts",kw:"chequing checking everyday banking debit e-transfer account fees student senior"},
+  {k:"savings",t:"Savings & GICs",p:"accounts",c:C.amber,d:"High-interest savings, GIC terms from 90 days to 5 years, and registered TFSA, RRSP, FHSA and RESP plans.",rate:RATE.gic1,rl:"1-year GIC",b:["No minimum balance","GIC terms from 90 days","TFSA, RRSP, FHSA, RESP eligible"],cta:"Compare Accounts",kw:"savings gic tfsa rrsp fhsa resp rdsp registered high interest term deposit"},
+  {k:"invest",t:"Investments",p:"personal",c:C.navy,d:"Mutual funds, Qtrade direct investing, and VirtualWealth portfolios inside your registered accounts.",rate:RATE.hisa,rl:"Savings rate",b:["Self-directed or advisor-managed","Held in TFSA, RRSP or cash","Aviso Wealth partnership"],cta:"Explore Investing",kw:"invest investments portfolio mutual funds qtrade virtualwealth etf stocks wealth retirement"},
+];
+
 // ============ TRANSLATION SYSTEM ============
 const TX={
   // Nav
   "Personal":{est:"Eraisik",lat:"Privātpersonām"},
+  "Banking":{est:"Pangandus",lat:"Bankas pakalpojumi"},
+  "Chequing & Savings":{est:"Arve- ja säästukontod",lat:"Norēķinu un krājkonti"},
+  "Chequing":{est:"Arvelduskonto",lat:"Norēķinu konts"},
+  "Mortgages":{est:"Hüpoteeklaenud",lat:"Hipotēkas"},
+  "Credit Cards":{est:"Krediitkaardid",lat:"Kredītkartes"},
+  "Personal Banking":{est:"Erapangandus",lat:"Privātpersonu banka"},
+  "Banking Products":{est:"Pangatooted",lat:"Bankas produkti"},
+  "Everyday banking, start to finish":{est:"Igapäevane pangandus algusest lõpuni",lat:"Ikdienas banku pakalpojumi no sākuma līdz beigām"},
+  "A Full-Service Credit Union Since 1954":{est:"Täisteenust pakkuv krediidiühistu alates 1954",lat:"Pilna servisa krājaizdevu sabiedrība kopš 1954. gada"},
+  "Compare Accounts":{est:"Võrdle kontosid",lat:"Salīdzināt kontus"},
+  "Explore Mortgages":{est:"Tutvu hüpoteeklaenudega",lat:"Iepazīties ar hipotēkām"},
+  "Apply for a Credit Card":{est:"Taotle krediitkaarti",lat:"Pieteikties kredītkartei"},
+  "Apply for this card":{est:"Taotle seda kaarti",lat:"Pieteikties šai kartei"},
+  "Explore Investing":{est:"Tutvu investeerimisega",lat:"Iepazīt investēšanu"},
+  "See All Rates":{est:"Vaata kõiki intresse",lat:"Skatīt visas likmes"},
+  "Get Pre-Approved":{est:"Küsi eelnõusolekut",lat:"Saņemt priekšapstiprinājumu"},
+  "Open an Account":{est:"Ava konto",lat:"Atvērt kontu"},
+  "Savings & GICs":{est:"Säästud ja tähtajalised hoiused",lat:"Uzkrājumi un noguldījumi"},
+  "Registered accounts":{est:"Registreeritud kontod",lat:"Reģistrētie konti"},
+  "Compare accounts side by side":{est:"Võrdle kontosid kõrvuti",lat:"Salīdziniet kontus līdzās"},
   "Insurance":{est:"Kindlustus",lat:"Apdrošināšana"},
   "Travel":{est:"Reisimine",lat:"Ceļošana"},
   "Business":{est:"Ettevõtlus",lat:"Bizness"},
@@ -237,8 +269,14 @@ function SearchOverlay({open,onClose,setPage}){
     {title:"Business Succession Planning",page:"business",cat:"Business"},{title:"Payroll & HR",page:"business",cat:"Business"},
     {title:"Insurance Dashboard",page:"digital",cat:"Digital"},{title:"Smart Quote Engine",page:"digital",cat:"Digital"},{title:"Financial Planning Tools",page:"digital",cat:"Digital"},
     {title:"Mobile Banking App",page:"mobileapp",cat:"Digital"},{title:"Estate Planning",page:"estate",cat:"Planning"},{title:"KESKUS Branch",page:"community",cat:"Community"},
-    {title:"Scholarships",page:"community",cat:"Community"},{title:"Chequing Accounts",page:"personal",cat:"Banking"},{title:"Savings Accounts",page:"personal",cat:"Banking"},
-    {title:"Mortgages",page:"personal",cat:"Banking"},{title:"GICs & Term Deposits",page:"rates",cat:"Banking"},{title:"Credit Cards",page:"personal",cat:"Banking"},
+    {title:"Scholarships",page:"community",cat:"Community"},
+    {title:"Chequing Accounts",page:"accounts",cat:"Banking",kw:"chequing checking everyday banking debit e-transfer no fee student senior us dollar"},
+    {title:"Savings Accounts",page:"accounts",cat:"Banking",kw:"savings high interest hisa deposit compare accounts"},
+    {title:"Mortgages",page:"mortgages",cat:"Banking",kw:"mortgage home loan pre-approval renewal refinance fixed variable high ratio co-op heloc"},
+    {title:"GICs & Term Deposits",page:"accounts",cat:"Banking",kw:"gic guaranteed investment certificate term deposit 90 day 1 year 5 year"},
+    {title:"Credit Cards",page:"cards",cat:"Banking",kw:"credit card mastercard collabria cash back rewards low rate apply"},
+    {title:"Registered Accounts (TFSA, RRSP, FHSA, RESP)",page:"accounts",cat:"Banking",kw:"tfsa rrsp fhsa resp rdsp rrif registered retirement first home education tax free"},
+    {title:"Compare Accounts",page:"accounts",cat:"Banking",kw:"compare accounts chequing savings fees"},
     {title:"Messages",page:"messages",cat:"Member"},{title:"Contact & Branches",page:"contact",cat:"About"},{title:"Insurance Quote Calculator",page:"quote",cat:"Tools"},{title:"AI Insurance Advisor",page:"aiadvisor",cat:"AI"},{title:"AI Coverage Analyzer",page:"analyzer",cat:"AI"},{title:"Financial Health Check",page:"healthcheck",cat:"AI"},{title:"Life Event Simulator",page:"lifesim",cat:"AI"},{title:"Policy Document Reader",page:"docreader",cat:"AI"},{title:"Tax & Savings Optimizer",page:"tax",cat:"AI"},{title:"Claims Centre",page:"claims",cat:"Tools"},{title:"Coverage Comparison",page:"compare",cat:"Tools"},
     {title:"Mortgage Calculator",page:"calculators",cat:"Tools"},{title:"Insurance Needs Calculator",page:"calculators",cat:"Tools"},{title:"Retirement Calculator",page:"calculators",cat:"Tools"},{title:"Book an Appointment",page:"booking",cat:"Tools"},
     {title:"Referral Program",page:"referrals",cat:"Rewards"},{title:"Rates",page:"rates",cat:"Banking"},{title:"Insurance Glossary",page:"glossary",cat:"Education"},
@@ -247,7 +285,7 @@ function SearchOverlay({open,onClose,setPage}){
     {title:"Privacy Policy",page:"privacy",cat:"Legal"},{title:"Accessibility (AODA)",page:"accessibility",cat:"Legal"},
     {title:"Complaint Resolution",page:"complaints",cat:"Legal"},{title:"Terms of Use",page:"terms",cat:"Legal"},{title:"Business Case (For Leadership)",page:"leadership",cat:"Leadership"},
   ];
-  const filtered=q.length>1?allItems.filter(i=>i.title.toLowerCase().includes(q.toLowerCase())):[];
+  const filtered=q.length>1?allItems.filter(i=>`${i.title} ${i.kw||""}`.toLowerCase().includes(q.toLowerCase())):[];
   if(!open)return null;
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",backdropFilter:"blur(8px)",zIndex:2000,display:"flex",alignItems:"flex-start",justifyContent:"center",paddingTop:120}}>
@@ -558,12 +596,14 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
   const[sc,setSc]=useState(false);
   const[mobileMenu,setMobileMenu]=useState(false);
   const[langMenu,setLangMenu]=useState(false);
+  const[menu,setMenu]=useState(null);
   const w=useW();
   const isMob=w<=900;
   useEffect(()=>{const h=()=>setSc(window.scrollY>50);window.addEventListener("scroll",h);return()=>window.removeEventListener("scroll",h)},[]);
-  useEffect(()=>{window.scrollTo({top:0});setMobileMenu(false)},[page]);
+  useEffect(()=>{window.scrollTo({top:0});setMobileMenu(false);setMenu(null)},[page]);
   const isDark=page==="home"&&!sc;
-  const nav=[{l:"Personal",p:"personal"},{l:"Insurance",p:"insurance"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"quote"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
+  // Banking leads: chequing, savings, mortgages and cards are what most visitors arrive looking for.
+  const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"quote"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
   const langLabels={en:"EN",est:"EST",lat:"LAT"};
   const langFull={en:"English",est:"Eesti",lat:"Latviesu"};
   return(<>
@@ -574,7 +614,22 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
           <div><span style={{fontFamily:ff,fontSize:isMob?14:16,color:isDark&&!mobileMenu?"#fff":C.navy,fontWeight:600,display:"block",lineHeight:1.2,transition:"color 0.3s"}}>Northern Birch</span>{!isMob&&<span style={{fontFamily:fs,fontSize:9.5,color:isDark?"rgba(255,255,255,0.5)":"#999",letterSpacing:1,textTransform:"uppercase"}}>{t("Credit Union",lang)}</span>}</div>
         </div>
         {!isMob&&<div style={{display:"flex",gap:1,alignItems:"center"}}>
-          {nav.map(n=><button key={n.p} onClick={()=>setPage(n.p)} style={{background:page===n.p?`${C.accent}10`:"transparent",border:"none",color:page===n.p?C.accent:(isDark?"rgba(255,255,255,0.8)":C.navy),padding:"8px 10px",borderRadius:8,cursor:"pointer",fontSize:12,fontFamily:fs,fontWeight:page===n.p?700:500,transition:"all 0.3s"}}>{t(n.l,lang)}</button>)}
+          {nav.map(n=>{
+            const act=page===n.p||(n.kids||[]).some(k=>k.p===page);
+            const st={background:act?`${C.accent}10`:"transparent",border:"none",color:act?C.accent:(isDark?"rgba(255,255,255,0.8)":C.navy),padding:"8px 10px",borderRadius:8,cursor:"pointer",fontSize:12,fontFamily:fs,fontWeight:act?700:500,transition:"all 0.3s"};
+            if(!n.kids)return <button key={n.l} onClick={()=>setPage(n.p)} style={st}>{t(n.l,lang)}</button>;
+            return <div key={n.l} onMouseEnter={()=>setMenu(n.l)} onMouseLeave={()=>setMenu(null)} style={{position:"relative"}}>
+              <button onClick={()=>setMenu(menu===n.l?null:n.l)} aria-expanded={menu===n.l} style={{...st,display:"flex",alignItems:"center",gap:4}}>{t(n.l,lang)}<span style={{fontSize:8,opacity:0.6}}>&#9660;</span></button>
+              {menu===n.l&&<div style={{position:"absolute",top:"100%",left:0,paddingTop:8}}>
+                <div style={{background:"#fff",borderRadius:14,boxShadow:"0 8px 32px rgba(12,24,41,0.16)",overflow:"hidden",minWidth:300,border:"1px solid #f0ece0"}}>
+                  {n.kids.map(k=><button key={k.l} onClick={()=>{setPage(k.p);setMenu(null)}} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accent}08`:"#fff",border:"none",borderBottom:"1px solid #f8f8f8",padding:"12px 18px",cursor:"pointer"}}>
+                    <span style={{display:"block",fontFamily:fs,fontSize:13.5,fontWeight:700,color:page===k.p?C.accent:C.navy}}>{t(k.l,lang)}</span>
+                    <span style={{display:"block",fontFamily:fs,fontSize:11.5,color:"#999",marginTop:2}}>{k.d}</span>
+                  </button>)}
+                </div>
+              </div>}
+            </div>;
+          })}
           <div style={{width:1,height:20,background:isDark?"rgba(255,255,255,0.15)":"#ddd",margin:"0 6px"}}/>
           {/* Language Picker */}
           <div style={{position:"relative"}}>
@@ -615,7 +670,12 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
       </div>
     </nav>
     {isMob&&mobileMenu&&<div style={{position:"fixed",top:56,left:0,right:0,bottom:0,background:"rgba(253,251,247,0.99)",zIndex:999,padding:"16px",overflow:"auto"}}>
-      {nav.map(n=><button key={n.p} onClick={()=>setPage(n.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===n.p?`${C.accent}10`:"transparent",border:"none",padding:"16px 20px",borderRadius:12,fontFamily:fs,fontSize:16,color:page===n.p?C.accent:C.navy,fontWeight:page===n.p?700:500,marginBottom:4}}>{t(n.l,lang)}</button>)}
+      {nav.map(n=><div key={n.l}>
+        {n.kids
+          ?<div style={{fontFamily:fs,fontSize:11,color:"#999",fontWeight:700,textTransform:"uppercase",letterSpacing:1.5,padding:"16px 20px 6px"}}>{t(n.l,lang)}</div>
+          :<button onClick={()=>setPage(n.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===n.p?`${C.accent}10`:"transparent",border:"none",padding:"16px 20px",borderRadius:12,fontFamily:fs,fontSize:16,color:page===n.p?C.accent:C.navy,fontWeight:page===n.p?700:500,marginBottom:4}}>{t(n.l,lang)}</button>}
+        {(n.kids||[]).map(k=><button key={k.l} onClick={()=>setPage(k.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accent}10`:"transparent",border:"none",padding:"14px 20px",borderRadius:12,fontFamily:fs,fontSize:15,color:page===k.p?C.accent:C.navy,fontWeight:page===k.p?700:500,marginBottom:4}}>{t(k.l,lang)}</button>)}
+      </div>)}
       <div style={{borderTop:"1px solid #eee",marginTop:12,paddingTop:12}}>
         <button onClick={()=>{onLogin();setMobileMenu(false)}} style={{display:"block",width:"100%",background:C.accent,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,marginBottom:8}}>{t("Sign In",lang)}</button>
         <button onClick={()=>setPage("booking")} style={{display:"block",width:"100%",background:C.navy,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>{t("Book Appointment",lang)}</button>
@@ -1056,9 +1116,9 @@ function RatesPage(){
       <div style={{maxWidth:1000,margin:"0 auto"}}>
         <SH tag="Current Rates" tagColor={C.green} title="Competitive rates for members" desc="All rates are subject to change. Contact your branch for the most current rates and special offers."/>
         {[
-          {title:"Mortgage Rates",color:C.accent,rates:[{term:"1-Year Fixed",rate:"5.54%"},{term:"2-Year Fixed",rate:"4.69%"},{term:"3-Year Fixed",rate:"4.39%"},{term:"4-Year Fixed",rate:"4.29%"},{term:"5-Year Fixed",rate:"4.34%"},{term:"5-Year High Ratio",rate:"3.89%"},{term:"Variable Rate",rate:"Prime - 0.50%"},{term:"HELOC",rate:"Prime + 0.50%"}]},
-          {title:"Deposit & Savings Rates",color:C.green,rates:[{term:"High-Interest Savings",rate:"2.00%"},{term:"90-Day GIC",rate:"2.25%"},{term:"6-Month GIC",rate:"2.50%"},{term:"1-Year GIC",rate:"2.70%"},{term:"2-Year GIC",rate:"2.60%"},{term:"3-Year GIC",rate:"2.55%"},{term:"4-Year GIC",rate:"2.50%"},{term:"5-Year GIC",rate:"2.50%"}]},
-          {title:"Lending Rates",color:C.amber,rates:[{term:"Personal Loan",rate:"From 7.45%"},{term:"Personal Line of Credit",rate:"From Prime + 2%"},{term:"Collabria Mastercard",rate:"19.99%"},{term:"Collabria Low Rate",rate:"12.99%"},{term:"Commercial Mortgage",rate:"Contact us"},{term:"Commercial LOC",rate:"Contact us"},{term:"Equipment Financing",rate:"Contact us"},{term:"CEBA Loan",rate:"0% (govt program)"}]},
+          {title:"Mortgage Rates",color:C.accent,rates:[{term:"1-Year Fixed",rate:"5.54%"},{term:"2-Year Fixed",rate:"4.69%"},{term:"3-Year Fixed",rate:RATE.m3},{term:"4-Year Fixed",rate:"4.29%"},{term:"5-Year Fixed",rate:RATE.m5},{term:"5-Year High Ratio",rate:RATE.m5hr},{term:"Variable Rate",rate:RATE.mvar},{term:"HELOC",rate:RATE.heloc}]},
+          {title:"Deposit & Savings Rates",color:C.green,rates:[{term:"High-Interest Savings",rate:RATE.hisa},{term:"90-Day GIC",rate:"2.25%"},{term:"6-Month GIC",rate:"2.50%"},{term:"1-Year GIC",rate:RATE.gic1},{term:"2-Year GIC",rate:"2.60%"},{term:"3-Year GIC",rate:"2.55%"},{term:"4-Year GIC",rate:"2.50%"},{term:"5-Year GIC",rate:RATE.gic5}]},
+          {title:"Lending Rates",color:C.amber,rates:[{term:"Personal Loan",rate:"From 7.45%"},{term:"Personal Line of Credit",rate:"From Prime + 2%"},{term:"Collabria Mastercard",rate:RATE.mc},{term:"Collabria Low Rate",rate:RATE.mcLow},{term:"Commercial Mortgage",rate:"Contact us"},{term:"Commercial LOC",rate:"Contact us"},{term:"Equipment Financing",rate:"Contact us"},{term:"CEBA Loan",rate:"0% (govt program)"}]},
         ].map((section,si)=>(
           <Fade key={si} delay={si*0.1}><div style={{marginBottom:32}}>
             <h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>{section.title}</h3>
@@ -1299,6 +1359,203 @@ function PersonalPage(){return <section style={{background:C.cream,padding:typeo
 function ContactPage(){return <section style={{background:C.navy,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Contact Us" tagColor={C.birch} title="We're here for you"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:24}}>{[{n:"Latvian Centre (HQ)",a:"4 Credit Union Dr, North York",h:"M-W 10-3, Th 10-7, F 10-3, Sa 9-1",p:"416-465-4659"},{n:"Tartu College",a:"310 Bloor St W, Toronto",h:"M-F 10-3 (Cashless)",p:"416-922-2551"},{n:"Hamilton",a:"16 Queen St N",h:"Tu-F 10-3, Th 10-7",p:"905-527-4344"},{n:"KESKUS",a:"Madison Ave, Toronto",h:"Coming Soon",p:"TBD"}].map((b,i)=><Fade key={i} delay={i*0.08}><div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:28}}><h3 style={{fontFamily:fs,fontSize:18,color:"#fff",margin:"0 0 4px",fontWeight:700}}>{b.n}</h3><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.4)",margin:"0 0 2px"}}>{b.a}</p><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.4)",margin:"0 0 8px"}}>{b.h}</p><p style={{fontFamily:fs,fontSize:15,color:C.accent,fontWeight:600,margin:0}}>{b.p}</p></div></Fade>)}</div><Fade delay={0.3}><div style={{marginTop:24,background:"rgba(255,255,255,0.03)",borderRadius:20,padding:"24px 32px"}}><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.4)",margin:0}}>Toll-Free: 1-866-844-3828 | 24/7 Support: 1-866-992-2490 | Financial Check-Up: FinancialCheckup@northernbirchcu.com</p></div></Fade></div></section>}
 
 // ============ HOME PAGE ============
+// ============ MORTGAGES ============
+function MortgagesPage({setPage,lang}){
+  const T=(k)=>t(k,lang);
+  const w=useW();
+  const posted=[{term:"3-Year Closed Fixed",rate:RATE.m3},{term:"5-Year Closed Fixed",rate:RATE.m5},{term:"5-Year High Ratio (insured, 5% down)",rate:RATE.m5hr},{term:"Variable Rate",rate:RATE.mvar},{term:"HELOC",rate:RATE.heloc}];
+  const options=[
+    {t:"Fixed-Rate Closed",d:"Your rate and payment stay the same for the whole term. The simplest way to budget.",c:C.green},
+    {t:"Variable-Rate",d:"Priced off prime. Your payment moves with rates, and you can convert to fixed at any time.",c:C.accent},
+    {t:"High-Ratio Insured",d:"Buy with as little as 5% down. We arrange default insurance through CMHC or Sagen.",c:C.amber},
+    {t:"Co-op Apartment",d:"Financing for Toronto housing co-ops -- a niche most lenders decline, and one we have served for decades.",c:C.purple},
+    {t:"HELOC",d:"Revolving credit secured by your home, for renovations, tuition, or consolidating higher-rate debt.",c:C.navy},
+    {t:"Renewals & Switches",d:"Bring your mortgage from another lender at renewal. We cover standard transfer costs.",c:C.red},
+  ];
+  const steps=[{n:"01",t:"Get pre-approved",d:"A short conversation gives you a budget and a rate hold while you shop."},{n:"02",t:"Find your home",d:"Your advisor is reachable directly, not through a call centre."},{n:"03",t:"Close with us",d:"We coordinate with your lawyer and fund on your closing date."}];
+  return <section style={{background:C.cream,padding:w<=768?"60px 16px":"80px 24px",paddingTop:w<=768?80:100}}>
+    <div style={{maxWidth:1320,margin:"0 auto"}}>
+      <SH tag={T("Mortgages")} tagColor={C.green} title={T("A mortgage from people you can meet")} desc={T("Fixed, variable, and high-ratio mortgages -- plus co-op apartment financing most lenders will not touch. Decisions are made in Toronto, by the same advisor who takes your call.")}/>
+      <Fade><div style={{background:"#fff",borderRadius:20,padding:w<=768?24:32,border:"1px solid #eee",marginBottom:32}}>
+        <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:20}}>
+          <span style={{fontFamily:ff,fontSize:44,color:C.green,fontWeight:700}}>{RATE.m5}</span>
+          <span style={{fontFamily:fs,fontSize:13,color:"#999"}}>{T("5-year closed fixed")}</span>
+        </div>
+        {posted.map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"13px 0",borderBottom:i<posted.length-1?"1px solid #f5f5f5":"none"}}>
+          <span style={{fontFamily:fs,fontSize:14,color:C.navy}}>{r.term}</span>
+          <span style={{fontFamily:fs,fontSize:16,color:C.green,fontWeight:700}}>{r.rate}</span>
+        </div>)}
+        <div style={{display:"flex",gap:12,marginTop:24,flexWrap:"wrap"}}>
+          <Btn color={C.green} onClick={()=>setPage("booking")}>{T("Get Pre-Approved")}</Btn>
+          <Btn outline color={C.navy} onClick={()=>setPage("calculators")}>{T("Payment Calculator")}</Btn>
+        </div>
+      </div></Fade>
+      <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 16px"}}>{T("Choose the structure that fits")}</h3>
+      <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16,marginBottom:40}}>
+        {options.map((o,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:20,padding:26,border:"1px solid #eee",borderTop:`3px solid ${o.c}`,height:"100%"}}>
+          <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{o.t}</h4>
+          <p style={{fontFamily:fs,fontSize:13.5,color:"#888",lineHeight:1.7,margin:0}}>{o.d}</p>
+        </div></Fade>)}
+      </div>
+      <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 16px"}}>{T("How it works")}</h3>
+      <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16,marginBottom:32}}>
+        {steps.map((st,i)=><Fade key={i} delay={i*0.08}><div style={{background:"#fff",borderRadius:20,padding:26,border:"1px solid #eee",height:"100%"}}>
+          <span style={{fontFamily:fs,fontSize:12,color:C.green,fontWeight:700}}>{st.n}</span>
+          <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"6px 0 8px",fontWeight:700}}>{st.t}</h4>
+          <p style={{fontFamily:fs,fontSize:13.5,color:"#888",lineHeight:1.7,margin:0}}>{st.d}</p>
+        </div></Fade>)}
+      </div>
+      <div style={{background:`${C.green}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.green}`}}>
+        <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.7}}>{T("Rates are subject to change without notice and are subject to credit approval. Special offers including C$3,500 cash back on mortgages may be available -- ask your advisor. Call 416-465-4659 for today's rate.")}</p>
+      </div>
+    </div>
+  </section>;
+}
+
+// ============ CREDIT CARDS ============
+function CardsPage({setPage,lang}){
+  const T=(k)=>t(k,lang);
+  const w=useW();
+  const cards=[
+    {n:"Cash Back Mastercard",tag:"Everyday spending",rate:RATE.mc,fee:"$0 annual fee",c:C.green,perks:["2% back on groceries and gas","1% back on everything else","No cap on annual earnings","Purchase protection and extended warranty"]},
+    {n:"Low Rate Mastercard",tag:"Carrying a balance",rate:RATE.mcLow,fee:"$29 annual fee",c:C.accent,perks:["The lowest purchase APR we offer","Balance transfers accepted","Ideal for consolidating higher-rate debt","21-day interest-free grace period"]},
+    {n:"Travel Rewards Mastercard",tag:"Members who fly home",rate:RATE.mc,fee:"$99 annual fee",c:C.purple,perks:["1.5 points per dollar, no blackout dates","Included travel medical coverage","Built for Baltic and European travel","Airport lounge access twice a year"]},
+  ];
+  const shared=[{t:"Instant card controls",d:"Lock, unlock, and set spend limits from the mobile app."},{t:"Zero liability",d:"You are not responsible for unauthorized transactions."},{t:"Tap and mobile wallet",d:"Apple Pay, Google Pay, and Interac Flash."},{t:"Member pricing",d:"Issued through Collabria, priced for credit union members."}];
+  return <section style={{background:C.cream,padding:w<=768?"60px 16px":"80px 24px",paddingTop:w<=768?80:100}}>
+    <div style={{maxWidth:1320,margin:"0 auto"}}>
+      <SH tag={T("Credit Cards")} tagColor={C.purple} title={T("Three cards. One straightforward choice.")} desc={T("Collabria Mastercard cards issued for Northern Birch members -- cash back for everyday spending, a low rate if you carry a balance, and travel rewards if you do not.")}/>
+      <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16,marginBottom:24}}>
+        {cards.map((cd,i)=><Fade key={i} delay={i*0.08}><div style={{background:"#fff",borderRadius:20,overflow:"hidden",border:"1px solid #eee",height:"100%",display:"flex",flexDirection:"column"}}>
+          <div style={{background:cd.c,padding:"18px 26px"}}>
+            <span style={{fontFamily:fs,fontSize:10.5,color:"rgba(255,255,255,0.75)",textTransform:"uppercase",letterSpacing:1.5,fontWeight:700}}>{cd.tag}</span>
+            <h3 style={{fontFamily:ff,fontSize:21,color:"#fff",margin:"4px 0 0"}}>{cd.n}</h3>
+          </div>
+          <div style={{padding:26,display:"flex",flexDirection:"column",flex:1}}>
+            <div style={{display:"flex",alignItems:"baseline",gap:8}}>
+              <span style={{fontFamily:ff,fontSize:30,color:C.navy,fontWeight:700}}>{cd.rate}</span>
+              <span style={{fontFamily:fs,fontSize:12,color:"#999"}}>{T("purchase APR")}</span>
+            </div>
+            <div style={{fontFamily:fs,fontSize:13,color:"#888",margin:"4px 0 18px"}}>{cd.fee}</div>
+            <div style={{flex:1,marginBottom:18}}>
+              {cd.perks.map((pk,pi)=><div key={pi} style={{display:"flex",gap:8,alignItems:"flex-start",marginBottom:8}}>
+                <div style={{width:5,height:5,borderRadius:"50%",background:cd.c,marginTop:6,flexShrink:0}}/>
+                <span style={{fontFamily:fs,fontSize:13.5,color:"#666",lineHeight:1.5}}>{pk}</span>
+              </div>)}
+            </div>
+            <Btn color={cd.c} onClick={()=>setPage("booking")}>{T("Apply for this card")}</Btn>
+          </div>
+        </div></Fade>)}
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(4,1fr)","repeat(2,1fr)","1fr"),gap:12,marginBottom:24}}>
+        {shared.map((sh,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:16,padding:22,border:"1px solid #eee",height:"100%"}}>
+          <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{sh.t}</h4>
+          <p style={{fontFamily:fs,fontSize:13,color:"#888",lineHeight:1.65,margin:0}}>{sh.d}</p>
+        </div></Fade>)}
+      </div>
+      <div style={{background:`${C.purple}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.purple}`}}>
+        <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.7}}>{T("Rates are subject to change and to credit approval. Cash advance and balance transfer rates differ from the purchase APR shown. Cards are issued by Collabria Financial Services. Mastercard is a registered trademark of Mastercard International Incorporated.")}</p>
+      </div>
+    </div>
+  </section>;
+}
+
+// ============ CHEQUING, SAVINGS & REGISTERED ============
+function AccountsPage({setPage,lang}){
+  const T=(k)=>t(k,lang);
+  const w=useW();
+  const chequing=[
+    {n:"Everyday Chequing",h:RATE.chq,hl:"monthly fee",c:C.accent,items:["Unlimited debits and e-Transfers","Free personalized cheques","THE EXCHANGE surcharge-free ATMs","No minimum balance"]},
+    {n:"Senior & Student Chequing",h:RATE.chq,hl:"monthly fee",c:C.accent,items:["Everything in Everyday Chequing","Free drafts and money orders","Paper statements at no charge","Built for fixed and part-time incomes"]},
+    {n:"US Dollar Chequing",h:"$3",hl:"monthly fee",c:C.accent,items:["Hold and spend USD without conversion","USD cheques and drafts","Waived with $1,000 minimum balance","For cross-border property and tuition"]},
+  ];
+  const savings=[
+    {n:"High-Interest Savings",h:RATE.hisa,hl:"annual interest",c:C.amber,items:["Interest calculated daily, paid monthly","No minimum balance, no monthly fee","Unlimited transfers to your chequing","FSRA deposit protection"]},
+    {n:"Guaranteed Investment Certificates",h:RATE.gic1,hl:"1-year term",c:C.amber,items:["Terms from 90 days to 5 years","Registered and non-registered options","Principal fully guaranteed","Redeemable options available"]},
+    {n:"Trust & Estate Accounts",h:"",hl:"",c:C.amber,items:["In-trust-for and estate accounts","Multi-signatory arrangements","Supported by our estate advisors","Common for family and community groups"]},
+  ];
+  const registered=[
+    {n:"TFSA",f:"Tax-Free Savings Account",d:"Tax-free growth on savings, GICs, or investments. Withdraw any time; room is restored the following year."},
+    {n:"RRSP",f:"Registered Retirement Savings Plan",d:"Deduct contributions from taxable income today and defer tax until retirement. Home Buyers' Plan eligible."},
+    {n:"FHSA",f:"First Home Savings Account",d:"Deductible going in, tax-free coming out for a first home. Up to $8,000 a year, $40,000 lifetime."},
+    {n:"RESP",f:"Registered Education Savings Plan",d:"Government grants of up to 20% on the first $2,500 contributed each year per child."},
+    {n:"RDSP",f:"Registered Disability Savings Plan",d:"Government grants and bonds for long-term savings for a person with a disability."},
+    {n:"RRIF",f:"Registered Retirement Income Fund",d:"Converts your RRSP into scheduled retirement income while the balance keeps growing tax-deferred."},
+  ];
+  const grid=(list)=><div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16,marginBottom:32}}>
+    {list.map((a,i)=><Fade key={i} delay={i*0.06}><div style={{background:"#fff",borderRadius:20,padding:26,border:"1px solid #eee",borderTop:`3px solid ${a.c}`,height:"100%"}}>
+      <h4 style={{fontFamily:ff,fontSize:20,color:C.navy,margin:"0 0 12px"}}>{a.n}</h4>
+      {a.h&&<div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:16}}>
+        <span style={{fontFamily:ff,fontSize:28,color:a.c,fontWeight:700}}>{a.h}</span>
+        <span style={{fontFamily:fs,fontSize:12,color:"#aaa"}}>{a.hl}</span>
+      </div>}
+      {a.items.map((x,xi)=><div key={xi} style={{display:"flex",gap:8,alignItems:"flex-start",marginBottom:8}}>
+        <div style={{width:5,height:5,borderRadius:"50%",background:a.c,marginTop:6,flexShrink:0}}/>
+        <span style={{fontFamily:fs,fontSize:13.5,color:"#666",lineHeight:1.5}}>{x}</span>
+      </div>)}
+    </div></Fade>)}
+  </div>;
+  return <section style={{background:C.cream,padding:w<=768?"60px 16px":"80px 24px",paddingTop:w<=768?80:100}}>
+    <div style={{maxWidth:1320,margin:"0 auto"}}>
+      <SH tag={T("Chequing, Savings & Registered")} tagColor={C.accent} title={T("Compare accounts side by side")} desc={T("No-fee everyday chequing, high-interest savings, GIC terms from 90 days to 5 years, and every registered plan a Canadian household needs.")}/>
+      <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 16px"}}>{T("Chequing")}</h3>
+      {grid(chequing)}
+      <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 16px"}}>{T("Savings & GICs")}</h3>
+      {grid(savings)}
+      <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 6px"}}>{T("Registered accounts")}</h3>
+      <p style={{fontFamily:fs,fontSize:14,color:"#888",margin:"0 0 16px"}}>{T("Each plan can hold savings, a GIC, or an investment portfolio -- the wrapper is the tax treatment, not the product.")}</p>
+      <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16,marginBottom:32}}>
+        {registered.map((r,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:20,padding:24,border:"1px solid #eee",height:"100%"}}>
+          <span style={{display:"inline-block",padding:"4px 10px",borderRadius:8,background:`${C.navy}0F`,fontFamily:fs,fontSize:12,fontWeight:700,color:C.navy,marginBottom:10}}>{r.n}</span>
+          <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{r.f}</h4>
+          <p style={{fontFamily:fs,fontSize:13.5,color:"#888",lineHeight:1.7,margin:0}}>{r.d}</p>
+        </div></Fade>)}
+      </div>
+      <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:24}}>
+        <Btn color={C.accent} onClick={()=>setPage("booking")}>{T("Open an Account")}</Btn>
+        <Btn outline color={C.navy} onClick={()=>setPage("rates")}>{T("See All Rates")}</Btn>
+      </div>
+      <div style={{background:`${C.accent}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.accent}`}}>
+        <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.7}}>{T("Rates are subject to change without notice. Eligible deposits are insured by FSRA; registered account deposits have unlimited coverage. Contact your branch for current rates and account terms.")}</p>
+      </div>
+    </div>
+  </section>;
+}
+
+// ============ BANKING PRODUCTS (homepage) ============
+function BankingProducts({setPage,lang}){
+  const T=(k)=>t(k,lang);
+  const w=useW();
+  return <section style={{background:C.birchLight,padding:w<=768?"56px 16px":"80px 24px"}}>
+    <div style={{maxWidth:1320,margin:"0 auto"}}>
+      <SH tag={T("Banking Products")} tagColor={C.green} title={T("Everyday banking, start to finish")} desc={T("Northern Birch is a full-service credit union. Open a chequing account, finance a home, carry a card, save in a GIC or TFSA, and invest -- all in one membership.")}/>
+      <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(5,1fr)","repeat(2,1fr)","1fr"),gap:12}}>
+        {BANKING.map((b,i)=><Fade key={b.k} delay={i*0.06}>
+          <div onClick={()=>setPage(b.p)} style={{background:"#fff",borderRadius:20,padding:24,border:"1px solid #EDE7D8",borderTop:`3px solid ${b.c}`,cursor:"pointer",height:"100%",display:"flex",flexDirection:"column"}}>
+            <h3 style={{fontFamily:ff,fontSize:21,color:C.navy,margin:"0 0 8px"}}>{T(b.t)}</h3>
+            <p style={{fontFamily:fs,fontSize:13,color:"#888",lineHeight:1.65,margin:"0 0 16px"}}>{b.d}</p>
+            <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:16}}>
+              <span style={{fontFamily:ff,fontSize:28,color:b.c,fontWeight:700}}>{b.rate}</span>
+              <span style={{fontFamily:fs,fontSize:11,color:"#aaa"}}>{b.rl}</span>
+            </div>
+            <div style={{flex:1,marginBottom:18}}>
+              {b.b.map((x,xi)=><div key={xi} style={{display:"flex",gap:8,alignItems:"flex-start",marginBottom:8}}>
+                <div style={{width:5,height:5,borderRadius:"50%",background:b.c,marginTop:6,flexShrink:0}}/>
+                <span style={{fontFamily:fs,fontSize:13,color:"#666",lineHeight:1.5}}>{x}</span>
+              </div>)}
+            </div>
+            <span style={{fontFamily:fs,fontSize:13,color:C.accent,fontWeight:700}}>{T(b.cta)} &rarr;</span>
+          </div>
+        </Fade>)}
+      </div>
+      <Fade delay={0.35}><div style={{display:"flex",gap:12,marginTop:28,flexWrap:"wrap"}}>
+        <Btn color={C.navy} onClick={()=>setPage("rates")}>{T("See All Rates")}</Btn>
+        <Btn outline color={C.navy} onClick={()=>setPage("booking")}>{T("Book an Appointment")}</Btn>
+      </div></Fade>
+    </div>
+  </section>;
+}
+
 function HomePage({setPage,lang}){
   const T=(k)=>t(k,lang);
   return <>
@@ -1314,21 +1571,21 @@ function HomePage({setPage,lang}){
       <div style={{maxWidth:1320,margin:"0 auto",padding:typeof window!=="undefined"&&window.innerWidth<=768?"100px 16px 60px":"130px 24px 90px",position:"relative",zIndex:2}}>
         <Fade><div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(200,184,138,0.1)",border:"1px solid rgba(200,184,138,0.2)",borderRadius:40,padding:"7px 18px",marginBottom:36}}>
           <Cornflower size={14} color={C.birch}/>
-          <span style={{fontFamily:fs,fontSize:11,color:C.birch,letterSpacing:3,textTransform:"uppercase",fontWeight:600}}>{T("The Future of Member Financial Wellness")}</span>
+          <span style={{fontFamily:fs,fontSize:11,color:C.birch,letterSpacing:3,textTransform:"uppercase",fontWeight:600}}>{T("A Full-Service Credit Union Since 1954")}</span>
           <Daisy size={14} color={C.birch} center="rgba(255,255,255,0.5)"/>
         </div></Fade>
         <Fade delay={0.08}><h1 style={{fontFamily:ff,fontSize:"clamp(36px,5vw,64px)",color:"#fff",lineHeight:1.07,maxWidth:780,margin:"0 0 24px"}}>{T("Your whole financial life.")}<br/><span style={{color:C.birch}}>{T("Under one Birch.")}</span></h1></Fade>
-        <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.5)",maxWidth:560,lineHeight:1.75,margin:"0 0 40px"}}>{T("Insurance. Investments. International transfers. Estate planning. Business benefits. 70+ years of community trust.")}</p></Fade>
+        <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.5)",maxWidth:560,lineHeight:1.75,margin:"0 0 40px"}}>{T("Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus investments, insurance and international transfers, all from one Toronto credit union.")}</p></Fade>
         <Fade delay={0.24}><div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-          <Btn onClick={()=>setPage("quote")}>{T("Get an Insurance Quote")}</Btn>
-          <Btn color={C.purple} onClick={()=>setPage("aiadvisor")}>{T("AI Insurance Advisor")}</Btn>
-          <Btn color={C.amber} onClick={()=>setPage("travel")}>{T("Travel & Transfers")}</Btn>
-          <Btn color={C.green} onClick={()=>setPage("business")}>{T("Business Solutions")}</Btn>
-          <Btn outline onClick={()=>setPage("mobileapp")}>Download the App</Btn>
+          <Btn color={C.accent} onClick={()=>setPage("accounts")}>{T("Compare Accounts")}</Btn>
+          <Btn color={C.green} onClick={()=>setPage("mortgages")}>{T("Explore Mortgages")}</Btn>
+          <Btn color={C.purple} onClick={()=>setPage("cards")}>{T("Apply for a Credit Card")}</Btn>
+          <Btn outline onClick={()=>setPage("quote")}>{T("Get an Insurance Quote")}</Btn>
         </div></Fade>
       </div>
     </section>
     <FlagStripe style={{margin:0}}/>
+    <BankingProducts setPage={setPage} lang={lang}/>
     <section style={{background:C.cream,padding:"64px 24px"}}><div style={{maxWidth:1320,margin:"0 auto"}}>
       <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"repeat(2,1fr)":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(3,1fr)":"repeat(6,1fr)",gap:12}}>
         {[{l:"AI Insurance Advisor",p:"aiadvisor",c:C.purple},{l:"Life Event Simulator",p:"lifesim",c:C.amber},{l:"Coverage Analyzer",p:"analyzer",c:C.accent},{l:"Health Check",p:"healthcheck",c:C.green},{l:"Document Reader",p:"docreader",c:C.navy},{l:"My Dashboard",p:"dashboard",c:C.red}].map((qi,i)=>
@@ -1369,7 +1626,7 @@ function Footer({setPage}){
         {[
           {t:"Insurance",items:[["Life Insurance","insurance"],["Home Insurance","insurance"],["Auto Insurance","insurance"],["Travel Insurance","travel"],["Claims Centre","claims"],["Quote Calculator","quote"]]},
           {t:"Tools",items:[["Compare Plans","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
-          {t:"Banking",items:[["Chequing","personal"],["Savings","personal"],["Mortgages","personal"],["Investments","personal"],["Rates","rates"],["Referrals","referrals"]]},
+          {t:"Banking",items:[["Chequing & Savings","accounts"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
           {t:"About",items:[["Community","community"],["Blog & News","blog"],["Glossary","glossary"],["Contact & Branches","contact"],["Careers","contact"],["KESKUS Branch","community"]]},
         ].map((col,i)=><div key={i}><h4 style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.4)",margin:"0 0 10px",textTransform:"uppercase",letterSpacing:1}}>{col.t}</h4>{col.items.map(([l,p],ii)=><div key={ii}><button onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.25)",fontFamily:fs,fontSize:12,padding:"2px 0",cursor:"pointer",display:"block"}}>{l}</button></div>)}</div>)}
       </div>
@@ -2755,6 +3012,7 @@ export default function App(){
   const pages={
     home:<HomePage setPage={setPage} lang={lang}/>,insurance:<InsurancePage setPage={setPage} lang={lang}/>,travel:<TravelPage lang={lang}/>,business:<BusinessPage lang={lang}/>,digital:<DigitalPage lang={lang}/>,
     estate:<EstatePage lang={lang}/>,community:<CommunityPage lang={lang}/>,personal:<PersonalPage lang={lang}/>,contact:<ContactPage lang={lang}/>,
+    mortgages:<MortgagesPage setPage={setPage} lang={lang}/>,cards:<CardsPage setPage={setPage} lang={lang}/>,accounts:<AccountsPage setPage={setPage} lang={lang}/>,
     quote:<QuotePage setPage={setPage} lang={lang}/>,compare:<ComparePage lang={lang}/>,claims:<ClaimsPage lang={lang}/>,calculators:<CalculatorsPage lang={lang}/>,
     booking:<BookingPage lang={lang}/>,rates:<RatesPage lang={lang}/>,referrals:<ReferralsPage lang={lang}/>,blog:<BlogPage setPage={setPage} lang={lang}/>,
     glossary:<GlossaryPage lang={lang}/>,mobileapp:<MobileAppPage lang={lang}/>,dashboard:<DashboardPage setPage={setPage} lang={lang}/>,aiadvisor:<AIAdvisorPage setPage={setPage} lang={lang}/>,
