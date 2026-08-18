@@ -5,3 +5,18 @@
 [dev]
   command = "npm run dev"
   port = 8080
+
+# Baseline security headers. The Next.js copy of this app got these in the
+# security audit; the deployed site never had them.
+#
+# CSP notes: the app styles every element with inline React `style` props and
+# an inline <style> block in index.html, so 'unsafe-inline' is required for
+# styles. Scripts are bundled to same-origin files and need no such exception.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
