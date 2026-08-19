@@ -7,10 +7,34 @@
     <title>Northern Birch Credit Union</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <style>*{margin:0;padding:0;box-sizing:border-box}body{-webkit-font-smoothing:antialiased}input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;outline:none;cursor:pointer}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#2E86C1;cursor:pointer;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2)}input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#2E86C1;cursor:pointer;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2)}</style>
-    <script type="module" crossorigin src="/assets/index-n-n6vMae.js"></script>
+    <script type="module" crossorigin src="/assets/index-BNiI3SM2.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DScdFga5.css">
   </head>
   <body>
+    <!--
+      Netlify detects forms by parsing the deployed HTML at build time, and a
+      React-rendered form is invisible to that parser. These hidden copies are
+      what register the forms; the app posts to them at runtime via submitForm().
+      Field names here must match the keys sent from src/App.jsx.
+      bot-field is the honeypot: real people never fill it in.
+    -->
+    <form name="booking" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="bot-field" />
+      <input type="text" name="branch" /><input type="text" name="service" />
+      <input type="text" name="date" /><input type="text" name="time" />
+      <input type="text" name="name" /><input type="email" name="email" /><input type="text" name="phone" />
+    </form>
+    <form name="claim" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="bot-field" />
+      <input type="text" name="claimType" /><input type="text" name="policy" /><input type="text" name="incidentDate" />
+      <textarea name="details"></textarea>
+      <input type="text" name="name" /><input type="email" name="email" /><input type="text" name="phone" />
+    </form>
+    <form name="referral" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="bot-field" />
+      <input type="text" name="yourName" /><input type="text" name="memberNo" />
+      <input type="text" name="friendName" /><input type="email" name="friendEmail" />
+    </form>
     <div id="root"></div>
   </body>
 </html>

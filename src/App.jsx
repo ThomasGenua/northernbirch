@@ -134,6 +134,24 @@ const TX={
 };
 function t(key,lang){if(!lang||lang==="en")return key;return TX[key]?.[lang==="est"?"est":"lat"]||key;}
 
+// Form submission. Posts to Netlify Forms, which needs no API key: the hidden
+// static forms in index.html are what Netlify detects at build time, and
+// submissions land in the site's Forms dashboard with email notification.
+//
+// Returns true only when Netlify actually accepted the submission. Callers must
+// not show a confirmation on false — these forms used to declare success
+// unconditionally while sending nothing anywhere.
+async function submitForm(formName,fields){
+  const body=new URLSearchParams({"form-name":formName,"bot-field":"",...fields});
+  try{
+    const res=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:body.toString()});
+    return res.ok;
+  }catch(e){return false}
+}
+
+// Shared styles for the inline error shown when a submission does not go through.
+const errBox={background:"#FDECEA",border:"1px solid #F5C6C2",borderRadius:12,padding:"14px 18px",marginBottom:16,fontFamily:fs,fontSize:13.5,color:"#8B2B22",lineHeight:1.6};
+
 // AI caller. The server owns the model, the system prompt, and the token budget;
 // we send only which feature is asking and the conversation so far.
 async function callAI(feature,messages){
@@ -854,8 +872,19 @@ function ComparePage(){
 function ClaimsPage(){
   const[step,setStep]=useState(0);
   const[claimType,setClaimType]=useState("");
-  const[file,setFile]=useState(null);
-  const[claimRef]=useState(()=>"NB-2026-"+Math.floor(Math.random()*9000+1000));
+  const[policy,setPolicy]=useState("");const[incidentDate,setIncidentDate]=useState("");const[details,setDetails]=useState("");
+  const[name,setName]=useState("");const[email,setEmail]=useState("");const[phone,setPhone]=useState("");
+  const[sending,setSending]=useState(false);const[error,setError]=useState("");
+  const canSubmit=policy.trim()&&details.trim()&&name.trim()&&(email.trim()||phone.trim());
+  // No claim number is invented here. Only the insurer can open a claim and
+  // issue a number; this form starts that conversation.
+  const submit=async()=>{
+    setError("");setSending(true);
+    const ok=await submitForm("claim",{claimType,policy,incidentDate,details,name,email,phone});
+    setSending(false);
+    if(ok)setStep(2);
+    else setError("We could not send your claim request. Nothing has been filed. Please try again, or call your insurer directly using the numbers below — for an urgent claim, always call.");
+  };
   const steps=[
     {title:"Select Claim Type",content:<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:16}}>
       {[{l:"Home Insurance Claim",v:"home",d:"Property damage, theft, water damage, liability"},{l:"Auto Insurance Claim",v:"auto",d:"Accident, collision, theft, vandalism"},{l:"Travel Insurance Claim",v:"travel",d:"Emergency medical, trip cancellation, baggage"},{l:"Life / CI / Disability Claim",v:"life",d:"Death benefit, critical illness, disability"},{l:"Mortgage Protection Claim",v:"mortgage",d:"Creditor life, disability, critical illness"},{l:"Commercial Insurance Claim",v:"commercial",d:"Business property, liability, business interruption"}].map((t,i)=>
@@ -866,26 +895,28 @@ function ClaimsPage(){
       )}
     </div>},
     {title:"Provide Details",content:<div>
-      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Policy Number</label><input placeholder="Enter your policy number" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Date of Incident</label><input type="date" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Description of Claim</label><textarea rows={4} placeholder="Please describe what happened..." style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box"}}/></div>
-      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Upload Supporting Documents (photos, receipts, police report)</label>
-        <div style={{border:"2px dashed #ddd",borderRadius:12,padding:"32px",textAlign:"center",cursor:"pointer",background:"#fafafa"}} onClick={()=>setFile("document.pdf")}>
-          <div style={{fontSize:32,color:"#ccc",marginBottom:8}}>&#128206;</div>
-          <p style={{fontFamily:fs,fontSize:14,color:"#999",margin:0}}>{file?"File uploaded: "+file:"Click to upload or drag and drop files here"}</p>
-          <p style={{fontFamily:fs,fontSize:12,color:"#ccc",margin:"4px 0 0"}}>PDF, JPG, PNG up to 10MB</p>
-        </div>
+      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Policy Number</label><input value={policy} onChange={e=>setPolicy(e.target.value)} placeholder="Enter your policy number" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Date of Incident</label><input type="date" value={incidentDate} onChange={e=>setIncidentDate(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Description of Claim</label><textarea rows={4} value={details} onChange={e=>setDetails(e.target.value)} placeholder="Please describe what happened..." style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box"}}/></div>
+      <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:16,marginBottom:16}}>
+        <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Name</label><input value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
+        <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Phone</label><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
       </div>
-      <div style={{display:"flex",gap:12}}><Btn outline onClick={()=>setStep(0)}>Back</Btn><Btn onClick={()=>setStep(2)}>Submit Claim</Btn></div>
+      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
+      <div style={{background:`${C.amber}08`,borderRadius:12,padding:"14px 18px",marginBottom:16,borderLeft:`4px solid ${C.amber}`}}>
+        <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.6}}>Have photos, receipts, or a police report ready. Documents are not uploaded through this form &mdash; the adjuster will tell you where to send them when they call.</p>
+      </div>
+      <>{error&&<div style={errBox}>{error}</div>}
+      <div style={{display:"flex",gap:12}}><Btn outline onClick={()=>setStep(0)}>Back</Btn><Btn color={sending||!canSubmit?"#ccc":C.accent} onClick={sending||!canSubmit?undefined:submit}>{sending?"Sending...":"Submit Claim Request"}</Btn></div></>
     </div>},
-    {title:"Claim Submitted",content:<div id="claim-confirmation" style={{textAlign:"center",padding:"40px 0"}}>
+    {title:"Request Sent",content:<div id="claim-confirmation" style={{textAlign:"center",padding:"40px 0"}}>
       <div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.green}}>&#10003;</span></div>
-      <h3 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 12px"}}>Claim Submitted Successfully</h3>
-      <p style={{fontFamily:fs,fontSize:15,color:"#777",lineHeight:1.7,maxWidth:500,margin:"0 auto 8px"}}>Your claim reference number is <strong style={{color:C.navy}}>{claimRef}</strong></p>
+      <h3 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 12px"}}>Claim Request Sent</h3>
+      <p style={{fontFamily:fs,fontSize:15,color:"#777",lineHeight:1.7,maxWidth:500,margin:"0 auto 8px"}}>We have passed your details to the insurer. Your claim number is issued by them, not by us, and comes with their first call.</p>
       <p style={{fontFamily:fs,fontSize:14,color:"#999",lineHeight:1.7,maxWidth:500,margin:"0 auto 24px"}}>A claims adjuster will contact you within 1-2 business days. You can track your claim status through the Insurance Dashboard in your online banking.</p>
       <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
-        <Btn onClick={()=>exportToPDF("claim-confirmation","Claim Confirmation - "+claimRef)} color={C.accent}>&#128190; Download Confirmation (PDF)</Btn>
-        <Btn outline onClick={()=>{setStep(0);setClaimType("");setFile(null)}}>File Another Claim</Btn>
+        <Btn onClick={()=>exportToPDF("claim-confirmation","Claim Request")} color={C.accent}>&#128190; Download Request (PDF)</Btn>
+        <Btn outline onClick={()=>{setStep(0);setClaimType("");setPolicy("");setDetails("")}}>File Another Claim</Btn>
       </div>
     </div>},
   ];
@@ -1055,15 +1086,25 @@ function CalculatorsPage(){
 // ============ BOOKING PAGE ============
 function BookingPage(){
   const[branch,setBranch]=useState("");const[service,setService]=useState("");const[date,setDate]=useState("");const[time,setTime]=useState("");const[submitted,setSubmitted]=useState(false);
+  const[name,setName]=useState("");const[email,setEmail]=useState("");const[phone,setPhone]=useState("");
+  const[sending,setSending]=useState(false);const[error,setError]=useState("");
+  const canSubmit=branch&&service&&name.trim()&&email.trim();
+  const submit=async()=>{
+    setError("");setSending(true);
+    const ok=await submitForm("booking",{branch,service,date,time,name,email,phone});
+    setSending(false);
+    if(ok)setSubmitted(true);
+    else setError("We could not send your request just now. Nothing has been booked. Please try again, or call us at 416-465-4659 and we will book it for you.");
+  };
   if(submitted)return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:600,margin:"0 auto"}}>
       <div id="booking-confirmation" style={{textAlign:"center"}}>
         <div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.green}}>&#10003;</span></div>
-        <h2 style={{fontFamily:ff,fontSize:32,color:C.navy}}>Appointment Booked</h2>
-        <p style={{fontFamily:fs,fontSize:16,color:"#777",lineHeight:1.7}}>Your appointment at the {branch} branch for {service} has been confirmed{date?` for ${date}`:""}{time?` at ${time}`:""}. You'll receive a confirmation email shortly. If you need to reschedule, call us at 416-465-4659.</p>
+        <h2 style={{fontFamily:ff,fontSize:32,color:C.navy}}>Appointment Requested</h2>
+        <p style={{fontFamily:fs,fontSize:16,color:"#777",lineHeight:1.7}}>We have received your request for the {branch} branch for {service}{date?` for ${date}`:""}{time?` at ${time}`:""}. You'll receive a confirmation email shortly. If you need to reschedule, call us at 416-465-4659.</p>
       </div>
       <div style={{display:"flex",gap:12,justifyContent:"center",marginTop:24,flexWrap:"wrap"}}>
-        <Btn onClick={()=>exportToPDF("booking-confirmation","Appointment Confirmation")} color={C.accent}>&#128190; Download Confirmation (PDF)</Btn>
+        <Btn onClick={()=>exportToPDF("booking-confirmation","Appointment Request")} color={C.accent}>&#128190; Download Confirmation (PDF)</Btn>
         <Btn outline onClick={()=>setSubmitted(false)}>Book Another Appointment</Btn>
       </div>
     </div></section>
@@ -1079,12 +1120,14 @@ function BookingPage(){
             <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Preferred Date</label><input type="date" value={date} onChange={e=>setDate(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
             <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Preferred Time</label><select value={time} onChange={e=>setTime(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">Select time...</option>{["10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","1:00 PM","1:30 PM","2:00 PM","2:30 PM"].map(t=><option key={t}>{t}</option>)}</select></div>
           </div>
-          <div style={{marginBottom:20}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Name</label><input placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+          <div style={{marginBottom:20}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Name</label><input value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:16,marginBottom:24}}>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Email</label><input type="email" placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Phone</label><input placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Phone</label><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           </div>
-          <button onClick={()=>setSubmitted(true)} style={{width:"100%",background:C.green,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Confirm Appointment</button>
+          {error&&<div style={errBox}>{error}</div>}
+          <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.green,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Request Appointment"}</button>
+          <p style={{fontFamily:fs,fontSize:12,color:"#999",textAlign:"center",margin:"10px 0 0"}}>A branch representative will confirm your appointment by phone or email.</p>
         </div>
       </div>
     </section>
@@ -1123,6 +1166,17 @@ function RatesPage(){
 // ============ REFERRALS PAGE ============
 function ReferralsPage(){
   const[submitted,setSubmitted]=useState(false);
+  const[yourName,setYourName]=useState("");const[memberNo,setMemberNo]=useState("");
+  const[friendName,setFriendName]=useState("");const[friendEmail,setFriendEmail]=useState("");
+  const[sending,setSending]=useState(false);const[error,setError]=useState("");
+  const canSubmit=yourName.trim()&&friendName.trim()&&friendEmail.trim();
+  const submit=async()=>{
+    setError("");setSending(true);
+    const ok=await submitForm("referral",{yourName,memberNo,friendName,friendEmail});
+    setSending(false);
+    if(ok)setSubmitted(true);
+    else setError("We could not send that referral. Please try again, or call us at 416-465-4659.");
+  };
   return(
     <section style={{background:C.birchLight,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
@@ -1139,12 +1193,13 @@ function ReferralsPage(){
         {!submitted?<div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>
           <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 20px"}}>Refer Someone Now</h3>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:16,marginBottom:16}}>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Name</label><input placeholder="Your full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Member Number</label><input placeholder="Member #" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Friend's Name</label><input placeholder="Their full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Friend's Email</label><input placeholder="their@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Name</label><input value={yourName} onChange={e=>setYourName(e.target.value)} placeholder="Your full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Member Number</label><input value={memberNo} onChange={e=>setMemberNo(e.target.value)} placeholder="Member #" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Friend's Name</label><input value={friendName} onChange={e=>setFriendName(e.target.value)} placeholder="Their full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Friend's Email</label><input value={friendEmail} onChange={e=>setFriendEmail(e.target.value)} placeholder="their@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           </div>
-          <button onClick={()=>setSubmitted(true)} style={{width:"100%",background:C.amber,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Send Referral</button>
+          {error&&<div style={errBox}>{error}</div>}
+          <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.amber,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Send Referral"}</button>
         </div>:<div style={{textAlign:"center",padding:40}}><div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.green}}>&#10003;</span></div><h3 style={{fontFamily:ff,fontSize:28,color:C.navy}}>Referral Sent!</h3><p style={{fontFamily:fs,fontSize:15,color:"#777"}}>Your friend will receive an invitation email. Once they join and complete a qualifying transaction, you'll both earn $50.</p><Btn onClick={()=>setSubmitted(false)}>Refer Another Friend</Btn></div>}
       </div>
     </section>
@@ -1607,7 +1662,7 @@ function Footer({setPage}){
         </div>
         {[
           {t:"Insurance",items:[["Life Insurance","insurance"],["Home Insurance","insurance"],["Auto Insurance","insurance"],["Travel Insurance","travel"],["Claims Centre","claims"],["Quote Calculator","quote"]]},
-          {t:"Tools",items:[["Compare Plans","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
+          {t:"Tools",items:[["Compare Plans","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["Refer a Friend","referrals"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
           {t:"Banking",items:[["Chequing & Savings","accounts"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
           {t:"About",items:[["Community","community"],["Blog & News","blog"],["Glossary","glossary"],["Contact & Branches","contact"],["Careers","contact"],["KESKUS Branch","community"]]},
         ].map((col,i)=><div key={i}><h4 style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.4)",margin:"0 0 10px",textTransform:"uppercase",letterSpacing:1}}>{col.t}</h4>{col.items.map(([l,p],ii)=><div key={ii}><button onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.25)",fontFamily:fs,fontSize:12,padding:"2px 0",cursor:"pointer",display:"block"}}>{l}</button></div>)}</div>)}
