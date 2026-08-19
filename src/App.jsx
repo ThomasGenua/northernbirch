@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import './index.css';
 
-const C={navy:"#1B2A4A",accent:"#2E86C1",dark:"#0C1829",green:"#27AE60",amber:"#D4A547",amberText:"#8A6410",red:"#E74C3C",redText:"#B3271A",birch:"#C8B88A",birchLight:"#F5F0E6",cream:"#FDFBF7",purple:"#8E44AD",accentText:"#1F6FA5",greenText:"#197A41",greenFill:"#177A41",lightBlue:"#EBF5FB"};
+const C={navy:"#1B2A4A",accent:"#2E86C1",dark:"#0C1829",green:"#27AE60",amber:"#D4A547",amberText:"#8A6410",red:"#E74C3C",redText:"#B3271A",birch:"#C8B88A",birchLight:"#F5F0E6",cream:"#FDFBF7",purple:"#8E44AD",accentText:"#1F6FA5",accentOnDark:"#7FB8E0",greenOnDark:"#6FD79B",amberOnDark:"#E8C46A",purpleOnDark:"#C89BDB",amberFill:"#8A6410",birchText:"#7D6C3E",greenText:"#197A41",greenFill:"#177A41",lightBlue:"#EBF5FB"};
 const ff="'Playfair Display',Georgia,serif",fs="'DM Sans',sans-serif";
 
 // ============ POSTED RATES (single source: RatesPage + homepage banking cards read this) ============
@@ -9,11 +9,11 @@ const RATE={m3:"4.39%",m5:"4.34%",m5hr:"3.89%",mvar:"Prime - 0.50%",heloc:"Prime
 
 // ============ CORE BANKING PRODUCTS (homepage cards, nav, search) ============
 const BANKING=[
-  {k:"mortgages",t:"Mortgages",p:"mortgages",c:C.green,d:"Fixed, variable, and high-ratio mortgages -- including co-op apartment financing few lenders offer.",rate:RATE.m5,rl:"5-year fixed",b:["Free pre-approval, held 120 days","Co-op and multi-unit financing","C$3,500 cash back offer available"],cta:"Explore Mortgages",kw:"mortgage home loan pre-approval renewal refinance fixed variable high ratio co-op heloc"},
-  {k:"cards",t:"Credit Cards",p:"cards",c:C.purple,d:"Collabria Mastercard cards with cash back, low-rate, and travel rewards options.",rate:RATE.mcLow,rl:"Low Rate APR",b:["No-annual-fee options","Cash back up to 2%","Lock and unlock in the app"],cta:"Apply for a Credit Card",kw:"credit card mastercard collabria cash back rewards low rate apply"},
-  {k:"chequing",t:"Chequing Accounts",p:"accounts",c:C.accent,d:"No-fee everyday banking with unlimited e-Transfers and free member cheques.",rate:RATE.chq,rl:"Monthly fee",b:["$0 monthly fee for members","Unlimited e-Transfers","THE EXCHANGE ATM network"],cta:"Compare Accounts",kw:"chequing checking everyday banking debit e-transfer account fees student senior"},
-  {k:"savings",t:"Savings & GICs",p:"accounts",c:C.amber,d:"High-interest savings, GIC terms from 90 days to 5 years, and registered TFSA, RRSP, FHSA and RESP plans.",rate:RATE.gic1,rl:"1-year GIC",b:["No minimum balance","GIC terms from 90 days","TFSA, RRSP, FHSA, RESP eligible"],cta:"Compare Accounts",kw:"savings gic tfsa rrsp fhsa resp rdsp registered high interest term deposit"},
-  {k:"invest",t:"Investments",p:"personal",c:C.navy,d:"Mutual funds, Qtrade direct investing, and VirtualWealth portfolios inside your registered accounts.",rate:RATE.hisa,rl:"Savings rate",b:["Self-directed or advisor-managed","Held in TFSA, RRSP or cash","Aviso Wealth partnership"],cta:"Explore Investing",kw:"invest investments portfolio mutual funds qtrade virtualwealth etf stocks wealth retirement"},
+  {k:"mortgages",t:"Mortgages",p:"mortgages",c:C.green,tc:C.greenText,d:"Fixed, variable, and high-ratio mortgages -- including co-op apartment financing few lenders offer.",rate:RATE.m5,rl:"5-year fixed",b:["Free pre-approval, held 120 days","Co-op and multi-unit financing","C$3,500 cash back offer available"],cta:"Explore Mortgages",kw:"mortgage home loan pre-approval renewal refinance fixed variable high ratio co-op heloc"},
+  {k:"cards",t:"Credit Cards",p:"cards",c:C.purple,tc:C.purple,d:"Collabria Mastercard cards with cash back, low-rate, and travel rewards options.",rate:RATE.mcLow,rl:"Low Rate APR",b:["No-annual-fee options","Cash back up to 2%","Lock and unlock in the app"],cta:"Apply for a Credit Card",kw:"credit card mastercard collabria cash back rewards low rate apply"},
+  {k:"chequing",t:"Chequing Accounts",p:"accounts",c:C.accent,tc:C.accentText,d:"No-fee everyday banking with unlimited e-Transfers and free member cheques.",rate:RATE.chq,rl:"Monthly fee",b:["$0 monthly fee for members","Unlimited e-Transfers","THE EXCHANGE ATM network"],cta:"Compare Accounts",kw:"chequing checking everyday banking debit e-transfer account fees student senior"},
+  {k:"savings",t:"Savings & GICs",p:"accounts",c:C.amber,tc:C.amberText,d:"High-interest savings, GIC terms from 90 days to 5 years, and registered TFSA, RRSP, FHSA and RESP plans.",rate:RATE.gic1,rl:"1-year GIC",b:["No minimum balance","GIC terms from 90 days","TFSA, RRSP, FHSA, RESP eligible"],cta:"Compare Accounts",kw:"savings gic tfsa rrsp fhsa resp rdsp registered high interest term deposit"},
+  {k:"invest",t:"Investments",p:"personal",c:C.navy,tc:C.navy,d:"Mutual funds, Qtrade direct investing, and VirtualWealth portfolios inside your registered accounts.",rate:RATE.hisa,rl:"Savings rate",b:["Self-directed or advisor-managed","Held in TFSA, RRSP or cash","Aviso Wealth partnership"],cta:"Explore Investing",kw:"invest investments portfolio mutual funds qtrade virtualwealth etf stocks wealth retirement"},
 ];
 
 // ============ TRANSLATION SYSTEM ============
@@ -337,9 +337,12 @@ function FlagStripe({style={}}){
 
 function useInView(t=0.1){const r=useRef(null);const[v,s]=useState(false);useEffect(()=>{const el=r.current;if(!el)return;const o=new IntersectionObserver(([e])=>{if(e.isIntersecting)s(true)},{threshold:t});o.observe(el);return()=>o.disconnect()},[t]);return[r,v]}
 function Fade({children,delay=0,style={}}){const[r,v]=useInView();return <div ref={r} style={{opacity:v?1:0,transform:v?"translateY(0)":"translateY(28px)",transition:`all 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s`,...style}}>{children}</div>}
-function SH({tag,tagColor,title,desc,dark}){return <Fade><div style={{maxWidth:700,marginBottom:48}}><span style={{fontFamily:fs,fontSize:11,color:tagColor||C.accent,letterSpacing:3,textTransform:"uppercase",fontWeight:600}}>{tag}</span><h2 style={{fontFamily:ff,fontSize:42,color:dark?"#fff":C.navy,margin:"10px 0 14px",lineHeight:1.12}}>{title}</h2>{desc&&<p style={{fontFamily:fs,fontSize:16,color:dark?"rgba(255,255,255,0.5)":"#666",lineHeight:1.75}}>{desc}</p>}</div></Fade>}
+const ON_DARK={"#1F6FA5":"#7FB8E0","#197A41":"#6FD79B","#8A6410":"#E8C46A","#8E44AD":"#C89BDB","#B3271A":"#F09A90","#C8B88A":"#C8B88A","#7D6C3E":"#D9C48F"};
+function onDark(c){return ON_DARK[c]||c}
+function SH({tag,tagColor,title,desc,dark}){
+  tagColor=dark?onDark(tagColor||"#1F6FA5"):tagColor;return <Fade><div style={{maxWidth:700,marginBottom:48}}><span style={{fontFamily:fs,fontSize:11,color:tagColor||C.accent,letterSpacing:3,textTransform:"uppercase",fontWeight:600}}>{tag}</span><h2 style={{fontFamily:ff,fontSize:42,color:dark?"#fff":C.navy,margin:"10px 0 14px",lineHeight:1.12}}>{title}</h2>{desc&&<p style={{fontFamily:fs,fontSize:16,color:dark?"rgba(255,255,255,0.5)":"#666",lineHeight:1.75}}>{desc}</p>}</div></Fade>}
 function FAQ({items,dark}){const[o,setO]=useState(null);return <div style={{display:"flex",flexDirection:"column",gap:8}}>{items.map((q,i)=><Clickable key={i} onClick={()=>setO(o===i?null:i)} style={{background:dark?"rgba(255,255,255,0.03)":"#fff",border:`1px solid ${dark?"rgba(255,255,255,0.06)":"#eee"}`,borderRadius:14,padding:"18px 24px",cursor:"pointer"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontFamily:fs,fontSize:15,color:dark?"#fff":C.navy,fontWeight:600}}>{q.q}</span><span style={{color:dark?"rgba(255,255,255,0.3)":"#707070",fontSize:18,transform:o===i?"rotate(45deg)":"none",transition:"transform 0.3s"}}>+</span></div>{o===i&&<p style={{fontFamily:fs,fontSize:14,color:dark?"rgba(255,255,255,0.5)":"#666",lineHeight:1.75,margin:"12px 0 0",paddingTop:12,borderTop:`1px solid ${dark?"rgba(255,255,255,0.05)":"#f0f0f0"}`}}>{q.a}</p>}</Clickable>)}</div>}
-function Btn({children,color=C.accent,onClick,outline,small}){return <button onClick={onClick} style={{background:outline?"transparent":color,border:outline?`2px solid ${color}`:"none",borderRadius:small?8:12,padding:small?"8px 16px":"12px 28px",cursor:"pointer",fontFamily:fs,fontSize:small?12:14,color:outline?color:"#fff",fontWeight:600,transition:"all 0.3s"}}>{children}</button>}
+function Btn({children,color=C.accentText,onClick,outline,small}){return <button onClick={onClick} style={{background:outline?"transparent":color,border:outline?`2px solid ${color}`:"none",borderRadius:small?8:12,padding:small?"8px 16px":"12px 28px",cursor:"pointer",fontFamily:fs,fontSize:small?12:14,color:outline?color:"#fff",fontWeight:600,transition:"all 0.3s"}}>{children}</button>}
 
 // ============ SEARCH OVERLAY ============
 function SearchOverlay({open,onClose,setPage}){
@@ -439,7 +442,7 @@ function ChatWidget(){
       </div>
       <div style={{padding:"8px 12px",borderTop:"1px solid #eee"}}>
         <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap"}}>
-          {msgs.length<=2&&["What insurance do I need?","Branch hours","Travel to Estonia","Mortgage rates","How to file a claim"].map((q,i)=><button key={i} onClick={()=>{setInput(q);}} style={{background:`${C.accent}08`,border:`1px solid ${C.accent}20`,borderRadius:8,padding:"5px 10px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accentText,fontWeight:500}}>{q}</button>)}
+          {msgs.length<=2&&["What insurance do I need?","Branch hours","Travel to Estonia","Mortgage rates","How to file a claim"].map((q,i)=><button key={i} onClick={()=>{setInput(q);}} style={{background:`${C.accentText}08`,border:`1px solid ${C.accent}20`,borderRadius:8,padding:"5px 10px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accentText,fontWeight:500}}>{q}</button>)}
         </div>
         <div style={{display:"flex",gap:8}}>
           <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Ask me anything about Northern Birch..." style={{flex:1,border:"1px solid #eee",borderRadius:10,padding:"10px 14px",fontFamily:fs,fontSize:13,outline:"none"}} disabled={loading}/>
@@ -474,7 +477,7 @@ function LoginModal({open,onClose,setPage}){
             <label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Password</label>
             <input type="password" placeholder="Enter your password" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/>
           </div>
-          <button onClick={()=>{setPage("dashboard");onClose()}} style={{width:"100%",background:C.accent,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,cursor:"pointer",marginBottom:16}}>Sign In</button>
+          <button onClick={()=>{setPage("dashboard");onClose()}} style={{width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,cursor:"pointer",marginBottom:16}}>Sign In</button>
           <div style={{display:"flex",justifyContent:"space-between"}}>
             <button style={{background:"none",border:"none",fontFamily:fs,fontSize:12,color:C.accentText,cursor:"pointer"}}>Forgot Password?</button>
             <button style={{background:"none",border:"none",fontFamily:fs,fontSize:12,color:C.accentText,cursor:"pointer"}}>Register</button>
@@ -534,12 +537,12 @@ function NotificationsPanel({open,onClose,setPage}){
         <button onClick={markAllRead} style={{background:"none",border:"none",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accentText,fontWeight:600}}>Mark all read</button>
       </div>
       <div style={{overflow:"auto",flex:1}}>
-        {notes.map(n=><Clickable key={n.id} onClick={()=>handleAction(n)} style={{padding:"14px 20px",borderBottom:"1px solid #f5f5f5",cursor:"pointer",background:n.unread?`${C.accent}04`:"transparent",display:"flex",gap:12}}>
+        {notes.map(n=><Clickable key={n.id} onClick={()=>handleAction(n)} style={{padding:"14px 20px",borderBottom:"1px solid #f5f5f5",cursor:"pointer",background:n.unread?`${C.accentText}04`:"transparent",display:"flex",gap:12}}>
           <div style={{width:36,height:36,borderRadius:10,background:`${n.color}15`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>{n.icon}</div>
           <div style={{flex:1,minWidth:0}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
               <div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:n.unread?700:500,lineHeight:1.4}}>{n.title}</div>
-              {n.unread&&<div style={{width:7,height:7,borderRadius:"50%",background:C.accent,flexShrink:0,marginTop:5}}/>}
+              {n.unread&&<div style={{width:7,height:7,borderRadius:"50%",background:C.accentText,flexShrink:0,marginTop:5}}/>}
             </div>
             <div style={{fontFamily:fs,fontSize:12,color:"#666",marginTop:4,lineHeight:1.5}}>{n.desc}</div>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8}}>
@@ -635,7 +638,7 @@ function MessagesPage({setPage}){
           <div style={{flex:1}}>
             <div style={{fontFamily:fs,fontSize:14,color:C.navy,fontWeight:700}}>{threads.find(t=>t.id===thread).name}</div>
             <div style={{fontFamily:fs,fontSize:11,color:C.greenText,display:"flex",alignItems:"center",gap:4}}>
-              <span style={{width:6,height:6,borderRadius:"50%",background:C.green,display:"inline-block"}}/>Online -- typically replies within 1 hour
+              <span style={{width:6,height:6,borderRadius:"50%",background:C.greenFill,display:"inline-block"}}/>Online -- typically replies within 1 hour
             </div>
           </div>
         </div>
@@ -685,13 +688,13 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
         {!isMob&&<div style={{display:"flex",gap:1,alignItems:"center"}}>
           {nav.map(n=>{
             const act=page===n.p||(n.kids||[]).some(k=>k.p===page);
-            const st={background:act?`${C.accent}10`:"transparent",border:"none",color:act?C.accent:(isDark?"rgba(255,255,255,0.8)":C.navy),padding:"8px 10px",borderRadius:8,cursor:"pointer",fontSize:12,fontFamily:fs,fontWeight:act?700:500,transition:"all 0.3s"};
+            const st={background:act?`${C.accentText}10`:"transparent",border:"none",color:act?C.accentText:(isDark?"rgba(255,255,255,0.8)":C.navy),padding:"8px 10px",borderRadius:8,cursor:"pointer",fontSize:12,fontFamily:fs,fontWeight:act?700:500,transition:"all 0.3s"};
             if(!n.kids)return <button key={n.l} onClick={()=>setPage(n.p)} style={st}>{t(n.l,lang)}</button>;
             return <div key={n.l} onMouseEnter={()=>setMenu(n.l)} onMouseLeave={()=>setMenu(null)} onKeyDown={e=>{if(e.key==="Escape")setMenu(null)}} style={{position:"relative"}}>
               <button onClick={()=>setMenu(menu===n.l?null:n.l)} aria-expanded={menu===n.l} aria-haspopup="true" style={{...st,display:"flex",alignItems:"center",gap:4}}>{t(n.l,lang)}<span style={{fontSize:8,opacity:0.6}}>&#9660;</span></button>
               {menu===n.l&&<div style={{position:"absolute",top:"100%",left:0,paddingTop:8}}>
                 <div style={{background:"#fff",borderRadius:14,boxShadow:"0 8px 32px rgba(12,24,41,0.16)",overflow:"hidden",minWidth:300,border:"1px solid #f0ece0"}}>
-                  {n.kids.map(k=><button key={k.l} onClick={()=>{setPage(k.p);setMenu(null)}} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accent}08`:"#fff",border:"none",borderBottom:"1px solid #f8f8f8",padding:"12px 18px",cursor:"pointer"}}>
+                  {n.kids.map(k=><button key={k.l} onClick={()=>{setPage(k.p);setMenu(null)}} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accentText}08`:"#fff",border:"none",borderBottom:"1px solid #f8f8f8",padding:"12px 18px",cursor:"pointer"}}>
                     <span style={{display:"block",fontFamily:fs,fontSize:13.5,fontWeight:700,color:page===k.p?C.accent:C.navy}}>{t(k.l,lang)}</span>
                     <span style={{display:"block",fontFamily:fs,fontSize:11.5,color:"#6B6B6B",marginTop:2}}>{k.d}</span>
                   </button>)}
@@ -707,7 +710,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
             </button>
             {langMenu&&<div style={{position:"absolute",top:"100%",right:0,marginTop:4,background:"#fff",borderRadius:12,boxShadow:"0 4px 20px rgba(0,0,0,0.12)",overflow:"hidden",minWidth:140,border:"1px solid #eee"}}>
               {Object.entries(langFull).map(([code,name])=>(
-                <button key={code} onClick={()=>{setLang(code);setLangMenu(false)}} style={{display:"block",width:"100%",textAlign:"left",background:lang===code?`${C.accent}08`:"#fff",border:"none",padding:"10px 16px",cursor:"pointer",fontFamily:fs,fontSize:13,color:lang===code?C.accent:C.navy,fontWeight:lang===code?700:400,borderBottom:"1px solid #f5f5f5"}}>
+                <button key={code} onClick={()=>{setLang(code);setLangMenu(false)}} style={{display:"block",width:"100%",textAlign:"left",background:lang===code?`${C.accentText}08`:"#fff",border:"none",padding:"10px 16px",cursor:"pointer",fontFamily:fs,fontSize:13,color:lang===code?C.accent:C.navy,fontWeight:lang===code?700:400,borderBottom:"1px solid #f5f5f5"}}>
                   <span style={{fontWeight:700,marginRight:8}}>{langLabels[code]}</span>{name}
                 </button>
               ))}
@@ -724,7 +727,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
             </button>
             {langMenu&&<div style={{position:"absolute",top:"100%",right:0,marginTop:4,background:"#fff",borderRadius:10,boxShadow:"0 4px 16px rgba(0,0,0,0.12)",overflow:"hidden",minWidth:120,zIndex:100,border:"1px solid #eee"}}>
               {Object.entries(langFull).map(([code,name])=>(
-                <button key={code} onClick={()=>{setLang(code);setLangMenu(false)}} style={{display:"block",width:"100%",textAlign:"left",background:lang===code?`${C.accent}08`:"#fff",border:"none",padding:"8px 14px",cursor:"pointer",fontFamily:fs,fontSize:12,color:lang===code?C.accent:C.navy,fontWeight:lang===code?700:400}}>
+                <button key={code} onClick={()=>{setLang(code);setLangMenu(false)}} style={{display:"block",width:"100%",textAlign:"left",background:lang===code?`${C.accentText}08`:"#fff",border:"none",padding:"8px 14px",cursor:"pointer",fontFamily:fs,fontSize:12,color:lang===code?C.accent:C.navy,fontWeight:lang===code?700:400}}>
                   {langLabels[code]} {name}
                 </button>
               ))}
@@ -742,11 +745,11 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
       {nav.map(n=><div key={n.l}>
         {n.kids
           ?<div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",fontWeight:700,textTransform:"uppercase",letterSpacing:1.5,padding:"16px 20px 6px"}}>{t(n.l,lang)}</div>
-          :<button onClick={()=>setPage(n.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===n.p?`${C.accent}10`:"transparent",border:"none",padding:"16px 20px",borderRadius:12,fontFamily:fs,fontSize:16,color:page===n.p?C.accent:C.navy,fontWeight:page===n.p?700:500,marginBottom:4}}>{t(n.l,lang)}</button>}
-        {(n.kids||[]).map(k=><button key={k.l} onClick={()=>setPage(k.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accent}10`:"transparent",border:"none",padding:"14px 20px",borderRadius:12,fontFamily:fs,fontSize:15,color:page===k.p?C.accent:C.navy,fontWeight:page===k.p?700:500,marginBottom:4}}>{t(k.l,lang)}</button>)}
+          :<button onClick={()=>setPage(n.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===n.p?`${C.accentText}10`:"transparent",border:"none",padding:"16px 20px",borderRadius:12,fontFamily:fs,fontSize:16,color:page===n.p?C.accent:C.navy,fontWeight:page===n.p?700:500,marginBottom:4}}>{t(n.l,lang)}</button>}
+        {(n.kids||[]).map(k=><button key={k.l} onClick={()=>setPage(k.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accentText}10`:"transparent",border:"none",padding:"14px 20px",borderRadius:12,fontFamily:fs,fontSize:15,color:page===k.p?C.accent:C.navy,fontWeight:page===k.p?700:500,marginBottom:4}}>{t(k.l,lang)}</button>)}
       </div>)}
       <div style={{borderTop:"1px solid #eee",marginTop:12,paddingTop:12}}>
-        <button onClick={()=>{onLogin();setMobileMenu(false)}} style={{display:"block",width:"100%",background:C.accent,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,marginBottom:8}}>{t("Sign In",lang)}</button>
+        <button onClick={()=>{onLogin();setMobileMenu(false)}} style={{display:"block",width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,marginBottom:8}}>{t("Sign In",lang)}</button>
         <button onClick={()=>setPage("booking")} style={{display:"block",width:"100%",background:C.navy,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>{t("Book Appointment",lang)}</button>
       </div>
     </div>}
@@ -778,7 +781,7 @@ function QuotePage({setPage}){
   const annual=Math.round(monthly*12*100)/100;
   const sliderStyle=(color)=>({WebkitAppearance:"none",width:"100%",height:8,borderRadius:4,background:`linear-gradient(90deg,${color} 0%,#eee 100%)`,outline:"none",cursor:"pointer"});
   const SliderLabel=({label,value,sub})=><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{label}</span><span style={{fontFamily:ff,fontSize:20,color:C.navy,fontWeight:700}}>{value}</span></div>;
-  const types=[{l:"Term Life",v:"life",icon:"&#9829;",c:C.accent},{l:"Home",v:"home",icon:"&#9750;",c:C.green},{l:"Auto",v:"auto",icon:"&#9881;",c:C.amber},{l:"Travel",v:"travel",icon:"&#9992;",c:C.purple}];
+  const types=[{l:"Term Life",v:"life",icon:"&#9829;",c:C.accentText},{l:"Home",v:"home",icon:"&#9750;",c:C.greenFill},{l:"Auto",v:"auto",icon:"&#9881;",c:C.amber},{l:"Travel",v:"travel",icon:"&#9992;",c:C.purple}];
   const activeType=types.find(t=>t.v===type);
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
@@ -799,17 +802,17 @@ function QuotePage({setPage}){
             {type==="life"&&<>
               <div style={{marginBottom:28}}>
                 <SliderLabel label="Your Age" value={age}/>
-                <input type="range" min={18} max={70} value={age} onChange={e=>setAge(+e.target.value)} style={sliderStyle(C.accent)}/>
+                <input type="range" aria-label="Your age" min={18} max={70} value={age} onChange={e=>setAge(+e.target.value)} style={sliderStyle(C.accent)}/>
                 <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#707070",marginTop:4}}><span>18</span><span>70</span></div>
               </div>
               <div style={{marginBottom:28}}>
                 <SliderLabel label="Coverage Amount" value={`C$${(coverage/1000).toLocaleString()}K`}/>
-                <input type="range" min={100000} max={2000000} step={50000} value={coverage} onChange={e=>setCoverage(+e.target.value)} style={sliderStyle(C.accent)}/>
+                <input type="range" aria-label="Coverage amount" min={100000} max={2000000} step={50000} value={coverage} onChange={e=>setCoverage(+e.target.value)} style={sliderStyle(C.accent)}/>
                 <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#707070",marginTop:4}}><span>$100K</span><span>$2M</span></div>
               </div>
               <div style={{marginBottom:28}}>
                 <div style={{fontFamily:fs,fontSize:13,color:"#666",marginBottom:10}}>Term Length</div>
-                <div style={{display:"flex",gap:8}}>{[10,20,30].map(t=><button key={t} onClick={()=>setTerm(t)} style={{flex:1,background:term===t?C.accent:"#f5f5f5",border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:14,color:term===t?"#fff":C.navy,fontWeight:600,transition:"all 0.2s"}}>{t} Years</button>)}</div>
+                <div style={{display:"flex",gap:8}}>{[10,20,30].map(t=><button key={t} onClick={()=>setTerm(t)} style={{flex:1,background:term===t?C.accentText:"#f5f5f5",border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:14,color:term===t?"#fff":C.navy,fontWeight:600,transition:"all 0.2s"}}>{t} Years</button>)}</div>
               </div>
               <div>
                 <div style={{fontFamily:fs,fontSize:13,color:"#666",marginBottom:10}}>Tobacco Use</div>
@@ -819,19 +822,19 @@ function QuotePage({setPage}){
             {type==="home"&&<>
               <div style={{marginBottom:28}}>
                 <SliderLabel label="Home Value" value={`C$${(homeVal/1000).toLocaleString()}K`}/>
-                <input type="range" min={200000} max={2000000} step={25000} value={homeVal} onChange={e=>setHomeVal(+e.target.value)} style={sliderStyle(C.green)}/>
+                <input type="range" aria-label="Home value" min={200000} max={2000000} step={25000} value={homeVal} onChange={e=>setHomeVal(+e.target.value)} style={sliderStyle(C.green)}/>
                 <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#707070",marginTop:4}}><span>$200K</span><span>$2M</span></div>
               </div>
               <div>
                 <div style={{fontFamily:fs,fontSize:13,color:"#666",marginBottom:10}}>Deductible</div>
-                <div style={{display:"flex",gap:8}}>{[500,1000,2500,5000].map(d=><button key={d} onClick={()=>setDeductible(d)} style={{flex:1,background:deductible===d?C.green:"#f5f5f5",border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:deductible===d?"#fff":C.navy,fontWeight:600,transition:"all 0.2s"}}>${d.toLocaleString()}</button>)}</div>
+                <div style={{display:"flex",gap:8}}>{[500,1000,2500,5000].map(d=><button key={d} onClick={()=>setDeductible(d)} style={{flex:1,background:deductible===d?C.greenFill:"#f5f5f5",border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:deductible===d?"#fff":C.navy,fontWeight:600,transition:"all 0.2s"}}>${d.toLocaleString()}</button>)}</div>
                 <p style={{fontFamily:fs,fontSize:12,color:"#707070",marginTop:8}}>Higher deductible = lower premium. Choose the amount you're comfortable paying out of pocket.</p>
               </div>
             </>}
             {type==="auto"&&<>
               <div style={{marginBottom:28}}>
                 <SliderLabel label="Vehicle Year" value={carYear}/>
-                <input type="range" min={2010} max={2026} value={carYear} onChange={e=>setCarYear(+e.target.value)} style={sliderStyle(C.amber)}/>
+                <input type="range" aria-label="Vehicle year" min={2010} max={2026} value={carYear} onChange={e=>setCarYear(+e.target.value)} style={sliderStyle(C.amber)}/>
                 <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#707070",marginTop:4}}><span>2010</span><span>2026</span></div>
               </div>
               <div>
@@ -918,7 +921,7 @@ function ComparePage(){
         </div>
         <div style={{display:"grid",gridTemplateColumns:`repeat(${t.plans.length},1fr)`,gap:16}}>
           {t.plans.map((plan,i)=><div key={i} style={{background:"#fff",borderRadius:20,overflow:"hidden",border:i===1?`2px solid ${C.accent}`:"1px solid #eee"}}>
-            {i===1&&<div style={{background:C.accent,padding:"6px",textAlign:"center"}}><span style={{fontFamily:fs,fontSize:11,color:"#fff",fontWeight:700,textTransform:"uppercase",letterSpacing:1}}>Most Popular</span></div>}
+            {i===1&&<div style={{background:C.accentText,padding:"6px",textAlign:"center"}}><span style={{fontFamily:fs,fontSize:11,color:"#fff",fontWeight:700,textTransform:"uppercase",letterSpacing:1}}>Most Popular</span></div>}
             <div style={{padding:"28px 24px",textAlign:"center",borderBottom:"1px solid #eee"}}>
               <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 8px"}}>{plan.tier}</h3>
               <div style={{fontFamily:fs,fontSize:20,color:C.accentText,fontWeight:700}}>{plan.price}</div>
@@ -926,10 +929,10 @@ function ComparePage(){
             <div style={{padding:"16px 24px"}}>
               {Object.entries(plan.features).map(([k,v],fi)=><div key={fi} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:fi<Object.keys(plan.features).length-1?"1px solid #f5f5f5":"none"}}>
                 <span style={{fontFamily:fs,fontSize:13,color:"#6B6B6B"}}>{k}</span>
-                <span style={{fontFamily:fs,fontSize:13,color:v==="No"?"#ddd":C.navy,fontWeight:v==="No"?400:600}}>{v}</span>
+                <span style={{fontFamily:fs,fontSize:13,color:v==="No"?"#707070":C.navy,fontWeight:v==="No"?400:600}}>{v}</span>
               </div>)}
             </div>
-            <div style={{padding:"16px 24px 24px"}}><button style={{width:"100%",background:i===1?C.accent:C.navy,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Get a Quote</button></div>
+            <div style={{padding:"16px 24px 24px"}}><button style={{width:"100%",background:i===1?C.accentText:C.navy,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Get a Quote</button></div>
           </div>)}
         </div>
       </div>
@@ -957,7 +960,7 @@ function ClaimsPage(){
   const steps=[
     {title:"Select Claim Type",content:<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:16}}>
       {[{l:"Home Insurance Claim",v:"home",d:"Property damage, theft, water damage, liability"},{l:"Auto Insurance Claim",v:"auto",d:"Accident, collision, theft, vandalism"},{l:"Travel Insurance Claim",v:"travel",d:"Emergency medical, trip cancellation, baggage"},{l:"Life / CI / Disability Claim",v:"life",d:"Death benefit, critical illness, disability"},{l:"Mortgage Protection Claim",v:"mortgage",d:"Creditor life, disability, critical illness"},{l:"Commercial Insurance Claim",v:"commercial",d:"Business property, liability, business interruption"}].map((t,i)=>
-        <Clickable key={i} onClick={()=>{setClaimType(t.v);setStep(1)}} style={{background:claimType===t.v?`${C.accent}08`:"#fff",border:claimType===t.v?`2px solid ${C.accent}`:"1px solid #eee",borderRadius:16,padding:"24px",cursor:"pointer",transition:"all 0.3s"}}>
+        <Clickable key={i} onClick={()=>{setClaimType(t.v);setStep(1)}} style={{background:claimType===t.v?`${C.accentText}08`:"#fff",border:claimType===t.v?`2px solid ${C.accent}`:"1px solid #eee",borderRadius:16,padding:"24px",cursor:"pointer",transition:"all 0.3s"}}>
           <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 4px",fontWeight:700}}>{t.l}</h4>
           <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:0}}>{t.d}</p>
         </Clickable>
@@ -979,7 +982,7 @@ function ClaimsPage(){
       <div style={{display:"flex",gap:12}}><Btn outline onClick={()=>setStep(0)}>Back</Btn><Btn color={sending||!canSubmit?"#ccc":C.accent} onClick={sending||!canSubmit?undefined:submit}>{sending?"Sending...":"Submit Claim Request"}</Btn></div></>
     </div>},
     {title:"Request Sent",content:<div id="claim-confirmation" style={{textAlign:"center",padding:"40px 0"}}>
-      <div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div>
+      <div style={{width:80,height:80,borderRadius:"50%",background:`${C.greenFill}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div>
       <h3 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 12px"}}>Claim Request Sent</h3>
       <p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.7,maxWidth:500,margin:"0 auto 8px"}}>We have passed your details to the insurer. Your claim number is issued by them, not by us, and comes with their first call.</p>
       <p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",lineHeight:1.7,maxWidth:500,margin:"0 auto 24px"}}>A claims adjuster will contact you within 1-2 business days. You can track your claim status through the Insurance Dashboard in your online banking.</p>
@@ -995,9 +998,9 @@ function ClaimsPage(){
         <SH tag="Claims Centre" tagColor={C.redText} title="File an insurance claim" desc="Start your claim online. We'll guide you through the process step by step."/>
         <div style={{display:"flex",gap:0,marginBottom:32}}>
           {steps.map((s,i)=><div key={i} style={{flex:1,display:"flex",alignItems:"center"}}>
-            <div style={{width:32,height:32,borderRadius:"50%",background:i<=step?C.accent:"#ddd",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:fs,fontSize:13,color:"#fff",fontWeight:700}}>{i+1}</span></div>
+            <div style={{width:32,height:32,borderRadius:"50%",background:i<=step?C.accentText:"#ddd",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:fs,fontSize:13,color:"#fff",fontWeight:700}}>{i+1}</span></div>
             <div style={{fontFamily:fs,fontSize:12,color:i<=step?C.navy:"#707070",marginLeft:8,fontWeight:i===step?700:400}}>{s.title}</div>
-            {i<steps.length-1&&<div style={{flex:1,height:2,background:i<step?C.accent:"#eee",margin:"0 12px"}}/>}
+            {i<steps.length-1&&<div style={{flex:1,height:2,background:i<step?C.accentText:"#eee",margin:"0 12px"}}/>}
           </div>)}
         </div>
         <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>{steps[step].content}</div>
@@ -1055,41 +1058,41 @@ function CalculatorsPage(){
         <div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
           {calc==="mortgage"&&<>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Mortgage Amount</label><input type="number" value={mAmt} onChange={e=>setMAmt(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Interest Rate (%)</label><input type="number" step="0.01" value={mRate} onChange={e=>setMRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-0" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Mortgage Amount</label><input type="number" id="calc-0" value={mAmt} onChange={e=>setMAmt(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-1" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Interest Rate (%)</label><input type="number" id="calc-1" step="0.01" value={mRate} onChange={e=>setMRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
               <div><label htmlFor="sel-0" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Amortization (Years)</label><select id="sel-0" value={mYrs} onChange={e=>setMYrs(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box",background:"#fff"}}>{[15,20,25,30].map(y=><option key={y} value={y}>{y} years</option>)}</select></div>
             </div>
-            <button onClick={calcMortgage} style={{width:"100%",background:C.green,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Payment</button>
-            {mResult&&<div id="mortgage-result" style={{marginTop:24,background:`${C.green}08`,borderRadius:16,padding:"28px 32px",textAlign:"center"}}>
+            <button onClick={calcMortgage} style={{width:"100%",background:C.greenFill,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Payment</button>
+            {mResult&&<div id="mortgage-result" style={{marginTop:24,background:`${C.greenFill}08`,borderRadius:16,padding:"28px 32px",textAlign:"center"}}>
               <div style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>Estimated Monthly Payment</div>
               <div style={{fontFamily:ff,fontSize:48,color:C.greenText,fontWeight:700,margin:"8px 0"}}>C${mResult.toLocaleString()}</div>
               <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:"8px 0 12px"}}>Based on {mRate}% rate, {mYrs}-year amortization. Current NBCU rates: 3-year closed 4.39%, 5-year high ratio 3.89%.</p>
-              <button onClick={()=>exportToPDF("mortgage-result","Mortgage Calculation")} style={{background:C.green,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download PDF</button>
+              <button onClick={()=>exportToPDF("mortgage-result","Mortgage Calculation")} style={{background:C.greenFill,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download PDF</button>
             </div>}
           </>}
           {calc==="insurance"&&<>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Household Income</label><input type="number" value={income} onChange={e=>setIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Number of Dependents</label><input type="number" value={deps} onChange={e=>setDeps(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Outstanding Mortgage</label><input type="number" value={mortgage} onChange={e=>setMortgage(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-2" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Household Income</label><input type="number" id="calc-2" value={income} onChange={e=>setIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-3" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Number of Dependents</label><input type="number" id="calc-3" value={deps} onChange={e=>setDeps(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-4" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Outstanding Mortgage</label><input type="number" id="calc-4" value={mortgage} onChange={e=>setMortgage(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
             </div>
-            <button onClick={calcInsurance} style={{width:"100%",background:C.accent,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Insurance Need</button>
-            {insResult&&<div id="insurance-needs-result" style={{marginTop:24,background:`${C.accent}08`,borderRadius:16,padding:"28px 32px"}}>
+            <button onClick={calcInsurance} style={{width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Insurance Need</button>
+            {insResult&&<div id="insurance-needs-result" style={{marginTop:24,background:`${C.accentText}08`,borderRadius:16,padding:"28px 32px"}}>
               <div style={{textAlign:"center",marginBottom:20}}><div style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>Recommended Life Insurance Coverage</div><div style={{fontFamily:ff,fontSize:48,color:C.accentText,fontWeight:700,margin:"8px 0"}}>C${(insResult.total/1000).toFixed(0)}K</div></div>
               <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:16}}>
                 {[{l:"Income Replacement (10x)",v:`C$${(insResult.income/1000).toFixed(0)}K`},{l:"Mortgage Payoff",v:`C$${(insResult.debt/1000).toFixed(0)}K`},{l:`Education (${deps} children)`,v:`C$${(insResult.edu/1000).toFixed(0)}K`}].map((m,i)=><div key={i} style={{textAlign:"center",background:"#fff",borderRadius:12,padding:16}}><div style={{fontFamily:ff,fontSize:22,color:C.navy,fontWeight:700}}>{m.v}</div><div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",marginTop:2}}>{m.l}</div></div>)}
               </div>
-              <div style={{textAlign:"center",marginTop:20}}><button onClick={()=>exportToPDF("insurance-needs-result","Insurance Needs Analysis")} style={{background:C.accent,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download PDF</button></div>
+              <div style={{textAlign:"center",marginTop:20}}><button onClick={()=>exportToPDF("insurance-needs-result","Insurance Needs Analysis")} style={{background:C.accentText,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download PDF</button></div>
             </div>}
           </>}
           {calc==="retirement"&&<>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:20}}>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Current Age</label><input type="number" value={rAge} onChange={e=>setRAge(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Target Retirement Age</label><input type="number" value={rRetire} onChange={e=>setRRetire(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Annual Income</label><input type="number" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Retirement Savings</label><input type="number" value={rSaved} onChange={e=>setRSaved(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Monthly Contribution</label><input type="number" value={rMonthly} onChange={e=>setRMonthly(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Expected Annual Return (%)</label><input type="number" step="0.5" value={rReturn} onChange={e=>setRReturn(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-5" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Current Age</label><input type="number" id="calc-5" value={rAge} onChange={e=>setRAge(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-6" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Target Retirement Age</label><input type="number" id="calc-6" value={rRetire} onChange={e=>setRRetire(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-7" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Annual Income</label><input type="number" id="calc-7" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-8" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Retirement Savings</label><input type="number" id="calc-8" value={rSaved} onChange={e=>setRSaved(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-9" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Monthly Contribution</label><input type="number" id="calc-9" value={rMonthly} onChange={e=>setRMonthly(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-10" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Expected Annual Return (%)</label><input type="number" id="calc-10" step="0.5" value={rReturn} onChange={e=>setRReturn(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
             </div>
             <button onClick={calcRetirement} style={{width:"100%",background:C.purple,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Retirement Plan</button>
             {rResult&&<div id="retirement-result" style={{marginTop:24}}>
@@ -1124,7 +1127,7 @@ function CalculatorsPage(){
                 </div>
               </div>
               {/* Gap or Surplus */}
-              <div style={{background:rResult.gap>0?`${C.red}08`:`${C.green}08`,borderRadius:16,padding:"24px 32px",borderLeft:`4px solid ${rResult.gap>0?C.red:C.green}`,marginBottom:16}}>
+              <div style={{background:rResult.gap>0?`${C.red}08`:`${C.greenFill}08`,borderRadius:16,padding:"24px 32px",borderLeft:`4px solid ${rResult.gap>0?C.red:C.green}`,marginBottom:16}}>
                 {rResult.gap>0?<>
                   <h4 style={{fontFamily:fs,fontSize:15,color:C.redText,margin:"0 0 8px",fontWeight:700}}>Monthly Gap: C${rResult.gap.toLocaleString()}</h4>
                   <p style={{fontFamily:fs,fontSize:14,color:"#666",margin:"0 0 12px",lineHeight:1.7}}>Based on current savings and contributions, you'll have a shortfall of C${rResult.gap.toLocaleString()}/month in retirement. Here's how to close it:</p>
@@ -1168,7 +1171,7 @@ function BookingPage(){
   if(submitted)return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:600,margin:"0 auto"}}>
       <div id="booking-confirmation" style={{textAlign:"center"}}>
-        <div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div>
+        <div style={{width:80,height:80,borderRadius:"50%",background:`${C.greenFill}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div>
         <h2 style={{fontFamily:ff,fontSize:32,color:C.navy}}>Appointment Requested</h2>
         <p style={{fontFamily:fs,fontSize:16,color:"#666",lineHeight:1.7}}>We have received your request for the {branch} branch for {service}{date?` for ${date}`:""}{time?` at ${time}`:""}. You'll receive a confirmation email shortly. If you need to reschedule, call us at 416-465-4659.</p>
       </div>
@@ -1195,7 +1198,7 @@ function BookingPage(){
             <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Phone</label><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           </div>
           {error&&<div style={errBox}>{error}</div>}
-          <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.green,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Request Appointment"}</button>
+          <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.greenFill,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Request Appointment"}</button>
           <p style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",textAlign:"center",margin:"10px 0 0"}}>A branch representative will confirm your appointment by phone or email.</p>
         </div>
       </div>
@@ -1224,7 +1227,7 @@ function RatesPage(){
             </div>
           </div></Fade>
         ))}
-        <div style={{background:`${C.accent}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.accent}`}}>
+        <div style={{background:`${C.accentText}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.accent}`}}>
           <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.7}}>Rates are subject to change at any time without notice. For the latest rates, please contact our branches directly at 416-465-4659 or 416-922-2551. Special offers including C$3,500 cash back on mortgages and promotional GIC rates may be available -- ask your advisor.</p>
         </div>
       </div>
@@ -1269,7 +1272,7 @@ function ReferralsPage(){
           </div>
           {error&&<div style={errBox}>{error}</div>}
           <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.amber,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Send Referral"}</button>
-        </div>:<div style={{textAlign:"center",padding:40}}><div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div><h3 style={{fontFamily:ff,fontSize:28,color:C.navy}}>Referral Sent!</h3><p style={{fontFamily:fs,fontSize:15,color:"#666"}}>Your friend will receive an invitation email. Once they join and complete a qualifying transaction, you'll both earn $50.</p><Btn onClick={()=>setSubmitted(false)}>Refer Another Friend</Btn></div>}
+        </div>:<div style={{textAlign:"center",padding:40}}><div style={{width:80,height:80,borderRadius:"50%",background:`${C.greenFill}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div><h3 style={{fontFamily:ff,fontSize:28,color:C.navy}}>Referral Sent!</h3><p style={{fontFamily:fs,fontSize:15,color:"#666"}}>Your friend will receive an invitation email. Once they join and complete a qualifying transaction, you'll both earn $50.</p><Btn onClick={()=>setSubmitted(false)}>Refer Another Friend</Btn></div>}
       </div>
     </section>
   );
@@ -1283,7 +1286,7 @@ function BlogPage({setPage}){
     {title:"Travelling to Estonia or Latvia This Summer?",date:"March 2026",cat:"Travel",excerpt:"Annual multi-trip travel insurance now available for Northern Birch members. Emergency medical up to $5M, pre-existing condition coverage for seniors, and 24/7 assistance in Estonian and Latvian.",color:C.amberText},
     {title:"Co-op Apartment Insurance: What You Need to Know",date:"March 2026",cat:"Insurance Education",excerpt:"Living in a co-op? Standard condo insurance won't adequately cover you. Northern Birch is one of the few institutions offering specialized co-op insurance in Ontario. Here's why it matters.",color:C.purple},
     {title:"5 Insurance Mistakes Young Professionals Make",date:"February 2026",cat:"Financial Literacy",excerpt:"From skipping tenant insurance to underestimating disability risk, young professionals often overlook critical coverage. Here are the five most common mistakes and how to avoid them.",color:C.redText},
-    {title:"KESKUS Branch: What to Expect",date:"February 2026",cat:"Community",excerpt:"Our new flagship branch at the KESKUS International Estonian Centre is under construction. Here's a preview of the services, technology, and community features you'll find when we open.",color:C.birch},
+    {title:"KESKUS Branch: What to Expect",date:"February 2026",cat:"Community",excerpt:"Our new flagship branch at the KESKUS International Estonian Centre is under construction. Here's a preview of the services, technology, and community features you'll find when we open.",color:C.birchText},
     {title:"Group Benefits: A Small Business Owner's Guide",date:"February 2026",cat:"Business",excerpt:"Offering employee benefits doesn't have to be complicated or expensive. Northern Birch now offers group health and dental plans for businesses with as few as 2 employees through Manulife.",color:C.greenText},
     {title:"Estate Planning at Every Life Stage",date:"January 2026",cat:"Planning",excerpt:"Estate planning isn't just for retirees. From your first will to your final legacy plan, here's what you need at each life stage -- and how insurance plays a critical role.",color:C.navy},
   ];
@@ -1356,7 +1359,7 @@ function MobileAppPage(){
   return(
     <section style={{background:C.dark,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
-        <SH dark tag="Mobile Banking" tagColor={C.accentText} title="Northern Birch in your pocket" desc="Download the Northern Birch mobile app for full-service banking, insurance management, international transfers, and more -- 24/7 from anywhere."/>
+        <SH dark tag="Mobile Banking" tagColor={C.accentOnDark} title="Northern Birch in your pocket" desc="Download the Northern Birch mobile app for full-service banking, insurance management, international transfers, and more -- 24/7 from anywhere."/>
         <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:32}}>
           <div>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
@@ -1372,7 +1375,7 @@ function MobileAppPage(){
                 {title:"Real-Time Notifications",desc:"Get alerts for transactions, payments, transfers, and insurance renewals."},
                 {title:"Apple Pay & Google Pay",desc:"Add your Northern Birch debit and credit cards to your mobile wallet."},
               ].map((f,i)=><div key={i} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:14,padding:"16px 20px",display:"flex",gap:14,alignItems:"flex-start"}}>
-                <div style={{width:28,height:28,borderRadius:8,background:`${C.accent}20`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}><span style={{fontFamily:fs,fontSize:11,color:C.accentText,fontWeight:800}}>{String(i+1).padStart(2,"0")}</span></div>
+                <div style={{width:28,height:28,borderRadius:8,background:`${C.accentText}20`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}><span style={{fontFamily:fs,fontSize:11,color:C.accentOnDark,fontWeight:800}}>{String(i+1).padStart(2,"0")}</span></div>
                 <div><h4 style={{fontFamily:fs,fontSize:14,color:"#fff",margin:"0 0 4px",fontWeight:700}}>{f.title}</h4><p style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.6}}>{f.desc}</p></div>
               </div>)}
             </div>
@@ -1388,7 +1391,7 @@ function MobileAppPage(){
               </div>
             </div>
             <div style={{background:"rgba(255,255,255,0.03)",borderRadius:16,padding:"20px 24px",textAlign:"center",border:"1px solid rgba(255,255,255,0.06)"}}>
-              <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:0}}>Need help? 24/7 online banking support: <span style={{color:C.accentText,fontWeight:600}}>1-866-992-2490</span></p>
+              <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:0}}>Need help? 24/7 online banking support: <span style={{color:C.accentOnDark,fontWeight:600}}>1-866-992-2490</span></p>
             </div>
           </div>
         </div>
@@ -1444,7 +1447,7 @@ function InsurancePage({setPage}){
           </div>
         </div></Fade>)}
         <Fade><div style={{background:`linear-gradient(135deg,${C.navy},#2a4a6a)`,borderRadius:24,padding:typeof window!=="undefined"&&window.innerWidth<=768?"28px 24px":"44px 52px",display:"flex",flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row",justifyContent:"space-between",alignItems:"center",gap:typeof window!=="undefined"&&window.innerWidth<=768?24:40}}>
-          <div style={{flex:1}}><div style={{fontFamily:fs,fontSize:11,color:C.birch,letterSpacing:2,textTransform:"uppercase",fontWeight:600,marginBottom:8}}>Powered by The Personal (Desjardins) + CUMIS (Co-operators) + Manulife</div><h3 style={{fontFamily:ff,fontSize:24,color:"#fff",margin:"0 0 8px"}}>Exclusive rates for Northern Birch members</h3><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.7}}>650+ organization partnerships. 380+ credit union partnerships. 98% policy renewal rate. Best-in-class partners for every insurance line.</p></div>
+          <div style={{flex:1}}><div style={{fontFamily:fs,fontSize:11,color:C.birchText,letterSpacing:2,textTransform:"uppercase",fontWeight:600,marginBottom:8}}>Powered by The Personal (Desjardins) + CUMIS (Co-operators) + Manulife</div><h3 style={{fontFamily:ff,fontSize:24,color:"#fff",margin:"0 0 8px"}}>Exclusive rates for Northern Birch members</h3><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.7}}>650+ organization partnerships. 380+ credit union partnerships. 98% policy renewal rate. Best-in-class partners for every insurance line.</p></div>
           <Btn onClick={()=>setPage("quote")}>Get Your Quote</Btn>
         </div></Fade>
         <div style={{marginTop:48}}><h3 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 24px"}}>Insurance FAQ</h3>
@@ -1458,11 +1461,11 @@ function InsurancePage({setPage}){
 // ============ SIMPLIFIED OTHER PAGES (keep routing) ============
 function TravelPage(){return <section style={{background:C.navy,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Connected to Your Heritage" tagColor={C.birch} title="Travel, transfers & foreign exchange" desc="Baltic travel insurance, international money transfers, and competitive FX -- built for our community."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr 1fr",gap:16}}>{[{t:"Travel Insurance",d:"Annual multi-trip coverage. Emergency medical up to $5M. 24/7 assistance in Estonian & Latvian. Pre-existing condition coverage for seniors.",c:C.amber},{t:"International Transfers",d:"Send money to Estonia & Latvia from the app. Competitive EUR rates, real-time tracking, recurring transfers, transparent fees.",c:C.accent},{t:"Foreign Exchange",d:"Competitive EUR/CAD rates. Cash and draft services. Transparent pricing with no hidden markups. In-branch assistance available.",c:C.green}].map((s,i)=><Fade key={i} delay={i*0.1}><div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:24,padding:36,height:"100%"}}><div style={{width:40,height:40,borderRadius:12,background:`${s.c}20`,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:16}}><span style={{color:s.c,fontSize:16,fontWeight:800}}>{i+1}</span></div><h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:"0 0 10px"}}>{s.t}</h3><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.75,margin:0}}>{s.d}</p></div></Fade>)}</div></div></section>}
 function BusinessPage(){return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Business Solutions" tagColor={C.greenText} title="Everything your business needs" desc="Group benefits, commercial insurance, key person coverage, payroll, and succession planning."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>{[{t:"Group Health & Dental",d:"Plans for 2-50 employees via Manulife. Health, dental, vision, disability.",c:C.green},{t:"Commercial Insurance",d:"Property, liability, and business interruption via Co-operators.",c:C.accent},{t:"Key Person Insurance",d:"Protect your business if a critical person can't work.",c:C.amber},{t:"Succession Planning",d:"Funded buy-sell agreements and ownership transitions.",c:C.purple},{t:"Payroll & HR",d:"Integrated payroll connected to your NBCU business account.",c:C.navy},{t:"Commercial Lending",d:"Mortgages, loans, lines of credit with personalized underwriting.",c:C.red}].map((s,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:20,padding:28,border:"1px solid #eee",borderTop:`3px solid ${s.c}`}}><h3 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{s.t}</h3><p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.7}}>{s.d}</p></div></Fade>)}</div></div></section>}
-function DigitalPage(){return <section style={{background:C.dark,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Digital Banking" tagColor={C.accentText} title="Heritage values. Digital convenience." desc="Insurance dashboard, smart quotes, financial planning, mobile banking, and more."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(4,1fr)",gap:16}}>{["Insurance Dashboard","Smart Quote Engine","Financial Planning","Life Event Intelligence","International Transfers","Mobile Banking","Estate Planning Portal","Business Hub"].map((f,i)=><Fade key={i} delay={i*0.04}><div style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:20,padding:24,borderTop:`2px solid ${[C.accent,C.green,C.amber,C.purple][i%4]}30`}}><span style={{fontFamily:fs,fontSize:11,color:[C.accent,C.green,C.amber,C.purple][i%4],fontWeight:700,opacity:0.7}}>{String(i+1).padStart(2,"0")}</span><h3 style={{fontFamily:fs,fontSize:15,color:"#fff",margin:"8px 0",fontWeight:700}}>{f}</h3></div></Fade>)}</div></div></section>}
+function DigitalPage(){return <section style={{background:C.dark,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Digital Banking" tagColor={C.accentText} title="Heritage values. Digital convenience." desc="Insurance dashboard, smart quotes, financial planning, mobile banking, and more."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(4,1fr)",gap:16}}>{["Insurance Dashboard","Smart Quote Engine","Financial Planning","Life Event Intelligence","International Transfers","Mobile Banking","Estate Planning Portal","Business Hub"].map((f,i)=><Fade key={i} delay={i*0.04}><div style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:20,padding:24,borderTop:`2px solid ${[C.accentOnDark,C.greenOnDark,C.amberOnDark,C.purpleOnDark][i%4]}30`}}><span style={{fontFamily:fs,fontSize:11,color:[C.accentOnDark,C.greenOnDark,C.amberOnDark,C.purpleOnDark][i%4],fontWeight:700}}>{String(i+1).padStart(2,"0")}</span><h3 style={{fontFamily:fs,fontSize:15,color:"#fff",margin:"8px 0",fontWeight:700}}>{f}</h3></div></Fade>)}</div></div></section>}
 function EstatePage(){const[s,setS]=useState(0);const stages=["Young Family","Mid-Career","Pre-Retirement","Senior"];return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1000,margin:"0 auto"}}><SH tag="Estate Planning" tagColor={C.purple} title="Protect your family across generations"/><div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>{stages.map((st,i)=><button key={i} onClick={()=>setS(i)} style={{flex:1,background:s===i?C.purple:"#fff",border:s===i?"none":"1px solid #ddd",borderRadius:12,padding:14,cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:s===i?"#fff":C.navy}}>{st}</button>)}</div><div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}><h3 style={{fontFamily:ff,fontSize:24,color:C.navy}}>Planning for: {stages[s]}</h3><p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.8}}>Northern Birch advisors combine insurance, investments, and professional referrals to build comprehensive estate plans. Contact Heili Orav, Manager of Wealth & Estate Services, to get started.</p></div></div></section>}
 function CommunityPage(){return <section style={{background:C.birchLight,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Our Community" tagColor={C.amberText} title="70 years of trust"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:24}}><Fade><div style={{background:"#fff",borderRadius:24,padding:40}}><h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>Our Heritage</h3><p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.8}}>Founded through the merger of the Estonian and Latvian Credit Unions in 2020, Northern Birch carries forward 70+ years of serving our community. We invest $50,000+ annually in scholarships, cultural sponsorships, and heritage programs.</p></div></Fade><Fade delay={0.1}><div style={{background:"#fff",borderRadius:24,padding:40}}><h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>KESKUS Flagship</h3><p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.8}}>Our new branch at the KESKUS International Estonian Centre in downtown Toronto -- full-service banking and insurance advisory, digital kiosks, community event space, and multilingual staff.</p></div></Fade></div></div></section>}
-function PersonalPage(){return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Personal Banking" tagColor={C.greenText} title="Banking designed around you"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>{[{t:"Daily Banking",c:C.green,items:["No-fee chequing","High-interest savings","Trust accounts","Student banking","e-Transfer","Debit card","Mobile app","Online banking"]},{t:"Borrowing",c:C.accent,items:["Fixed/variable mortgages","Co-op mortgages","HELOCs","Personal loans","Credit lines","Mastercard credit cards","Student loans","Pre-approval"]},{t:"Investing",c:C.amber,items:["GICs & term deposits","TFSA","RRSP","FHSA","RESP","RDSP","Mutual funds","Qtrade trading","VirtualWealth"]}].map((cat,i)=><Fade key={i} delay={i*0.08}><div style={{background:"#fff",borderRadius:20,overflow:"hidden",border:"1px solid #eee"}}><div style={{background:cat.c,padding:"20px 28px"}}><h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:0}}>{cat.t}</h3></div><div style={{padding:"12px 28px"}}>{cat.items.map((item,ii)=><div key={ii} style={{padding:"8px 0",borderBottom:ii<cat.items.length-1?"1px solid #f5f5f5":"none",display:"flex",gap:8,alignItems:"center"}}><div style={{width:5,height:5,borderRadius:"50%",background:cat.c}}/><span style={{fontFamily:fs,fontSize:14,color:"#555"}}>{item}</span></div>)}</div></div></Fade>)}</div></div></section>}
-function ContactPage(){return <section style={{background:C.navy,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Contact Us" tagColor={C.birch} title="We're here for you"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:24}}>{[{n:"Latvian Centre (HQ)",a:"4 Credit Union Dr, North York",h:"M-W 10-3, Th 10-7, F 10-3, Sa 9-1",p:"416-465-4659"},{n:"Tartu College",a:"310 Bloor St W, Toronto",h:"M-F 10-3 (Cashless)",p:"416-922-2551"},{n:"Hamilton",a:"16 Queen St N",h:"Tu-F 10-3, Th 10-7",p:"905-527-4344"},{n:"KESKUS",a:"Madison Ave, Toronto",h:"Coming Soon",p:"TBD"}].map((b,i)=><Fade key={i} delay={i*0.08}><div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:28}}><h3 style={{fontFamily:fs,fontSize:18,color:"#fff",margin:"0 0 4px",fontWeight:700}}>{b.n}</h3><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:"0 0 2px"}}>{b.a}</p><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:"0 0 8px"}}>{b.h}</p><p style={{fontFamily:fs,fontSize:15,color:C.accentText,fontWeight:600,margin:0}}>{b.p}</p></div></Fade>)}</div><Fade delay={0.3}><div style={{marginTop:24,background:"rgba(255,255,255,0.03)",borderRadius:20,padding:"24px 32px"}}><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",margin:0}}>Toll-Free: 1-866-844-3828 | 24/7 Support: 1-866-992-2490 | Financial Check-Up: FinancialCheckup@northernbirchcu.com</p></div></Fade></div></section>}
+function PersonalPage(){return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Personal Banking" tagColor={C.greenText} title="Banking designed around you"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>{[{t:"Daily Banking",c:C.greenFill,items:["No-fee chequing","High-interest savings","Trust accounts","Student banking","e-Transfer","Debit card","Mobile app","Online banking"]},{t:"Borrowing",c:C.accentText,items:["Fixed/variable mortgages","Co-op mortgages","HELOCs","Personal loans","Credit lines","Mastercard credit cards","Student loans","Pre-approval"]},{t:"Investing",c:C.amberFill,items:["GICs & term deposits","TFSA","RRSP","FHSA","RESP","RDSP","Mutual funds","Qtrade trading","VirtualWealth"]}].map((cat,i)=><Fade key={i} delay={i*0.08}><div style={{background:"#fff",borderRadius:20,overflow:"hidden",border:"1px solid #eee"}}><div style={{background:cat.c,padding:"20px 28px"}}><h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:0}}>{cat.t}</h3></div><div style={{padding:"12px 28px"}}>{cat.items.map((item,ii)=><div key={ii} style={{padding:"8px 0",borderBottom:ii<cat.items.length-1?"1px solid #f5f5f5":"none",display:"flex",gap:8,alignItems:"center"}}><div style={{width:5,height:5,borderRadius:"50%",background:cat.c}}/><span style={{fontFamily:fs,fontSize:14,color:"#555"}}>{item}</span></div>)}</div></div></Fade>)}</div></div></section>}
+function ContactPage(){return <section style={{background:C.navy,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Contact Us" tagColor={C.birch} title="We're here for you"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:24}}>{[{n:"Latvian Centre (HQ)",a:"4 Credit Union Dr, North York",h:"M-W 10-3, Th 10-7, F 10-3, Sa 9-1",p:"416-465-4659"},{n:"Tartu College",a:"310 Bloor St W, Toronto",h:"M-F 10-3 (Cashless)",p:"416-922-2551"},{n:"Hamilton",a:"16 Queen St N",h:"Tu-F 10-3, Th 10-7",p:"905-527-4344"},{n:"KESKUS",a:"Madison Ave, Toronto",h:"Coming Soon",p:"TBD"}].map((b,i)=><Fade key={i} delay={i*0.08}><div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:28}}><h3 style={{fontFamily:fs,fontSize:18,color:"#fff",margin:"0 0 4px",fontWeight:700}}>{b.n}</h3><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:"0 0 2px"}}>{b.a}</p><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:"0 0 8px"}}>{b.h}</p><p style={{fontFamily:fs,fontSize:15,color:C.accentOnDark,fontWeight:600,margin:0}}>{b.p}</p></div></Fade>)}</div><Fade delay={0.3}><div style={{marginTop:24,background:"rgba(255,255,255,0.03)",borderRadius:20,padding:"24px 32px"}}><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",margin:0}}>Toll-Free: 1-866-844-3828 | 24/7 Support: 1-866-992-2490 | Financial Check-Up: FinancialCheckup@northernbirchcu.com</p></div></Fade></div></section>}
 
 // ============ HOME PAGE ============
 // ============ MORTGAGES ============
@@ -1511,7 +1514,7 @@ function MortgagesPage({setPage,lang}){
           <p style={{fontFamily:fs,fontSize:13.5,color:"#666",lineHeight:1.7,margin:0}}>{st.d}</p>
         </div></Fade>)}
       </div>
-      <div style={{background:`${C.green}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.green}`}}>
+      <div style={{background:`${C.greenFill}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.green}`}}>
         <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.7}}>{T("Rates are subject to change without notice and are subject to credit approval. Special offers including C$3,500 cash back on mortgages may be available -- ask your advisor. Call 416-465-4659 for today's rate.")}</p>
       </div>
     </div>
@@ -1523,8 +1526,8 @@ function CardsPage({setPage,lang}){
   const T=(k)=>t(k,lang);
   const w=useW();
   const cards=[
-    {n:"Cash Back Mastercard",tag:"Everyday spending",rate:RATE.mc,fee:"$0 annual fee",c:C.green,perks:["2% back on groceries and gas","1% back on everything else","No cap on annual earnings","Purchase protection and extended warranty"]},
-    {n:"Low Rate Mastercard",tag:"Carrying a balance",rate:RATE.mcLow,fee:"$29 annual fee",c:C.accent,perks:["The lowest purchase APR we offer","Balance transfers accepted","Ideal for consolidating higher-rate debt","21-day interest-free grace period"]},
+    {n:"Cash Back Mastercard",tag:"Everyday spending",rate:RATE.mc,fee:"$0 annual fee",c:C.greenFill,perks:["2% back on groceries and gas","1% back on everything else","No cap on annual earnings","Purchase protection and extended warranty"]},
+    {n:"Low Rate Mastercard",tag:"Carrying a balance",rate:RATE.mcLow,fee:"$29 annual fee",c:C.accentText,perks:["The lowest purchase APR we offer","Balance transfers accepted","Ideal for consolidating higher-rate debt","21-day interest-free grace period"]},
     {n:"Travel Rewards Mastercard",tag:"Members who fly home",rate:RATE.mc,fee:"$99 annual fee",c:C.purple,perks:["1.5 points per dollar, no blackout dates","Included travel medical coverage","Built for Baltic and European travel","Airport lounge access twice a year"]},
   ];
   const shared=[{t:"Instant card controls",d:"Lock, unlock, and set spend limits from the mobile app."},{t:"Zero liability",d:"You are not responsible for unauthorized transactions."},{t:"Tap and mobile wallet",d:"Apple Pay, Google Pay, and Interac Flash."},{t:"Member pricing",d:"Issued through Collabria, priced for credit union members."}];
@@ -1534,7 +1537,7 @@ function CardsPage({setPage,lang}){
       <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16,marginBottom:24}}>
         {cards.map((cd,i)=><Fade key={i} delay={i*0.08}><div style={{background:"#fff",borderRadius:20,overflow:"hidden",border:"1px solid #eee",height:"100%",display:"flex",flexDirection:"column"}}>
           <div style={{background:cd.c,padding:"18px 26px"}}>
-            <span style={{fontFamily:fs,fontSize:10.5,color:"rgba(255,255,255,0.75)",textTransform:"uppercase",letterSpacing:1.5,fontWeight:700}}>{cd.tag}</span>
+            <span style={{fontFamily:fs,fontSize:10.5,color:"rgba(255,255,255,0.95)",textTransform:"uppercase",letterSpacing:1.5,fontWeight:700}}>{cd.tag}</span>
             <h3 style={{fontFamily:ff,fontSize:21,color:"#fff",margin:"4px 0 0"}}>{cd.n}</h3>
           </div>
           <div style={{padding:26,display:"flex",flexDirection:"column",flex:1}}>
@@ -1571,14 +1574,14 @@ function AccountsPage({setPage,lang}){
   const T=(k)=>t(k,lang);
   const w=useW();
   const chequing=[
-    {n:"Everyday Chequing",h:RATE.chq,hl:"monthly fee",c:C.accent,items:["Unlimited debits and e-Transfers","Free personalized cheques","THE EXCHANGE surcharge-free ATMs","No minimum balance"]},
-    {n:"Senior & Student Chequing",h:RATE.chq,hl:"monthly fee",c:C.accent,items:["Everything in Everyday Chequing","Free drafts and money orders","Paper statements at no charge","Built for fixed and part-time incomes"]},
-    {n:"US Dollar Chequing",h:"$3",hl:"monthly fee",c:C.accent,items:["Hold and spend USD without conversion","USD cheques and drafts","Waived with $1,000 minimum balance","For cross-border property and tuition"]},
+    {n:"Everyday Chequing",h:RATE.chq,hl:"monthly fee",c:C.accent,tc:C.accentText,items:["Unlimited debits and e-Transfers","Free personalized cheques","THE EXCHANGE surcharge-free ATMs","No minimum balance"]},
+    {n:"Senior & Student Chequing",h:RATE.chq,hl:"monthly fee",c:C.accent,tc:C.accentText,items:["Everything in Everyday Chequing","Free drafts and money orders","Paper statements at no charge","Built for fixed and part-time incomes"]},
+    {n:"US Dollar Chequing",h:"$3",hl:"monthly fee",c:C.accent,tc:C.accentText,items:["Hold and spend USD without conversion","USD cheques and drafts","Waived with $1,000 minimum balance","For cross-border property and tuition"]},
   ];
   const savings=[
-    {n:"High-Interest Savings",h:RATE.hisa,hl:"annual interest",c:C.amber,items:["Interest calculated daily, paid monthly","No minimum balance, no monthly fee","Unlimited transfers to your chequing","FSRA deposit protection"]},
-    {n:"Guaranteed Investment Certificates",h:RATE.gic1,hl:"1-year term",c:C.amber,items:["Terms from 90 days to 5 years","Registered and non-registered options","Principal fully guaranteed","Redeemable options available"]},
-    {n:"Trust & Estate Accounts",h:"",hl:"",c:C.amber,items:["In-trust-for and estate accounts","Multi-signatory arrangements","Supported by our estate advisors","Common for family and community groups"]},
+    {n:"High-Interest Savings",h:RATE.hisa,hl:"annual interest",c:C.amber,tc:C.amberText,items:["Interest calculated daily, paid monthly","No minimum balance, no monthly fee","Unlimited transfers to your chequing","FSRA deposit protection"]},
+    {n:"Guaranteed Investment Certificates",h:RATE.gic1,hl:"1-year term",c:C.amber,tc:C.amberText,items:["Terms from 90 days to 5 years","Registered and non-registered options","Principal fully guaranteed","Redeemable options available"]},
+    {n:"Trust & Estate Accounts",h:"",hl:"",c:C.amber,tc:C.amberText,items:["In-trust-for and estate accounts","Multi-signatory arrangements","Supported by our estate advisors","Common for family and community groups"]},
   ];
   const registered=[
     {n:"TFSA",f:"Tax-Free Savings Account",d:"Tax-free growth on savings, GICs, or investments. Withdraw any time; room is restored the following year."},
@@ -1592,7 +1595,7 @@ function AccountsPage({setPage,lang}){
     {list.map((a,i)=><Fade key={i} delay={i*0.06}><div style={{background:"#fff",borderRadius:20,padding:26,border:"1px solid #eee",borderTop:`3px solid ${a.c}`,height:"100%"}}>
       <h4 style={{fontFamily:ff,fontSize:20,color:C.navy,margin:"0 0 12px"}}>{a.n}</h4>
       {a.h&&<div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:16}}>
-        <span style={{fontFamily:ff,fontSize:28,color:a.c,fontWeight:700}}>{a.h}</span>
+        <span style={{fontFamily:ff,fontSize:28,color:a.tc||a.c,fontWeight:700}}>{a.h}</span>
         <span style={{fontFamily:fs,fontSize:12,color:"#707070"}}>{a.hl}</span>
       </div>}
       {a.items.map((x,xi)=><div key={xi} style={{display:"flex",gap:8,alignItems:"flex-start",marginBottom:8}}>
@@ -1621,7 +1624,7 @@ function AccountsPage({setPage,lang}){
         <Btn color={C.accentText} onClick={()=>setPage("booking")}>{T("Open an Account")}</Btn>
         <Btn outline color={C.navy} onClick={()=>setPage("rates")}>{T("See All Rates")}</Btn>
       </div>
-      <div style={{background:`${C.accent}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.accent}`}}>
+      <div style={{background:`${C.accentText}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.accent}`}}>
         <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.7}}>{T("Rates are subject to change without notice. Eligible deposits are insured by FSRA; registered account deposits have unlimited coverage. Contact your branch for current rates and account terms.")}</p>
       </div>
     </div>
@@ -1641,7 +1644,7 @@ function BankingProducts({setPage,lang}){
             <h3 style={{fontFamily:ff,fontSize:21,color:C.navy,margin:"0 0 8px"}}>{T(b.t)}</h3>
             <p style={{fontFamily:fs,fontSize:13,color:"#666",lineHeight:1.65,margin:"0 0 16px"}}>{b.d}</p>
             <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:16}}>
-              <span style={{fontFamily:ff,fontSize:28,color:b.c,fontWeight:700}}>{b.rate}</span>
+              <span style={{fontFamily:ff,fontSize:28,color:b.tc||b.c,fontWeight:700}}>{b.rate}</span>
               <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>{b.rl}</span>
             </div>
             <div style={{flex:1,marginBottom:18}}>
@@ -1744,7 +1747,7 @@ function Footer({setPage}){
       <div style={{background:"rgba(255,255,255,0.03)",borderRadius:12,padding:"14px 20px",marginBottom:16}}>
         <div style={{display:"flex",alignItems:typeof window!=="undefined"&&window.innerWidth<=768?"flex-start":"center",gap:16,flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row"}}>
           <div style={{background:"rgba(39,174,96,0.15)",borderRadius:8,padding:"6px 14px",flexShrink:0}}>
-            <span style={{fontFamily:fs,fontSize:11,color:C.greenText,fontWeight:700}}>FSRA INSURED</span>
+            <span style={{fontFamily:fs,fontSize:11,color:C.greenOnDark,fontWeight:700}}>FSRA INSURED</span>
           </div>
           <p style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.6}}>Eligible deposits at Northern Birch Credit Union are insured by the Financial Services Regulatory Authority of Ontario (FSRA). Registered account deposits have unlimited coverage. Other eligible deposits are insured up to $250,000 per depositor. Insurance products are not deposits and are not insured by FSRA.</p>
         </div>
@@ -1898,14 +1901,14 @@ function PolicyAnalyzerPage({setPage}){
           <div style={{marginTop:20}}>
             <div style={{fontFamily:fs,fontSize:12,color:"#707070",marginBottom:10}}>Or try a sample scenario:</div>
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-              {["Young couple, first mortgage, no life insurance","Retiree, travelling to Estonia, no travel coverage","Small business owner, 8 employees, no group benefits","Renting downtown, no tenant insurance, drives to work"].map((s,i)=><button key={i} onClick={()=>setInput(s)} style={{background:`${C.accent}06`,border:`1px solid ${C.accent}15`,borderRadius:8,padding:"8px 14px",cursor:"pointer",fontFamily:fs,fontSize:12,color:C.accentText}}>{s}</button>)}
+              {["Young couple, first mortgage, no life insurance","Retiree, travelling to Estonia, no travel coverage","Small business owner, 8 employees, no group benefits","Renting downtown, no tenant insurance, drives to work"].map((s,i)=><button key={i} onClick={()=>setInput(s)} style={{background:`${C.accentText}06`,border:`1px solid ${C.accent}15`,borderRadius:8,padding:"8px 14px",cursor:"pointer",fontFamily:fs,fontSize:12,color:C.accentText}}>{s}</button>)}
             </div>
           </div>
         </div>:
         <div>
           <div id="coverage-analysis-result" style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee",marginBottom:20}}>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
-              <div style={{width:40,height:40,borderRadius:12,background:`${C.green}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:C.greenText}}>&#10003;</span></div>
+              <div style={{width:40,height:40,borderRadius:12,background:`${C.greenFill}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:C.greenText}}>&#10003;</span></div>
               <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>Coverage Analysis Complete</div><div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>AI-generated recommendations based on your profile</div></div>
             </div>
             <div style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{result}</div>
@@ -2005,7 +2008,7 @@ function HealthAssessmentPage({setPage}){
       <div style={{maxWidth:700,margin:"0 auto"}}>
         {/* Progress */}
         <div style={{display:"flex",gap:4,marginBottom:40}}>
-          {questions.map((_,i)=><div key={i} style={{flex:1,height:4,borderRadius:2,background:i<=step?C.accent:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}
+          {questions.map((_,i)=><div key={i} style={{flex:1,height:4,borderRadius:2,background:i<=step?C.accentText:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}
         </div>
         <Fade>
           <div style={{textAlign:"center",marginBottom:12}}>
@@ -2129,13 +2132,13 @@ function DocReaderPage({setPage}){
           <button onClick={analyze} disabled={loading||!input.trim()} style={{width:"100%",marginTop:16,background:loading?"#ccc":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:12,padding:"16px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{loading?"Reading and analyzing your document...":"Analyze My Policy"}</button>
           <div style={{marginTop:16,display:"flex",gap:8,flexWrap:"wrap"}}>
             <span style={{fontFamily:fs,fontSize:12,color:"#707070"}}>Try with:</span>
-            {["Home insurance renewal","Auto policy summary","Life insurance certificate","Group benefits booklet"].map((s,i)=><button key={i} onClick={()=>setInput(`I have a ${s.toLowerCase()} from my current provider. Here are the details: [paste your ${s.toLowerCase()} details here]`)} style={{background:`${C.accent}06`,border:`1px solid ${C.accent}15`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accentText}}>{s}</button>)}
+            {["Home insurance renewal","Auto policy summary","Life insurance certificate","Group benefits booklet"].map((s,i)=><button key={i} onClick={()=>setInput(`I have a ${s.toLowerCase()} from my current provider. Here are the details: [paste your ${s.toLowerCase()} details here]`)} style={{background:`${C.accentText}06`,border:`1px solid ${C.accent}15`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accentText}}>{s}</button>)}
           </div>
         </div>:
         <div>
           <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee",marginBottom:24}}>
             <div id="doc-reader-result"><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
-              <div style={{width:40,height:40,borderRadius:12,background:`${C.green}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:C.greenText}}>&#10003;</span></div>
+              <div style={{width:40,height:40,borderRadius:12,background:`${C.greenFill}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:C.greenText}}>&#10003;</span></div>
               <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>Policy Analysis Complete</div><div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>Powered by Claude Opus 4.6</div></div>
             </div>
             <div style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{result}</div>
@@ -2180,7 +2183,7 @@ function TaxPage({setPage}){
       <div style={{maxWidth:1000,margin:"0 auto"}}>
         <SH tag="AI Tax & Savings Optimizer" tagColor={C.greenText} title="Keep more of what you earn" desc="Canadian tax optimization strategies, RRSP/TFSA planning, and insurance tax benefits -- personalized for your situation."/>
         <div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>
-          {[{l:"AI Tax Advisor",v:"optimizer"},{l:"RRSP/TFSA Calculator",v:"calculator"},{l:"Tax-Smart Insurance",v:"insurance"}].map(tab=><button key={tab.v} onClick={()=>{setMode(tab.v);setResult(null)}} style={{flex:1,minWidth:isMob?0:150,background:mode===tab.v?C.green:"#fff",border:mode===tab.v?"none":"1px solid #ddd",borderRadius:12,padding:"14px 16px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:mode===tab.v?"#fff":C.navy}}>{tab.l}</button>)}
+          {[{l:"AI Tax Advisor",v:"optimizer"},{l:"RRSP/TFSA Calculator",v:"calculator"},{l:"Tax-Smart Insurance",v:"insurance"}].map(tab=><button key={tab.v} onClick={()=>{setMode(tab.v);setResult(null)}} style={{flex:1,minWidth:isMob?0:150,background:mode===tab.v?C.greenFill:"#fff",border:mode===tab.v?"none":"1px solid #ddd",borderRadius:12,padding:"14px 16px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:mode===tab.v?"#fff":C.navy}}>{tab.l}</button>)}
         </div>
 
         {mode==="optimizer"&&!result&&<div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
@@ -2191,7 +2194,7 @@ function TaxPage({setPage}){
           <textarea value={input} onChange={e=>setInput(e.target.value)} rows={6} placeholder={"Describe your tax situation. For example:\n\n\"I'm 42, married, household income $180K (I earn $120K, spouse $60K). We have 2 kids (ages 5 and 8). $90K in RRSPs, $25K in TFSAs, $400K mortgage with NBCU. No RESP for the kids yet. No FHSA. My employer doesn't offer a pension. I'm paying $2,400/year in home insurance to TD. Looking to reduce our tax bill and save smarter.\""} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
           <button onClick={analyze} disabled={loading||!input.trim()} style={{width:"100%",marginTop:16,background:loading?"#ccc":`linear-gradient(135deg,${C.green},${C.accent})`,border:"none",borderRadius:12,padding:"16px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{loading?"Analyzing your tax situation...":"Optimize My Taxes"}</button>
           <div style={{marginTop:16,display:"flex",gap:8,flexWrap:"wrap"}}>
-            {["Maximize RRSP deductions","Best TFSA vs RRSP strategy","Tax-efficient estate planning","Small business tax optimization","Retirement income splitting"].map((s,i)=><button key={i} onClick={()=>setInput(s+" -- please advise based on typical Ontario resident situation")} style={{background:`${C.green}06`,border:`1px solid ${C.green}15`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.greenText}}>{s}</button>)}
+            {["Maximize RRSP deductions","Best TFSA vs RRSP strategy","Tax-efficient estate planning","Small business tax optimization","Retirement income splitting"].map((s,i)=><button key={i} onClick={()=>setInput(s+" -- please advise based on typical Ontario resident situation")} style={{background:`${C.greenFill}06`,border:`1px solid ${C.green}15`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.greenText}}>{s}</button>)}
           </div>
         </div>}
 
@@ -2210,12 +2213,12 @@ function TaxPage({setPage}){
         {mode==="calculator"&&<div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
           <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 24px"}}>RRSP vs. TFSA Comparison</h3>
           <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Income</label><input type="number" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>RRSP Contribution</label><input type="number" value={rContrib} onChange={e=>setRContrib(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="calc-11" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Income</label><input type="number" id="calc-11" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="calc-12" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>RRSP Contribution</label><input type="number" id="calc-12" value={rContrib} onChange={e=>setRContrib(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
             <div><label htmlFor="sel-4" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Marginal Tax Rate (%)</label><select id="sel-4" value={rRate} onChange={e=>setRRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value={20}>20.05% ($0-$51K)</option><option value={30}>29.65% ($51K-$102K)</option><option value={31}>31.48% ($102K-$150K)</option><option value={33}>33.89% ($150K-$220K)</option><option value={46}>46.41% ($220K+)</option></select></div>
           </div>
           <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr",gap:16}}>
-            <div style={{background:`${C.accent}06`,borderRadius:16,padding:24,borderTop:`3px solid ${C.accent}`}}>
+            <div style={{background:`${C.accentText}06`,borderRadius:16,padding:24,borderTop:`3px solid ${C.accent}`}}>
               <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 16px",fontWeight:700}}>RRSP</h4>
               {[
                 {l:"Your contribution",v:`C$${rContrib.toLocaleString()}`},
@@ -2225,9 +2228,9 @@ function TaxPage({setPage}){
                 {l:"Tax on withdrawal",v:`Taxed as income`},
                 {l:"2025 limit",v:`18% of income, max $31,560`},
               ].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<5?"1px solid rgba(0,0,0,0.05)":"none"}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.v}</span></div>)}
-              <div style={{marginTop:12,background:`${C.accent}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.accentText,margin:0,lineHeight:1.6}}>Best for: High income now, lower income in retirement. Reinvest the refund in your TFSA for maximum benefit.</p></div>
+              <div style={{marginTop:12,background:`${C.accentText}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.accentText,margin:0,lineHeight:1.6}}>Best for: High income now, lower income in retirement. Reinvest the refund in your TFSA for maximum benefit.</p></div>
             </div>
-            <div style={{background:`${C.green}06`,borderRadius:16,padding:24,borderTop:`3px solid ${C.green}`}}>
+            <div style={{background:`${C.greenFill}06`,borderRadius:16,padding:24,borderTop:`3px solid ${C.green}`}}>
               <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 16px",fontWeight:700}}>TFSA</h4>
               {[
                 {l:"Max annual contribution",v:"C$7,000"},
@@ -2237,7 +2240,7 @@ function TaxPage({setPage}){
                 {l:"Tax on withdrawal",v:"Completely tax-free"},
                 {l:"Cumulative room (since 2009)",v:"Up to $95,000"},
               ].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<5?"1px solid rgba(0,0,0,0.05)":"none"}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.v}</span></div>)}
-              <div style={{marginTop:12,background:`${C.green}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.greenText,margin:0,lineHeight:1.6}}>Best for: Everyone. Tax-free growth forever. Ideal emergency fund, medium-term savings, or supplement to RRSP.</p></div>
+              <div style={{marginTop:12,background:`${C.greenFill}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.greenText,margin:0,lineHeight:1.6}}>Best for: Everyone. Tax-free growth forever. Ideal emergency fund, medium-term savings, or supplement to RRSP.</p></div>
             </div>
           </div>
           <div style={{marginTop:20,background:`${C.amber}08`,borderRadius:14,padding:"16px 20px",borderLeft:`4px solid ${C.amber}`}}>
@@ -2316,10 +2319,10 @@ function DashboardPage({setPage}){
             <span style={{fontFamily:fs,fontSize:13,color:C.navy,flex:1}}>Your home insurance renewal is coming up on <strong>April 15, 2026</strong>. Review your coverage to ensure you're still adequately protected.</span>
             <button style={{background:C.amber,border:"none",borderRadius:8,padding:"6px 14px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600,whiteSpace:"nowrap"}}>Review Now</button>
           </div>
-          <div style={{background:`${C.accent}08`,border:`1px solid ${C.accent}20`,borderRadius:14,padding:"12px 20px",display:"flex",alignItems:"center",gap:12}}>
+          <div style={{background:`${C.accentText}08`,border:`1px solid ${C.accent}20`,borderRadius:14,padding:"12px 20px",display:"flex",alignItems:"center",gap:12}}>
             <span style={{fontSize:16}}>&#9997;</span>
             <span style={{fontFamily:fs,fontSize:13,color:C.navy,flex:1}}>2 documents pending your electronic signature. Sign now to complete your insurance application.</span>
-            <button style={{background:C.accent,border:"none",borderRadius:8,padding:"6px 14px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600,whiteSpace:"nowrap"}}>Sign Now</button>
+            <button style={{background:C.accentText,border:"none",borderRadius:8,padding:"6px 14px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600,whiteSpace:"nowrap"}}>Sign Now</button>
           </div>
         </div>
 
@@ -2345,7 +2348,7 @@ function DashboardPage({setPage}){
               </div>
               <div style={{display:"flex",alignItems:isMob?"flex-start":"center",gap:24,flexDirection:isMob?"column":"row"}}>
                 <div style={{textAlign:"center"}}>
-                  <div style={{width:110,height:110,borderRadius:"50%",background:`conic-gradient(${C.green} 0% 78%, #eee 78% 100%)`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto"}}>
+                  <div style={{width:110,height:110,borderRadius:"50%",background:`conic-gradient(${C.greenFill} 0% 78%, #eee 78% 100%)`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto"}}>
                     <div style={{width:88,height:88,borderRadius:"50%",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>
                       <span style={{fontFamily:ff,fontSize:32,color:C.navy,fontWeight:700}}>782</span>
                     </div>
@@ -2387,7 +2390,7 @@ function DashboardPage({setPage}){
                   </div>
                 ))}
               </div>
-              <div style={{background:`${C.accent}06`,borderRadius:12,padding:"12px 16px",display:"flex",alignItems:"center",gap:8}}>
+              <div style={{background:`${C.accentText}06`,borderRadius:12,padding:"12px 16px",display:"flex",alignItems:"center",gap:8}}>
                 <span style={{fontSize:14}}>&#128161;</span>
                 <span style={{fontFamily:fs,fontSize:12,color:C.navy}}>You spent <strong>C$435</strong> on transportation this month -- 15% more than last month. Consider bundling auto insurance with home for savings.</span>
               </div>
@@ -2412,7 +2415,7 @@ function DashboardPage({setPage}){
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                       <div style={{fontFamily:fs,fontSize:14,color:C.navy,fontWeight:700}}>{p.type}</div>
-                      <span style={{fontFamily:fs,fontSize:10,color:C.greenText,fontWeight:600,background:`${C.green}10`,padding:"3px 8px",borderRadius:6}}>{p.status}</span>
+                      <span style={{fontFamily:fs,fontSize:10,color:C.greenText,fontWeight:600,background:`${C.greenFill}10`,padding:"3px 8px",borderRadius:6}}>{p.status}</span>
                     </div>
                     <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",marginTop:2}}>{p.provider} -- {p.coverage} -- <span style={{color:C.accentText,fontWeight:600}}>{p.premium}</span></div>
                   </div>
@@ -2433,7 +2436,7 @@ function DashboardPage({setPage}){
                 {name:"Mortgage Renewal Agreement",provider:"Northern Birch",date:"Jan 15, 2026",status:"signed",type:"Mortgage"},
               ].map((doc,i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:16,padding:"14px 0",borderBottom:i<3?"1px solid #f5f5f5":"none"}}>
-                  <div style={{width:40,height:40,borderRadius:10,background:doc.status==="pending"?`${C.amber}10`:`${C.green}08`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <div style={{width:40,height:40,borderRadius:10,background:doc.status==="pending"?`${C.amber}10`:`${C.greenFill}08`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                     <span style={{fontSize:16}}>{doc.status==="pending"?"&#9997;":"&#9989;"}</span>
                   </div>
                   <div style={{flex:1}}>
@@ -2441,7 +2444,7 @@ function DashboardPage({setPage}){
                     <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B"}}>{doc.provider} -- {doc.date}</div>
                   </div>
                   {doc.status==="pending"?
-                    <button onClick={()=>setSignedDocs(p=>({...p,[i]:true}))} style={{background:signedDocs[i]?C.green:C.accent,border:"none",borderRadius:8,padding:"8px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#fff",fontWeight:600}}>{signedDocs[i]?"Signed ✓":"Sign Now"}</button>:
+                    <button onClick={()=>setSignedDocs(p=>({...p,[i]:true}))} style={{background:signedDocs[i]?C.greenFill:C.accentText,border:"none",borderRadius:8,padding:"8px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#fff",fontWeight:600}}>{signedDocs[i]?"Signed ✓":"Sign Now"}</button>:
                     <span style={{fontFamily:fs,fontSize:11,color:C.greenText,fontWeight:600}}>Signed &#9989;</span>
                   }
                 </div>
@@ -2464,7 +2467,7 @@ function DashboardPage({setPage}){
               ].map((tx,i)=>(
                 <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 0",borderBottom:i<7?"1px solid #f8f8f8":"none"}}>
                   <div style={{display:"flex",alignItems:"center",gap:12}}>
-                    <div style={{width:32,height:32,borderRadius:8,background:tx.type==="deposit"?`${C.green}10`:tx.type==="insurance"?`${C.accent}10`:tx.type==="transfer"?`${C.purple}10`:"#f5f5f5",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <div style={{width:32,height:32,borderRadius:8,background:tx.type==="deposit"?`${C.greenFill}10`:tx.type==="insurance"?`${C.accentText}10`:tx.type==="transfer"?`${C.purple}10`:"#f5f5f5",display:"flex",alignItems:"center",justifyContent:"center"}}>
                       <span style={{fontSize:11}} dangerouslySetInnerHTML={{__html:tx.type==="deposit"?"&#8593;":tx.type==="insurance"?"&#9737;":tx.type==="transfer"?"&#8644;":"&#8595;"}}/>
                     </div>
                     <div>
@@ -2502,7 +2505,7 @@ function DashboardPage({setPage}){
                   <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Recipient Gets</span><span style={{fontFamily:fs,fontSize:14,color:C.greenText,fontWeight:700}}>{"\u20AC"}{(parseFloat(transferAmt||0)*0.6821).toFixed(2)}</span></div>
                   <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Fee</span><span style={{fontFamily:fs,fontSize:12,color:"#fff"}}>C$4.99</span></div>
                 </div>
-                <button onClick={()=>setTransferSent(true)} style={{width:"100%",background:C.green,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:14,color:"#fff",fontWeight:700}}>Send C${transferAmt} to {transferTo.split(" - ")[0]}</button>
+                <button onClick={()=>setTransferSent(true)} style={{width:"100%",background:C.greenFill,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:14,color:"#fff",fontWeight:700}}>Send C${transferAmt} to {transferTo.split(" - ")[0]}</button>
               </>:<div style={{textAlign:"center",padding:"12px 0"}}>
                 <div style={{fontSize:32,marginBottom:8}}>&#9989;</div>
                 <div style={{fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>Transfer Sent!</div>
@@ -2588,13 +2591,13 @@ function DashboardPage({setPage}){
             </div>
 
             {/* Next Advisor Appointment */}
-            <div style={{background:`${C.green}08`,border:`1px solid ${C.green}20`,borderRadius:20,padding:24}}>
+            <div style={{background:`${C.greenFill}08`,border:`1px solid ${C.green}20`,borderRadius:20,padding:24}}>
               <h3 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 12px",fontWeight:700}}>Next Appointment</h3>
               <div style={{fontFamily:fs,fontSize:14,color:C.navy,fontWeight:600}}>Insurance Review with Heili Orav</div>
               <div style={{fontFamily:fs,fontSize:12,color:"#666",marginTop:4}}>March 25, 2026 at 10:30 AM</div>
               <div style={{fontFamily:fs,fontSize:12,color:"#666"}}>Latvian Centre Branch, North York</div>
               <div style={{display:"flex",gap:8,marginTop:12}}>
-                <button style={{flex:1,background:C.green,border:"none",borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600}}>Join Video Call</button>
+                <button style={{flex:1,background:C.greenFill,border:"none",borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600}}>Join Video Call</button>
                 <button style={{flex:1,background:"#fff",border:`1px solid ${C.green}`,borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.greenText,fontWeight:600}}>Reschedule</button>
               </div>
             </div>
@@ -2662,7 +2665,7 @@ function LeadershipPage({setPage}){
                 {item:"Staff Time (opportunity cost)",y1:"C$8,000",y2:"C$10,000",y3:"C$10,000",total:"C$28,000"},
                 {item:"TOTAL",y1:"C$21,000",y2:"C$17,500",y3:"C$17,500",total:"C$56,000",bold:true},
               ].map((row,i)=>(
-                <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",padding:"12px 20px",background:row.highlight?`${C.green}06`:row.bold?`${C.navy}06`:i%2===0?"#fff":"#fafafa",borderBottom:"1px solid #f0f0f0"}}>
+                <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",padding:"12px 20px",background:row.highlight?`${C.greenFill}06`:row.bold?`${C.navy}06`:i%2===0?"#fff":"#fafafa",borderBottom:"1px solid #f0f0f0"}}>
                   <span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:row.bold||row.highlight?700:400}}>{row.item}</span>
                   <span style={{fontFamily:fs,fontSize:13,color:row.highlight?C.green:C.navy,fontWeight:row.bold||row.highlight?700:400}}>{row.y1}</span>
                   <span style={{fontFamily:fs,fontSize:13,color:row.highlight?C.green:C.navy,fontWeight:row.bold||row.highlight?700:400}}>{row.y2}</span>
@@ -2685,7 +2688,7 @@ function LeadershipPage({setPage}){
               </div>
             ))}
           </div>
-          <div style={{background:`${C.green}08`,borderRadius:16,padding:"20px 28px",borderLeft:`4px solid ${C.green}`}}>
+          <div style={{background:`${C.greenFill}08`,borderRadius:16,padding:"20px 28px",borderLeft:`4px solid ${C.green}`}}>
             <p style={{fontFamily:fs,fontSize:14,color:"#555",margin:0,lineHeight:1.7}}><strong style={{color:C.navy}}>Bottom line:</strong> Northern Birch's total 3-year cost is C$56,000 for projected revenue of C$1.49 million. That's a 26x return on investment. The program is profitable from Day 1 because both Oodler and the insurer provide their services at no cost to NBCU.</p>
           </div>
         </div>}
@@ -2846,7 +2849,7 @@ function CookieBanner(){
       <div style={{maxWidth:1320,margin:"0 auto",display:"flex",alignItems:typeof window!=="undefined"&&window.innerWidth<=768?"flex-start":"center",gap:16,flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row"}}>
         <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:0,flex:1,lineHeight:1.6}}>We use cookies to improve your experience and analyze site usage. By continuing to browse, you consent to our use of cookies in accordance with our <button onClick={()=>setShow(false)} style={{background:"none",border:"none",color:C.accentText,fontFamily:fs,fontSize:13,cursor:"pointer",textDecoration:"underline",padding:0}}>Privacy Policy</button> and the Personal Information Protection and Electronic Documents Act (PIPEDA).</p>
         <div style={{display:"flex",gap:8,flexShrink:0}}>
-          <button onClick={()=>setShow(false)} style={{background:C.accent,border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Accept All</button>
+          <button onClick={()=>setShow(false)} style={{background:C.accentText,border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Accept All</button>
           <button onClick={()=>setShow(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)"}}>Essential Only</button>
         </div>
       </div>
