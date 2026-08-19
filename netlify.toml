@@ -6,6 +6,14 @@
   command = "npm run dev"
   port = 8080
 
+# Serve index.html for client-side routes so /mortgages and friends survive a
+# refresh or a direct link. Not forced, so real files, the /api/chat function
+# and Netlify Forms posts are unaffected.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 # Baseline security headers. The Next.js copy of this app got these in the
 # security audit; the deployed site never had them.
 #
