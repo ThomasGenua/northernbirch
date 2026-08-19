@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import './index.css';
 
-const C={navy:"#1B2A4A",accent:"#2E86C1",dark:"#0C1829",green:"#27AE60",amber:"#D4A547",red:"#E74C3C",birch:"#C8B88A",birchLight:"#F5F0E6",cream:"#FDFBF7",purple:"#8E44AD",lightBlue:"#EBF5FB"};
+const C={navy:"#1B2A4A",accent:"#2E86C1",dark:"#0C1829",green:"#27AE60",amber:"#D4A547",amberText:"#8A6410",red:"#E74C3C",redText:"#B3271A",birch:"#C8B88A",birchLight:"#F5F0E6",cream:"#FDFBF7",purple:"#8E44AD",accentText:"#1F6FA5",greenText:"#197A41",greenFill:"#177A41",lightBlue:"#EBF5FB"};
 const ff="'Playfair Display',Georgia,serif",fs="'DM Sans',sans-serif";
 
 // ============ POSTED RATES (single source: RatesPage + homepage banking cards read this) ============
@@ -267,12 +267,20 @@ function exportToPDF(elementId,title="Northern Birch Document"){
   </body></html>`);
   w.document.close();
 }
+// A real <button> that inherits the caller's styling. Seventeen interactive
+// elements in this file were plain <div onClick>: not focusable, not reachable
+// by keyboard, and announced as nothing by a screen reader. Passing the same
+// style object through keeps them looking identical.
+function Clickable({onClick,style={},label,children,...rest}){
+  return <button type="button" onClick={onClick} aria-label={label} style={{background:"none",border:"none",padding:0,margin:0,font:"inherit",color:"inherit",textAlign:"inherit",display:"block",width:"100%",cursor:"pointer",...style}} {...rest}>{children}</button>;
+}
+
 function useW(){const[w,setW]=useState(typeof window!=='undefined'?window.innerWidth:1200);useEffect(()=>{const h=()=>setW(window.innerWidth);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h)},[]);return w}
 const g=(w,d,t,m)=>w>1024?d:w>768?t:m; // grid helper: desktop, tablet, mobile
 // ============ CULTURAL BRANDING ELEMENTS ============
 // Birch tree silhouettes for hero
 function BirchTrees({side="right",opacity=0.06}){
-  return <svg style={{position:"absolute",[side]:side==="right"?"-2%":"0%",bottom:0,width:400,height:"80%",opacity,pointerEvents:"none"}} viewBox="0 0 400 600" fill="none">
+  return <svg aria-hidden="true" focusable="false" style={{position:"absolute",[side]:side==="right"?"-2%":"0%",bottom:0,width:400,height:"80%",opacity,pointerEvents:"none"}} viewBox="0 0 400 600" fill="none">
     {/* Birch trunk 1 */}
     <rect x="80" y="50" width="12" height="550" rx="6" fill="white"/><rect x="84" y="80" width="4" height="8" rx="2" fill="rgba(0,0,0,0.15)"/><rect x="82" y="130" width="6" height="6" rx="2" fill="rgba(0,0,0,0.12)"/><rect x="85" y="200" width="3" height="10" rx="1" fill="rgba(0,0,0,0.1)"/><rect x="81" y="280" width="5" height="7" rx="2" fill="rgba(0,0,0,0.12)"/><rect x="83" y="370" width="4" height="5" rx="2" fill="rgba(0,0,0,0.1)"/>
     {/* Birch branches 1 */}
@@ -292,7 +300,7 @@ function BirchTrees({side="right",opacity=0.06}){
 
 // Estonian folk pattern border (muhu-inspired geometric)
 function FolkBorder({color=C.birch,opacity=0.15}){
-  return <svg style={{width:"100%",height:24,opacity}} viewBox="0 0 1200 24" preserveAspectRatio="none">
+  return <svg aria-hidden="true" focusable="false" style={{width:"100%",height:24,opacity}} viewBox="0 0 1200 24" preserveAspectRatio="none">
     {Array.from({length:60}).map((_,i)=><g key={i} transform={`translate(${i*20},0)`}>
       <rect x="2" y="2" width="8" height="8" fill={color} transform="rotate(45,6,6)"/>
       <rect x="10" y="10" width="6" height="6" fill={color} transform="rotate(45,13,13)"/>
@@ -302,7 +310,7 @@ function FolkBorder({color=C.birch,opacity=0.15}){
 
 // Cornflower (Estonia national flower) accent
 function Cornflower({size=24,color=C.accent,style={}}){
-  return <svg style={{width:size,height:size,...style}} viewBox="0 0 40 40">
+  return <svg aria-hidden="true" focusable="false" style={{width:size,height:size,...style}} viewBox="0 0 40 40">
     {[0,45,90,135,180,225,270,315].map((r,i)=><ellipse key={i} cx="20" cy="8" rx="4" ry="8" fill={color} opacity="0.7" transform={`rotate(${r},20,20)`}/>)}
     <circle cx="20" cy="20" r="5" fill={color}/>
   </svg>;
@@ -310,7 +318,7 @@ function Cornflower({size=24,color=C.accent,style={}}){
 
 // Daisy (Latvia national flower) accent
 function Daisy({size=24,color="white",center=C.amber,style={}}){
-  return <svg style={{width:size,height:size,...style}} viewBox="0 0 40 40">
+  return <svg aria-hidden="true" focusable="false" style={{width:size,height:size,...style}} viewBox="0 0 40 40">
     {[0,30,60,90,120,150,180,210,240,270,300,330].map((r,i)=><ellipse key={i} cx="20" cy="7" rx="3" ry="7" fill={color} opacity="0.8" transform={`rotate(${r},20,20)`}/>)}
     <circle cx="20" cy="20" r="4.5" fill={center}/>
   </svg>;
@@ -318,7 +326,7 @@ function Daisy({size=24,color="white",center=C.amber,style={}}){
 
 // Estonian + Latvian flag stripe accent
 function FlagStripe({style={}}){
-  return <div style={{display:"flex",height:4,borderRadius:2,overflow:"hidden",...style}}>
+  return <div aria-hidden="true" style={{display:"flex",height:4,borderRadius:2,overflow:"hidden",...style}}>
     {/* Estonian: blue-black-white */}
     <div style={{flex:1,background:"#0072CE"}}/><div style={{flex:1,background:"#000000"}}/><div style={{flex:1,background:"#FFFFFF"}}/>
     <div style={{flex:0.3}}/>
@@ -329,8 +337,8 @@ function FlagStripe({style={}}){
 
 function useInView(t=0.1){const r=useRef(null);const[v,s]=useState(false);useEffect(()=>{const el=r.current;if(!el)return;const o=new IntersectionObserver(([e])=>{if(e.isIntersecting)s(true)},{threshold:t});o.observe(el);return()=>o.disconnect()},[t]);return[r,v]}
 function Fade({children,delay=0,style={}}){const[r,v]=useInView();return <div ref={r} style={{opacity:v?1:0,transform:v?"translateY(0)":"translateY(28px)",transition:`all 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s`,...style}}>{children}</div>}
-function SH({tag,tagColor,title,desc,dark}){return <Fade><div style={{maxWidth:700,marginBottom:48}}><span style={{fontFamily:fs,fontSize:11,color:tagColor||C.accent,letterSpacing:3,textTransform:"uppercase",fontWeight:600}}>{tag}</span><h2 style={{fontFamily:ff,fontSize:42,color:dark?"#fff":C.navy,margin:"10px 0 14px",lineHeight:1.12}}>{title}</h2>{desc&&<p style={{fontFamily:fs,fontSize:16,color:dark?"rgba(255,255,255,0.5)":"#777",lineHeight:1.75}}>{desc}</p>}</div></Fade>}
-function FAQ({items,dark}){const[o,setO]=useState(null);return <div style={{display:"flex",flexDirection:"column",gap:8}}>{items.map((q,i)=><div key={i} onClick={()=>setO(o===i?null:i)} style={{background:dark?"rgba(255,255,255,0.03)":"#fff",border:`1px solid ${dark?"rgba(255,255,255,0.06)":"#eee"}`,borderRadius:14,padding:"18px 24px",cursor:"pointer"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontFamily:fs,fontSize:15,color:dark?"#fff":C.navy,fontWeight:600}}>{q.q}</span><span style={{color:dark?"rgba(255,255,255,0.3)":"#ccc",fontSize:18,transform:o===i?"rotate(45deg)":"none",transition:"transform 0.3s"}}>+</span></div>{o===i&&<p style={{fontFamily:fs,fontSize:14,color:dark?"rgba(255,255,255,0.5)":"#777",lineHeight:1.75,margin:"12px 0 0",paddingTop:12,borderTop:`1px solid ${dark?"rgba(255,255,255,0.05)":"#f0f0f0"}`}}>{q.a}</p>}</div>)}</div>}
+function SH({tag,tagColor,title,desc,dark}){return <Fade><div style={{maxWidth:700,marginBottom:48}}><span style={{fontFamily:fs,fontSize:11,color:tagColor||C.accent,letterSpacing:3,textTransform:"uppercase",fontWeight:600}}>{tag}</span><h2 style={{fontFamily:ff,fontSize:42,color:dark?"#fff":C.navy,margin:"10px 0 14px",lineHeight:1.12}}>{title}</h2>{desc&&<p style={{fontFamily:fs,fontSize:16,color:dark?"rgba(255,255,255,0.5)":"#666",lineHeight:1.75}}>{desc}</p>}</div></Fade>}
+function FAQ({items,dark}){const[o,setO]=useState(null);return <div style={{display:"flex",flexDirection:"column",gap:8}}>{items.map((q,i)=><Clickable key={i} onClick={()=>setO(o===i?null:i)} style={{background:dark?"rgba(255,255,255,0.03)":"#fff",border:`1px solid ${dark?"rgba(255,255,255,0.06)":"#eee"}`,borderRadius:14,padding:"18px 24px",cursor:"pointer"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontFamily:fs,fontSize:15,color:dark?"#fff":C.navy,fontWeight:600}}>{q.q}</span><span style={{color:dark?"rgba(255,255,255,0.3)":"#707070",fontSize:18,transform:o===i?"rotate(45deg)":"none",transition:"transform 0.3s"}}>+</span></div>{o===i&&<p style={{fontFamily:fs,fontSize:14,color:dark?"rgba(255,255,255,0.5)":"#666",lineHeight:1.75,margin:"12px 0 0",paddingTop:12,borderTop:`1px solid ${dark?"rgba(255,255,255,0.05)":"#f0f0f0"}`}}>{q.a}</p>}</Clickable>)}</div>}
 function Btn({children,color=C.accent,onClick,outline,small}){return <button onClick={onClick} style={{background:outline?"transparent":color,border:outline?`2px solid ${color}`:"none",borderRadius:small?8:12,padding:small?"8px 16px":"12px 28px",cursor:"pointer",fontFamily:fs,fontSize:small?12:14,color:outline?color:"#fff",fontWeight:600,transition:"all 0.3s"}}>{children}</button>}
 
 // ============ SEARCH OVERLAY ============
@@ -365,23 +373,23 @@ function SearchOverlay({open,onClose,setPage}){
   if(!open)return null;
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",backdropFilter:"blur(8px)",zIndex:2000,display:"flex",alignItems:"flex-start",justifyContent:"center",paddingTop:120}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:"100%",maxWidth:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":640,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
+      <div role="dialog" aria-modal="true" aria-label="Search Northern Birch" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:"100%",maxWidth:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":640,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
         <div style={{padding:"24px 28px",borderBottom:"1px solid #eee",display:"flex",gap:12,alignItems:"center"}}>
-          <span style={{fontSize:20,color:"#ccc"}}>&#128269;</span>
+          <span style={{fontSize:20,color:"#707070"}}>&#128269;</span>
           <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search products, services, tools..." autoFocus style={{flex:1,border:"none",outline:"none",fontFamily:fs,fontSize:17,color:C.navy}}/>
-          <span style={{fontFamily:fs,fontSize:11,color:"#bbb",background:"#f0f0f0",padding:"3px 8px",borderRadius:6,fontWeight:600}}>esc</span>
-          <button onClick={onClose} style={{background:"#f5f5f5",border:"none",borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#999"}}>ESC</button>
+          <span style={{fontFamily:fs,fontSize:11,color:"#707070",background:"#f0f0f0",padding:"3px 8px",borderRadius:6,fontWeight:600}}>esc</span>
+          <button onClick={onClose} style={{background:"#f5f5f5",border:"none",borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>ESC</button>
         </div>
         {q.length>1&&<div style={{maxHeight:400,overflow:"auto",padding:"8px 0"}}>
-          {filtered.length===0?<p style={{padding:"24px 28px",fontFamily:fs,fontSize:14,color:"#999",textAlign:"center"}}>No results found for "{q}"</p>:
+          {filtered.length===0?<p style={{padding:"24px 28px",fontFamily:fs,fontSize:14,color:"#6B6B6B",textAlign:"center"}}>No results found for "{q}"</p>:
           filtered.map((item,i)=>(
-            <div key={i} onClick={()=>{setPage(item.page);onClose();setQ("")}} style={{padding:"14px 28px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #f8f8f8"}}>
+            <Clickable key={i} onClick={()=>{setPage(item.page);onClose();setQ("")}} style={{padding:"14px 28px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #f8f8f8"}}>
               <span style={{fontFamily:fs,fontSize:15,color:C.navy,fontWeight:500}}>{item.title}</span>
-              <span style={{fontFamily:fs,fontSize:11,color:"#999",background:"#f5f5f5",padding:"3px 10px",borderRadius:6}}>{item.cat}</span>
-            </div>
+              <span style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",background:"#f5f5f5",padding:"3px 10px",borderRadius:6}}>{item.cat}</span>
+            </Clickable>
           ))}
         </div>}
-        {q.length<=1&&<div style={{padding:"24px 28px"}}><p style={{fontFamily:fs,fontSize:13,color:"#bbb",margin:0}}>Try searching for "insurance", "mortgage", "travel", "claims", or "quote"</p></div>}
+        {q.length<=1&&<div style={{padding:"24px 28px"}}><p style={{fontFamily:fs,fontSize:13,color:"#707070",margin:0}}>Try searching for "insurance", "mortgage", "travel", "claims", or "quote"</p></div>}
       </div>
     </div>
   );
@@ -411,14 +419,14 @@ function ChatWidget(){
     setLoading(false);
   };
   return(<>
-    {!open&&<div onClick={()=>setOpen(true)} style={{position:"fixed",bottom:24,right:24,width:60,height:60,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 4px 20px rgba(46,134,193,0.4)",zIndex:1500,animation:"pulse 2s infinite"}}>
+    {!open&&<Clickable onClick={()=>setOpen(true)} style={{position:"fixed",bottom:24,right:24,width:60,height:60,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 4px 20px rgba(46,134,193,0.4)",zIndex:1500,animation:"pulse 2s infinite"}}>
       <span style={{fontSize:24,color:"#fff"}}>&#9889;</span>
-    </div>}
+    </Clickable>}
     {open&&<div style={{position:"fixed",bottom:24,right:24,width:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":400,height:typeof window!=="undefined"&&window.innerWidth<=768?440:560,background:"#fff",borderRadius:20,boxShadow:"0 8px 40px rgba(0,0,0,0.15)",zIndex:1500,display:"flex",flexDirection:"column",overflow:"hidden"}}>
       <div style={{background:`linear-gradient(135deg,${C.navy},#2a4060)`,padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
           <div style={{width:32,height:32,borderRadius:10,background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:14,color:"#fff"}}>&#9889;</span></div>
-          <div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:700}}>AI Insurance Advisor</div><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.5)"}}>Powered by Claude -- Available 24/7</div></div>
+          <div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:700}}>AI Insurance Advisor</div><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)"}}>Powered by Claude -- Available 24/7</div></div>
         </div>
         <button onClick={()=>setOpen(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"4px 10px",cursor:"pointer",color:"#fff",fontSize:16}}>x</button>
       </div>
@@ -426,12 +434,12 @@ function ChatWidget(){
         {msgs.map((m,i)=><div key={i} style={{alignSelf:m.from==="user"?"flex-end":"flex-start",maxWidth:"82%"}}>
           <div style={{background:m.from==="user"?`linear-gradient(135deg,${C.accent},${C.purple})`:"#f5f5f5",color:m.from==="user"?"#fff":C.navy,borderRadius:m.from==="user"?"14px 14px 4px 14px":"14px 14px 14px 4px",padding:"10px 16px",fontFamily:fs,fontSize:13,lineHeight:1.65}}>{m.text}</div>
         </div>)}
-        {loading&&<div style={{alignSelf:"flex-start",maxWidth:"60%"}}><div style={{background:"#f5f5f5",borderRadius:"14px 14px 14px 4px",padding:"12px 16px"}}><span style={{fontFamily:fs,fontSize:13,color:"#999",animation:"blink 1s infinite"}}>Thinking...</span></div></div>}
+        {loading&&<div style={{alignSelf:"flex-start",maxWidth:"60%"}}><div style={{background:"#f5f5f5",borderRadius:"14px 14px 14px 4px",padding:"12px 16px"}}><span style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",animation:"blink 1s infinite"}}>Thinking...</span></div></div>}
         <div ref={bottomRef}/>
       </div>
       <div style={{padding:"8px 12px",borderTop:"1px solid #eee"}}>
         <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap"}}>
-          {msgs.length<=2&&["What insurance do I need?","Branch hours","Travel to Estonia","Mortgage rates","How to file a claim"].map((q,i)=><button key={i} onClick={()=>{setInput(q);}} style={{background:`${C.accent}08`,border:`1px solid ${C.accent}20`,borderRadius:8,padding:"5px 10px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accent,fontWeight:500}}>{q}</button>)}
+          {msgs.length<=2&&["What insurance do I need?","Branch hours","Travel to Estonia","Mortgage rates","How to file a claim"].map((q,i)=><button key={i} onClick={()=>{setInput(q);}} style={{background:`${C.accent}08`,border:`1px solid ${C.accent}20`,borderRadius:8,padding:"5px 10px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accentText,fontWeight:500}}>{q}</button>)}
         </div>
         <div style={{display:"flex",gap:8}}>
           <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Ask me anything about Northern Birch..." style={{flex:1,border:"1px solid #eee",borderRadius:10,padding:"10px 14px",fontFamily:fs,fontSize:13,outline:"none"}} disabled={loading}/>
@@ -449,27 +457,27 @@ function LoginModal({open,onClose,setPage}){
   if(!open)return null;
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(6px)",zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center"}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":420,overflow:"hidden"}}>
+      <div role="dialog" aria-modal="true" aria-label="Member sign in" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":420,overflow:"hidden"}}>
         <div style={{background:C.navy,padding:"28px 32px",textAlign:"center"}}>
           <div style={{width:48,height:48,borderRadius:"50%",background:`linear-gradient(135deg,${C.birch},${C.accent})`,margin:"0 auto 12px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,fontWeight:800,color:"#fff"}}>NB</span></div>
           <h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:0}}>Member Sign In</h3>
         </div>
         <div style={{display:"flex",borderBottom:"1px solid #eee"}}>
-          {["Online Banking","Insurance Portal"].map((t,i)=><button key={i} onClick={()=>setTab(i)} style={{flex:1,background:"none",border:"none",padding:"14px",fontFamily:fs,fontSize:13,fontWeight:tab===i?700:400,color:tab===i?C.accent:"#999",borderBottom:tab===i?`2px solid ${C.accent}`:"2px solid transparent",cursor:"pointer"}}>{t}</button>)}
+          {["Online Banking","Insurance Portal"].map((t,i)=><button key={i} onClick={()=>setTab(i)} style={{flex:1,background:"none",border:"none",padding:"14px",fontFamily:fs,fontSize:13,fontWeight:tab===i?700:400,color:tab===i?C.accent:"#6B6B6B",borderBottom:tab===i?`2px solid ${C.accent}`:"2px solid transparent",cursor:"pointer"}}>{t}</button>)}
         </div>
         <div style={{padding:"28px 32px"}}>
           <div style={{marginBottom:16}}>
-            <label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>{tab===0?"Member Number":"Policy Number"}</label>
+            <label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>{tab===0?"Member Number":"Policy Number"}</label>
             <input placeholder={tab===0?"Enter your member number":"Enter your policy number"} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/>
           </div>
           <div style={{marginBottom:20}}>
-            <label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Password</label>
+            <label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Password</label>
             <input type="password" placeholder="Enter your password" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/>
           </div>
           <button onClick={()=>{setPage("dashboard");onClose()}} style={{width:"100%",background:C.accent,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,cursor:"pointer",marginBottom:16}}>Sign In</button>
           <div style={{display:"flex",justifyContent:"space-between"}}>
-            <button style={{background:"none",border:"none",fontFamily:fs,fontSize:12,color:C.accent,cursor:"pointer"}}>Forgot Password?</button>
-            <button style={{background:"none",border:"none",fontFamily:fs,fontSize:12,color:C.accent,cursor:"pointer"}}>Register</button>
+            <button style={{background:"none",border:"none",fontFamily:fs,fontSize:12,color:C.accentText,cursor:"pointer"}}>Forgot Password?</button>
+            <button style={{background:"none",border:"none",fontFamily:fs,fontSize:12,color:C.accentText,cursor:"pointer"}}>Register</button>
           </div>
         </div>
       </div>
@@ -502,14 +510,14 @@ function useToast(){return React.useContext(ToastContext)||((m)=>console.log(m))
 // ============ NOTIFICATIONS PANEL ============
 function NotificationsPanel({open,onClose,setPage}){
   const[notes,setNotes]=useState([
-    {id:1,type:"renewal",icon:"\uD83D\uDD14",title:"Home Insurance Renewal in 28 Days",desc:"Your home insurance with The Personal renews April 15, 2026 at C$142.50/month. Review coverage to ensure you're still adequately protected.",time:"2 hours ago",unread:true,action:"insurance",actionLabel:"Review Coverage",color:C.amber},
-    {id:2,type:"signature",icon:"\u270D\uFE0F",title:"Document Awaiting Your Signature",desc:"Critical Illness Insurance Application from CUMIS is ready for e-signature. Sign now to activate coverage.",time:"5 hours ago",unread:true,action:"dashboard",actionLabel:"Sign Now",color:C.accent},
+    {id:1,type:"renewal",icon:"\uD83D\uDD14",title:"Home Insurance Renewal in 28 Days",desc:"Your home insurance with The Personal renews April 15, 2026 at C$142.50/month. Review coverage to ensure you're still adequately protected.",time:"2 hours ago",unread:true,action:"insurance",actionLabel:"Review Coverage",color:C.amberText},
+    {id:2,type:"signature",icon:"\u270D\uFE0F",title:"Document Awaiting Your Signature",desc:"Critical Illness Insurance Application from CUMIS is ready for e-signature. Sign now to activate coverage.",time:"5 hours ago",unread:true,action:"dashboard",actionLabel:"Sign Now",color:C.accentText},
     {id:3,type:"life-event",icon:"\uD83C\uDF89",title:"Life Event Reminder: Mortgage Anniversary",desc:"It's been one year since your mortgage with Northern Birch. Time for a coverage review -- your equity has likely increased.",time:"Yesterday",unread:true,action:"healthcheck",actionLabel:"Run Health Check",color:C.purple},
-    {id:4,type:"advisor",icon:"\uD83D\uDCAC",title:"New Message from Heili Orav",desc:"Heili replied to your question about TFSA contribution room. \"You have C$22,500 of unused TFSA room from prior years...\"",time:"Yesterday",unread:false,action:"messages",actionLabel:"Read Message",color:C.green},
-    {id:5,type:"transfer",icon:"\u2705",title:"International Transfer Delivered",desc:"Your C$200 transfer to Maija in Riga has been received. Tracking ID: NB-TXN-487291.",time:"2 days ago",unread:false,action:"dashboard",actionLabel:"View Transfer",color:C.green},
-    {id:6,type:"rate-alert",icon:"\uD83D\uDCC8",title:"GIC Rate Increase",desc:"Northern Birch is offering a special 5-year GIC rate of 3.45% -- up from 3.20%. Limited time, members only.",time:"3 days ago",unread:false,action:"rates",actionLabel:"View Rates",color:C.accent},
-    {id:7,type:"claim",icon:"\u2611\uFE0F",title:"Claim #CL-2024-3387 Approved",desc:"Your auto insurance claim for windshield damage has been approved. C$847 will be deposited within 3 business days.",time:"1 week ago",unread:false,action:"claims",actionLabel:"View Details",color:C.green},
-    {id:8,type:"appointment",icon:"\uD83D\uDCC5",title:"Upcoming: Insurance Review",desc:"Your insurance review with Heili Orav is scheduled for March 25 at 10:30 AM at the Latvian Centre Branch.",time:"1 week ago",unread:false,action:"booking",actionLabel:"View Appointment",color:C.amber},
+    {id:4,type:"advisor",icon:"\uD83D\uDCAC",title:"New Message from Heili Orav",desc:"Heili replied to your question about TFSA contribution room. \"You have C$22,500 of unused TFSA room from prior years...\"",time:"Yesterday",unread:false,action:"messages",actionLabel:"Read Message",color:C.greenText},
+    {id:5,type:"transfer",icon:"\u2705",title:"International Transfer Delivered",desc:"Your C$200 transfer to Maija in Riga has been received. Tracking ID: NB-TXN-487291.",time:"2 days ago",unread:false,action:"dashboard",actionLabel:"View Transfer",color:C.greenText},
+    {id:6,type:"rate-alert",icon:"\uD83D\uDCC8",title:"GIC Rate Increase",desc:"Northern Birch is offering a special 5-year GIC rate of 3.45% -- up from 3.20%. Limited time, members only.",time:"3 days ago",unread:false,action:"rates",actionLabel:"View Rates",color:C.accentText},
+    {id:7,type:"claim",icon:"\u2611\uFE0F",title:"Claim #CL-2024-3387 Approved",desc:"Your auto insurance claim for windshield damage has been approved. C$847 will be deposited within 3 business days.",time:"1 week ago",unread:false,action:"claims",actionLabel:"View Details",color:C.greenText},
+    {id:8,type:"appointment",icon:"\uD83D\uDCC5",title:"Upcoming: Insurance Review",desc:"Your insurance review with Heili Orav is scheduled for March 25 at 10:30 AM at the Latvian Centre Branch.",time:"1 week ago",unread:false,action:"booking",actionLabel:"View Appointment",color:C.amberText},
   ]);
   const unreadCount=notes.filter(n=>n.unread).length;
   const markRead=(id)=>setNotes(p=>p.map(n=>n.id===id?{...n,unread:false}:n));
@@ -517,32 +525,32 @@ function NotificationsPanel({open,onClose,setPage}){
   const handleAction=(note)=>{markRead(note.id);setPage(note.action);onClose()};
   if(!open)return null;
   return <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:1500,background:"rgba(0,0,0,0.3)",display:"flex",justifyContent:"flex-end",alignItems:"flex-start",paddingTop:64}}>
-    <div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:16,boxShadow:"0 8px 40px rgba(0,0,0,0.15)",width:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":420,maxHeight:"calc(100vh - 100px)",margin:typeof window!=="undefined"&&window.innerWidth<=768?"0 16px":"0 24px",display:"flex",flexDirection:"column",overflow:"hidden",animation:"slideDown 0.25s ease-out"}}>
+    <div role="dialog" aria-modal="true" aria-label="Notifications" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:16,boxShadow:"0 8px 40px rgba(0,0,0,0.15)",width:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":420,maxHeight:"calc(100vh - 100px)",margin:typeof window!=="undefined"&&window.innerWidth<=768?"0 16px":"0 24px",display:"flex",flexDirection:"column",overflow:"hidden",animation:"slideDown 0.25s ease-out"}}>
       <div style={{padding:"16px 20px",borderBottom:"1px solid #f0f0f0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <h3 style={{fontFamily:ff,fontSize:18,color:C.navy,margin:0}}>Notifications</h3>
           {unreadCount>0&&<span style={{background:C.red,color:"#fff",fontFamily:fs,fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:10}}>{unreadCount}</span>}
         </div>
-        <button onClick={markAllRead} style={{background:"none",border:"none",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accent,fontWeight:600}}>Mark all read</button>
+        <button onClick={markAllRead} style={{background:"none",border:"none",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accentText,fontWeight:600}}>Mark all read</button>
       </div>
       <div style={{overflow:"auto",flex:1}}>
-        {notes.map(n=><div key={n.id} onClick={()=>handleAction(n)} style={{padding:"14px 20px",borderBottom:"1px solid #f5f5f5",cursor:"pointer",background:n.unread?`${C.accent}04`:"transparent",display:"flex",gap:12}}>
+        {notes.map(n=><Clickable key={n.id} onClick={()=>handleAction(n)} style={{padding:"14px 20px",borderBottom:"1px solid #f5f5f5",cursor:"pointer",background:n.unread?`${C.accent}04`:"transparent",display:"flex",gap:12}}>
           <div style={{width:36,height:36,borderRadius:10,background:`${n.color}15`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>{n.icon}</div>
           <div style={{flex:1,minWidth:0}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
               <div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:n.unread?700:500,lineHeight:1.4}}>{n.title}</div>
               {n.unread&&<div style={{width:7,height:7,borderRadius:"50%",background:C.accent,flexShrink:0,marginTop:5}}/>}
             </div>
-            <div style={{fontFamily:fs,fontSize:12,color:"#777",marginTop:4,lineHeight:1.5}}>{n.desc}</div>
+            <div style={{fontFamily:fs,fontSize:12,color:"#666",marginTop:4,lineHeight:1.5}}>{n.desc}</div>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8}}>
-              <span style={{fontFamily:fs,fontSize:11,color:"#bbb"}}>{n.time}</span>
+              <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>{n.time}</span>
               <span style={{fontFamily:fs,fontSize:11,color:n.color,fontWeight:600}}>{n.actionLabel} &rarr;</span>
             </div>
           </div>
-        </div>)}
+        </Clickable>)}
       </div>
       <div style={{padding:"12px 20px",borderTop:"1px solid #f0f0f0",textAlign:"center"}}>
-        <button onClick={()=>{setPage("dashboard");onClose()}} style={{background:"none",border:"none",cursor:"pointer",fontFamily:fs,fontSize:12,color:C.accent,fontWeight:600}}>View all in dashboard &rarr;</button>
+        <button onClick={()=>{setPage("dashboard");onClose()}} style={{background:"none",border:"none",cursor:"pointer",fontFamily:fs,fontSize:12,color:C.accentText,fontWeight:600}}>View all in dashboard &rarr;</button>
       </div>
     </div>
     <style>{`@keyframes slideDown{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}`}</style>
@@ -602,20 +610,20 @@ function MessagesPage({setPage}){
       {(!isMob||mobileView==="threads")&&<div style={{borderRight:isMob?"none":"1px solid #eee",overflow:"auto",background:"#fafafa"}}>
         <div style={{padding:"16px 20px",borderBottom:"1px solid #eee"}}>
           <h3 style={{fontFamily:ff,fontSize:18,color:C.navy,margin:0}}>Messages</h3>
-          <p style={{fontFamily:fs,fontSize:11,color:"#999",margin:"4px 0 0"}}>Direct line to your Northern Birch team</p>
+          <p style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",margin:"4px 0 0"}}>Direct line to your Northern Birch team</p>
         </div>
-        {threads.map(th=><div key={th.id} onClick={()=>{setThread(th.id);if(isMob)setMobileView("chat")}} style={{padding:"14px 20px",cursor:"pointer",background:thread===th.id?"#fff":"transparent",borderLeft:thread===th.id?`3px solid ${C.accent}`:"3px solid transparent",borderBottom:"1px solid #f5f5f5"}}>
+        {threads.map(th=><Clickable key={th.id} onClick={()=>{setThread(th.id);if(isMob)setMobileView("chat")}} style={{padding:"14px 20px",cursor:"pointer",background:thread===th.id?"#fff":"transparent",borderLeft:thread===th.id?`3px solid ${C.accent}`:"3px solid transparent",borderBottom:"1px solid #f5f5f5"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <div style={{width:36,height:36,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
               <span style={{fontFamily:fs,fontSize:13,color:"#fff",fontWeight:700}}>{th.name.split(" ").map(n=>n[0]).join("").slice(0,2)}</span>
             </div>
             <div style={{flex:1,minWidth:0}}>
               <div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:700}}>{th.name}</div>
-              <div style={{fontFamily:fs,fontSize:11,color:"#999",marginTop:1}}>{th.role}</div>
-              <div style={{fontFamily:fs,fontSize:11,color:"#bbb",marginTop:4,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{th.last}</div>
+              <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",marginTop:1}}>{th.role}</div>
+              <div style={{fontFamily:fs,fontSize:11,color:"#707070",marginTop:4,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{th.last}</div>
             </div>
           </div>
-        </div>)}
+        </Clickable>)}
       </div>}
       {/* Chat */}
       {(!isMob||mobileView==="chat")&&<div style={{display:"flex",flexDirection:"column",overflow:"hidden"}}>
@@ -626,26 +634,26 @@ function MessagesPage({setPage}){
           </div>
           <div style={{flex:1}}>
             <div style={{fontFamily:fs,fontSize:14,color:C.navy,fontWeight:700}}>{threads.find(t=>t.id===thread).name}</div>
-            <div style={{fontFamily:fs,fontSize:11,color:C.green,display:"flex",alignItems:"center",gap:4}}>
+            <div style={{fontFamily:fs,fontSize:11,color:C.greenText,display:"flex",alignItems:"center",gap:4}}>
               <span style={{width:6,height:6,borderRadius:"50%",background:C.green,display:"inline-block"}}/>Online -- typically replies within 1 hour
             </div>
           </div>
         </div>
         <div style={{flex:1,overflow:"auto",padding:"20px 24px",display:"flex",flexDirection:"column",gap:12,background:"#fafafa"}}>
           {messages[thread].map((m,i)=><div key={i} style={{alignSelf:m.from==="member"?"flex-end":"flex-start",maxWidth:"75%"}}>
-            {m.from==="advisor"&&<div style={{fontFamily:fs,fontSize:10,color:"#999",marginBottom:3,marginLeft:4}}>{m.author} -- {m.role}</div>}
+            {m.from==="advisor"&&<div style={{fontFamily:fs,fontSize:10,color:"#6B6B6B",marginBottom:3,marginLeft:4}}>{m.author} -- {m.role}</div>}
             <div style={{background:m.from==="member"?`linear-gradient(135deg,${C.accent},${C.purple})`:"#fff",color:m.from==="member"?"#fff":C.navy,borderRadius:m.from==="member"?"16px 16px 4px 16px":"16px 16px 16px 4px",padding:"10px 16px",fontFamily:fs,fontSize:13,lineHeight:1.6,boxShadow:m.from==="advisor"?"0 1px 3px rgba(0,0,0,0.06)":"none"}}>{m.text}</div>
-            <div style={{fontFamily:fs,fontSize:10,color:"#bbb",marginTop:3,textAlign:m.from==="member"?"right":"left",paddingLeft:m.from==="member"?0:4,paddingRight:m.from==="member"?4:0}}>{m.time}</div>
+            <div style={{fontFamily:fs,fontSize:10,color:"#707070",marginTop:3,textAlign:m.from==="member"?"right":"left",paddingLeft:m.from==="member"?0:4,paddingRight:m.from==="member"?4:0}}>{m.time}</div>
           </div>)}
           {loading&&<div style={{alignSelf:"flex-start",background:"#fff",borderRadius:"16px 16px 16px 4px",padding:"10px 16px",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
-            <span style={{fontFamily:fs,fontSize:12,color:"#999",animation:"blink 1.4s infinite"}}>{threads.find(t=>t.id===thread).name.split(" ")[0]} is typing...</span>
+            <span style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",animation:"blink 1.4s infinite"}}>{threads.find(t=>t.id===thread).name.split(" ")[0]} is typing...</span>
           </div>}
         </div>
         <div style={{padding:"12px 16px",borderTop:"1px solid #eee",background:"#fff",display:"flex",gap:8}}>
           <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Type a message..." style={{flex:1,border:"1px solid #eee",borderRadius:20,padding:"10px 18px",fontFamily:fs,fontSize:13,outline:"none",background:"#f8f8f8"}} disabled={loading}/>
           <button onClick={send} disabled={loading||!input.trim()} style={{background:loading||!input.trim()?"#ddd":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:20,padding:"10px 20px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Send</button>
         </div>
-        <p style={{fontFamily:fs,fontSize:10,color:"#bbb",margin:0,padding:"0 16px 12px",textAlign:"center"}}>Messages are encrypted end-to-end. AI may assist advisors with replies during off-hours.</p>
+        <p style={{fontFamily:fs,fontSize:10,color:"#707070",margin:0,padding:"0 16px 12px",textAlign:"center"}}>Messages are encrypted end-to-end. AI may assist advisors with replies during off-hours.</p>
       </div>}
     </div>
     <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
@@ -670,22 +678,22 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
   return(<>
     <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:1000,background:isDark&&!mobileMenu?"transparent":"rgba(253,251,247,0.98)",backdropFilter:isDark&&!mobileMenu?"none":"blur(16px)",transition:"all 0.4s",borderBottom:isDark&&!mobileMenu?"none":"1px solid rgba(200,184,138,0.15)"}}>
       <div style={{maxWidth:1320,margin:"0 auto",padding:isMob?"10px 16px":"10px 24px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-        <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>setPage("home")}>
+        <Clickable label="Northern Birch home" style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer",width:"auto"}} onClick={()=>setPage("home")}>
           <div style={{width:34,height:34,borderRadius:"50%",background:`linear-gradient(135deg,${C.birch},${C.navy})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:13,fontWeight:800,color:"#fff"}}>NB</span></div>
-          <div><span style={{fontFamily:ff,fontSize:isMob?14:16,color:isDark&&!mobileMenu?"#fff":C.navy,fontWeight:600,display:"block",lineHeight:1.2,transition:"color 0.3s"}}>Northern Birch</span>{!isMob&&<span style={{fontFamily:fs,fontSize:9.5,color:isDark?"rgba(255,255,255,0.5)":"#999",letterSpacing:1,textTransform:"uppercase"}}>{t("Credit Union",lang)}</span>}</div>
-        </div>
+          <div><span style={{fontFamily:ff,fontSize:isMob?14:16,color:isDark&&!mobileMenu?"#fff":C.navy,fontWeight:600,display:"block",lineHeight:1.2,transition:"color 0.3s"}}>Northern Birch</span>{!isMob&&<span style={{fontFamily:fs,fontSize:9.5,color:isDark?"rgba(255,255,255,0.5)":"#6B6B6B",letterSpacing:1,textTransform:"uppercase"}}>{t("Credit Union",lang)}</span>}</div>
+        </Clickable>
         {!isMob&&<div style={{display:"flex",gap:1,alignItems:"center"}}>
           {nav.map(n=>{
             const act=page===n.p||(n.kids||[]).some(k=>k.p===page);
             const st={background:act?`${C.accent}10`:"transparent",border:"none",color:act?C.accent:(isDark?"rgba(255,255,255,0.8)":C.navy),padding:"8px 10px",borderRadius:8,cursor:"pointer",fontSize:12,fontFamily:fs,fontWeight:act?700:500,transition:"all 0.3s"};
             if(!n.kids)return <button key={n.l} onClick={()=>setPage(n.p)} style={st}>{t(n.l,lang)}</button>;
-            return <div key={n.l} onMouseEnter={()=>setMenu(n.l)} onMouseLeave={()=>setMenu(null)} style={{position:"relative"}}>
-              <button onClick={()=>setMenu(menu===n.l?null:n.l)} aria-expanded={menu===n.l} style={{...st,display:"flex",alignItems:"center",gap:4}}>{t(n.l,lang)}<span style={{fontSize:8,opacity:0.6}}>&#9660;</span></button>
+            return <div key={n.l} onMouseEnter={()=>setMenu(n.l)} onMouseLeave={()=>setMenu(null)} onKeyDown={e=>{if(e.key==="Escape")setMenu(null)}} style={{position:"relative"}}>
+              <button onClick={()=>setMenu(menu===n.l?null:n.l)} aria-expanded={menu===n.l} aria-haspopup="true" style={{...st,display:"flex",alignItems:"center",gap:4}}>{t(n.l,lang)}<span style={{fontSize:8,opacity:0.6}}>&#9660;</span></button>
               {menu===n.l&&<div style={{position:"absolute",top:"100%",left:0,paddingTop:8}}>
                 <div style={{background:"#fff",borderRadius:14,boxShadow:"0 8px 32px rgba(12,24,41,0.16)",overflow:"hidden",minWidth:300,border:"1px solid #f0ece0"}}>
                   {n.kids.map(k=><button key={k.l} onClick={()=>{setPage(k.p);setMenu(null)}} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accent}08`:"#fff",border:"none",borderBottom:"1px solid #f8f8f8",padding:"12px 18px",cursor:"pointer"}}>
                     <span style={{display:"block",fontFamily:fs,fontSize:13.5,fontWeight:700,color:page===k.p?C.accent:C.navy}}>{t(k.l,lang)}</span>
-                    <span style={{display:"block",fontFamily:fs,fontSize:11.5,color:"#999",marginTop:2}}>{k.d}</span>
+                    <span style={{display:"block",fontFamily:fs,fontSize:11.5,color:"#6B6B6B",marginTop:2}}>{k.d}</span>
                   </button>)}
                 </div>
               </div>}
@@ -705,9 +713,9 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
               ))}
             </div>}
           </div>
-          <button onClick={onSearch} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:isDark?"rgba(255,255,255,0.6)":"#999"}}>&#128269;</button>
-          <button onClick={onNotifications} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:isDark?"rgba(255,255,255,0.6)":"#999",position:"relative"}}>&#128276;<span style={{position:"absolute",top:4,right:4,width:8,height:8,borderRadius:"50%",background:C.red,border:"2px solid "+(isDark?C.dark:"#fdfbf7")}}/></button>
-          <button onClick={onLogin} style={{background:C.accent,border:"none",borderRadius:8,padding:"7px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#fff",fontWeight:600}}>{t("Sign In",lang)}</button>
+          <button onClick={onSearch} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:isDark?"rgba(255,255,255,0.6)":"#6B6B6B"}}>&#128269;</button>
+          <button onClick={onNotifications} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:isDark?"rgba(255,255,255,0.6)":"#6B6B6B",position:"relative"}}>&#128276;<span style={{position:"absolute",top:4,right:4,width:8,height:8,borderRadius:"50%",background:C.red,border:"2px solid "+(isDark?C.dark:"#fdfbf7")}}/></button>
+          <button onClick={onLogin} style={{background:C.accentText,border:"none",borderRadius:8,padding:"7px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#fff",fontWeight:600}}>{t("Sign In",lang)}</button>
         </div>}
         {isMob&&<div style={{display:"flex",gap:6,alignItems:"center"}}>
           <div style={{position:"relative"}}>
@@ -722,8 +730,8 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
               ))}
             </div>}
           </div>
-          <button onClick={onSearch} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:"#999"}}>&#128269;</button>
-          <button onClick={onNotifications} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:"#999",position:"relative"}}>&#128276;<span style={{position:"absolute",top:4,right:4,width:7,height:7,borderRadius:"50%",background:C.red,border:"2px solid #fdfbf7"}}/></button>
+          <button onClick={onSearch} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:"#6B6B6B"}}>&#128269;</button>
+          <button onClick={onNotifications} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:"#6B6B6B",position:"relative"}}>&#128276;<span style={{position:"absolute",top:4,right:4,width:7,height:7,borderRadius:"50%",background:C.red,border:"2px solid #fdfbf7"}}/></button>
           <button onClick={()=>setMobileMenu(!mobileMenu)} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:20,color:C.navy}}>
             {mobileMenu?"\u2715":"\u2630"}
           </button>
@@ -733,7 +741,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
     {isMob&&mobileMenu&&<div style={{position:"fixed",top:56,left:0,right:0,bottom:0,background:"rgba(253,251,247,0.99)",zIndex:999,padding:"16px",overflow:"auto"}}>
       {nav.map(n=><div key={n.l}>
         {n.kids
-          ?<div style={{fontFamily:fs,fontSize:11,color:"#999",fontWeight:700,textTransform:"uppercase",letterSpacing:1.5,padding:"16px 20px 6px"}}>{t(n.l,lang)}</div>
+          ?<div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",fontWeight:700,textTransform:"uppercase",letterSpacing:1.5,padding:"16px 20px 6px"}}>{t(n.l,lang)}</div>
           :<button onClick={()=>setPage(n.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===n.p?`${C.accent}10`:"transparent",border:"none",padding:"16px 20px",borderRadius:12,fontFamily:fs,fontSize:16,color:page===n.p?C.accent:C.navy,fontWeight:page===n.p?700:500,marginBottom:4}}>{t(n.l,lang)}</button>}
         {(n.kids||[]).map(k=><button key={k.l} onClick={()=>setPage(k.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accent}10`:"transparent",border:"none",padding:"14px 20px",borderRadius:12,fontFamily:fs,fontSize:15,color:page===k.p?C.accent:C.navy,fontWeight:page===k.p?700:500,marginBottom:4}}>{t(k.l,lang)}</button>)}
       </div>)}
@@ -769,13 +777,13 @@ function QuotePage({setPage}){
   const monthly=calc();
   const annual=Math.round(monthly*12*100)/100;
   const sliderStyle=(color)=>({WebkitAppearance:"none",width:"100%",height:8,borderRadius:4,background:`linear-gradient(90deg,${color} 0%,#eee 100%)`,outline:"none",cursor:"pointer"});
-  const SliderLabel=({label,value,sub})=><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}><span style={{fontFamily:fs,fontSize:13,color:"#777"}}>{label}</span><span style={{fontFamily:ff,fontSize:20,color:C.navy,fontWeight:700}}>{value}</span></div>;
+  const SliderLabel=({label,value,sub})=><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{label}</span><span style={{fontFamily:ff,fontSize:20,color:C.navy,fontWeight:700}}>{value}</span></div>;
   const types=[{l:"Term Life",v:"life",icon:"&#9829;",c:C.accent},{l:"Home",v:"home",icon:"&#9750;",c:C.green},{l:"Auto",v:"auto",icon:"&#9881;",c:C.amber},{l:"Travel",v:"travel",icon:"&#9992;",c:C.purple}];
   const activeType=types.find(t=>t.v===type);
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
-        <SH tag="Interactive Quote Calculator" tagColor={C.accent} title="See your estimated premium instantly" desc="Drag the sliders to adjust coverage. Your estimated premium updates in real-time. No personal information required."/>
+        <SH tag="Interactive Quote Calculator" tagColor={C.accentText} title="See your estimated premium instantly" desc="Drag the sliders to adjust coverage. Your estimated premium updates in real-time. No personal information required."/>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:8,marginBottom:32}}>
           {types.map(t=>(
             <button key={t.v} onClick={()=>setType(t.v)} style={{background:type===t.v?t.c:"#fff",border:type===t.v?"none":"1px solid #ddd",borderRadius:16,padding:"20px 16px",cursor:"pointer",transition:"all 0.3s",textAlign:"center"}}>
@@ -792,19 +800,19 @@ function QuotePage({setPage}){
               <div style={{marginBottom:28}}>
                 <SliderLabel label="Your Age" value={age}/>
                 <input type="range" min={18} max={70} value={age} onChange={e=>setAge(+e.target.value)} style={sliderStyle(C.accent)}/>
-                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#ccc",marginTop:4}}><span>18</span><span>70</span></div>
+                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#707070",marginTop:4}}><span>18</span><span>70</span></div>
               </div>
               <div style={{marginBottom:28}}>
                 <SliderLabel label="Coverage Amount" value={`C$${(coverage/1000).toLocaleString()}K`}/>
                 <input type="range" min={100000} max={2000000} step={50000} value={coverage} onChange={e=>setCoverage(+e.target.value)} style={sliderStyle(C.accent)}/>
-                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#ccc",marginTop:4}}><span>$100K</span><span>$2M</span></div>
+                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#707070",marginTop:4}}><span>$100K</span><span>$2M</span></div>
               </div>
               <div style={{marginBottom:28}}>
-                <div style={{fontFamily:fs,fontSize:13,color:"#777",marginBottom:10}}>Term Length</div>
+                <div style={{fontFamily:fs,fontSize:13,color:"#666",marginBottom:10}}>Term Length</div>
                 <div style={{display:"flex",gap:8}}>{[10,20,30].map(t=><button key={t} onClick={()=>setTerm(t)} style={{flex:1,background:term===t?C.accent:"#f5f5f5",border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:14,color:term===t?"#fff":C.navy,fontWeight:600,transition:"all 0.2s"}}>{t} Years</button>)}</div>
               </div>
               <div>
-                <div style={{fontFamily:fs,fontSize:13,color:"#777",marginBottom:10}}>Tobacco Use</div>
+                <div style={{fontFamily:fs,fontSize:13,color:"#666",marginBottom:10}}>Tobacco Use</div>
                 <div style={{display:"flex",gap:8}}>{[{l:"Non-Smoker",v:false},{l:"Smoker",v:true}].map(s=><button key={String(s.v)} onClick={()=>setSmoker(s.v)} style={{flex:1,background:smoker===s.v?C.navy:"#f5f5f5",border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:14,color:smoker===s.v?"#fff":C.navy,fontWeight:600,transition:"all 0.2s"}}>{s.l}</button>)}</div>
               </div>
             </>}
@@ -812,22 +820,22 @@ function QuotePage({setPage}){
               <div style={{marginBottom:28}}>
                 <SliderLabel label="Home Value" value={`C$${(homeVal/1000).toLocaleString()}K`}/>
                 <input type="range" min={200000} max={2000000} step={25000} value={homeVal} onChange={e=>setHomeVal(+e.target.value)} style={sliderStyle(C.green)}/>
-                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#ccc",marginTop:4}}><span>$200K</span><span>$2M</span></div>
+                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#707070",marginTop:4}}><span>$200K</span><span>$2M</span></div>
               </div>
               <div>
-                <div style={{fontFamily:fs,fontSize:13,color:"#777",marginBottom:10}}>Deductible</div>
+                <div style={{fontFamily:fs,fontSize:13,color:"#666",marginBottom:10}}>Deductible</div>
                 <div style={{display:"flex",gap:8}}>{[500,1000,2500,5000].map(d=><button key={d} onClick={()=>setDeductible(d)} style={{flex:1,background:deductible===d?C.green:"#f5f5f5",border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:deductible===d?"#fff":C.navy,fontWeight:600,transition:"all 0.2s"}}>${d.toLocaleString()}</button>)}</div>
-                <p style={{fontFamily:fs,fontSize:12,color:"#bbb",marginTop:8}}>Higher deductible = lower premium. Choose the amount you're comfortable paying out of pocket.</p>
+                <p style={{fontFamily:fs,fontSize:12,color:"#707070",marginTop:8}}>Higher deductible = lower premium. Choose the amount you're comfortable paying out of pocket.</p>
               </div>
             </>}
             {type==="auto"&&<>
               <div style={{marginBottom:28}}>
                 <SliderLabel label="Vehicle Year" value={carYear}/>
                 <input type="range" min={2010} max={2026} value={carYear} onChange={e=>setCarYear(+e.target.value)} style={sliderStyle(C.amber)}/>
-                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#ccc",marginTop:4}}><span>2010</span><span>2026</span></div>
+                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#707070",marginTop:4}}><span>2010</span><span>2026</span></div>
               </div>
               <div>
-                <div style={{fontFamily:fs,fontSize:13,color:"#777",marginBottom:10}}>Driving Record</div>
+                <div style={{fontFamily:fs,fontSize:13,color:"#666",marginBottom:10}}>Driving Record</div>
                 <div style={{display:"flex",gap:8}}>{[{l:"Clean",v:"clean"},{l:"1-2 Minor",v:"minor"},{l:"At-Fault Accident",v:"accident"}].map(r=><button key={r.v} onClick={()=>setDrivingRecord(r.v)} style={{flex:1,background:drivingRecord===r.v?C.amber:"#f5f5f5",border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:12,color:drivingRecord===r.v?"#fff":C.navy,fontWeight:600,transition:"all 0.2s"}}>{r.l}</button>)}</div>
               </div>
             </>}
@@ -839,10 +847,10 @@ function QuotePage({setPage}){
               <div style={{marginBottom:28}}>
                 <SliderLabel label="Trip Duration" value={`${tripDays} days`}/>
                 <input type="range" min={7} max={180} value={tripDays} onChange={e=>setTripDays(+e.target.value)} style={sliderStyle(C.purple)}/>
-                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#ccc",marginTop:4}}><span>7 days</span><span>180 days</span></div>
+                <div style={{display:"flex",justifyContent:"space-between",fontFamily:fs,fontSize:11,color:"#707070",marginTop:4}}><span>7 days</span><span>180 days</span></div>
               </div>
               <div>
-                <div style={{fontFamily:fs,fontSize:13,color:"#777",marginBottom:10}}>Travellers</div>
+                <div style={{fontFamily:fs,fontSize:13,color:"#666",marginBottom:10}}>Travellers</div>
                 <div style={{display:"flex",gap:8}}>{[1,2,3,4].map(n=><button key={n} onClick={()=>setTravellers(n)} style={{flex:1,background:travellers===n?C.purple:"#f5f5f5",border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:14,color:travellers===n?"#fff":C.navy,fontWeight:600,transition:"all 0.2s"}}>{n}</button>)}</div>
               </div>
             </>}
@@ -851,27 +859,27 @@ function QuotePage({setPage}){
           <div>
             <div id="quote-result-panel" style={{background:C.navy,borderRadius:24,padding:"36px 32px",textAlign:"center",position:typeof window!=="undefined"&&window.innerWidth<=768?"relative":"sticky",top:80}}>
               <div style={{width:56,height:56,borderRadius:16,background:`${activeType.c}25`,margin:"0 auto 16px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:24,color:activeType.c}} dangerouslySetInnerHTML={{__html:activeType.icon}}/></div>
-              <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.4)",textTransform:"uppercase",letterSpacing:2,marginBottom:4}}>Estimated Monthly Premium</div>
+              <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:2,marginBottom:4}}>Estimated Monthly Premium</div>
               <div style={{fontFamily:ff,fontSize:52,color:"#fff",fontWeight:700,margin:"0 0 4px",transition:"all 0.3s"}}>C${monthly.toFixed(2)}</div>
-              <div style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.4)",marginBottom:20}}>C${annual.toFixed(2)} / year</div>
+              <div style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",marginBottom:20}}>C${annual.toFixed(2)} / year</div>
               <div style={{background:"rgba(255,255,255,0.06)",borderRadius:14,padding:"16px",marginBottom:20}}>
                 {type==="life"&&<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8,textAlign:"left"}}>
-                  {[["Coverage",`C$${(coverage/1000)}K`],["Term",`${term} years`],["Age",age],["Tobacco",smoker?"Yes":"No"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.35)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>{v}</div></div>)}
+                  {[["Coverage",`C$${(coverage/1000)}K`],["Term",`${term} years`],["Age",age],["Tobacco",smoker?"Yes":"No"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>{v}</div></div>)}
                 </div>}
                 {type==="home"&&<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8,textAlign:"left"}}>
-                  {[["Home Value",`C$${(homeVal/1000)}K`],["Deductible",`C$${deductible}`],["Coverage","Replacement Cost"],["Liability","C$2M"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.35)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>{v}</div></div>)}
+                  {[["Home Value",`C$${(homeVal/1000)}K`],["Deductible",`C$${deductible}`],["Coverage","Replacement Cost"],["Liability","C$2M"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>{v}</div></div>)}
                 </div>}
                 {type==="auto"&&<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8,textAlign:"left"}}>
-                  {[["Vehicle",carYear],["Record",drivingRecord],["Liability","C$1M"],["Collision","Included"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.35)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600,textTransform:"capitalize"}}>{v}</div></div>)}
+                  {[["Vehicle",carYear],["Record",drivingRecord],["Liability","C$1M"],["Collision","Included"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600,textTransform:"capitalize"}}>{v}</div></div>)}
                 </div>}
                 {type==="travel"&&<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8,textAlign:"left"}}>
-                  {[["Age",age],["Duration",`${tripDays} days`],["Travellers",travellers],["Medical","C$5M"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.35)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>{v}</div></div>)}
+                  {[["Age",age],["Duration",`${tripDays} days`],["Travellers",travellers],["Medical","C$5M"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>{v}</div></div>)}
                 </div>}
               </div>
               <button onClick={()=>setPage("booking")} style={{width:"100%",background:activeType.c,border:"none",borderRadius:12,padding:"14px",cursor:"pointer",fontFamily:fs,fontSize:14,color:"#fff",fontWeight:700,marginBottom:8}}>Book an Advisor Appointment</button>
               <button onClick={()=>exportToPDF("quote-result-panel",`${activeType.l} Insurance Quote`)} style={{width:"100%",background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:12,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600,marginBottom:8}}>&#128190; Download Quote (PDF)</button>
               <button onClick={()=>setPage("compare")} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"none",borderRadius:12,padding:"14px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",fontWeight:500}}>Compare Coverage Options</button>
-              <p style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.25)",margin:"16px 0 0",lineHeight:1.6}}>Estimate only. Actual premiums may vary. Exclusive NBCU member rates may be lower.</p>
+              <p style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:"16px 0 0",lineHeight:1.6}}>Estimate only. Actual premiums may vary. Exclusive NBCU member rates may be lower.</p>
             </div>
           </div>
         </div>
@@ -904,7 +912,7 @@ function ComparePage(){
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:1100,margin:"0 auto"}}>
-        <SH tag="Compare Plans" tagColor={C.accent} title="Coverage comparison" desc="Compare plan tiers side-by-side to find the right level of protection for your needs."/>
+        <SH tag="Compare Plans" tagColor={C.accentText} title="Coverage comparison" desc="Compare plan tiers side-by-side to find the right level of protection for your needs."/>
         <div style={{display:"flex",gap:8,marginBottom:32}}>
           {tables.map((tb,i)=><button key={i} onClick={()=>setCat(i)} style={{flex:1,background:cat===i?C.navy:"#fff",border:cat===i?"none":"1px solid #ddd",borderRadius:12,padding:"14px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:cat===i?"#fff":C.navy}}>{tb.name}</button>)}
         </div>
@@ -913,11 +921,11 @@ function ComparePage(){
             {i===1&&<div style={{background:C.accent,padding:"6px",textAlign:"center"}}><span style={{fontFamily:fs,fontSize:11,color:"#fff",fontWeight:700,textTransform:"uppercase",letterSpacing:1}}>Most Popular</span></div>}
             <div style={{padding:"28px 24px",textAlign:"center",borderBottom:"1px solid #eee"}}>
               <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 8px"}}>{plan.tier}</h3>
-              <div style={{fontFamily:fs,fontSize:20,color:C.accent,fontWeight:700}}>{plan.price}</div>
+              <div style={{fontFamily:fs,fontSize:20,color:C.accentText,fontWeight:700}}>{plan.price}</div>
             </div>
             <div style={{padding:"16px 24px"}}>
               {Object.entries(plan.features).map(([k,v],fi)=><div key={fi} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:fi<Object.keys(plan.features).length-1?"1px solid #f5f5f5":"none"}}>
-                <span style={{fontFamily:fs,fontSize:13,color:"#999"}}>{k}</span>
+                <span style={{fontFamily:fs,fontSize:13,color:"#6B6B6B"}}>{k}</span>
                 <span style={{fontFamily:fs,fontSize:13,color:v==="No"?"#ddd":C.navy,fontWeight:v==="No"?400:600}}>{v}</span>
               </div>)}
             </div>
@@ -949,21 +957,21 @@ function ClaimsPage(){
   const steps=[
     {title:"Select Claim Type",content:<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:16}}>
       {[{l:"Home Insurance Claim",v:"home",d:"Property damage, theft, water damage, liability"},{l:"Auto Insurance Claim",v:"auto",d:"Accident, collision, theft, vandalism"},{l:"Travel Insurance Claim",v:"travel",d:"Emergency medical, trip cancellation, baggage"},{l:"Life / CI / Disability Claim",v:"life",d:"Death benefit, critical illness, disability"},{l:"Mortgage Protection Claim",v:"mortgage",d:"Creditor life, disability, critical illness"},{l:"Commercial Insurance Claim",v:"commercial",d:"Business property, liability, business interruption"}].map((t,i)=>
-        <div key={i} onClick={()=>{setClaimType(t.v);setStep(1)}} style={{background:claimType===t.v?`${C.accent}08`:"#fff",border:claimType===t.v?`2px solid ${C.accent}`:"1px solid #eee",borderRadius:16,padding:"24px",cursor:"pointer",transition:"all 0.3s"}}>
+        <Clickable key={i} onClick={()=>{setClaimType(t.v);setStep(1)}} style={{background:claimType===t.v?`${C.accent}08`:"#fff",border:claimType===t.v?`2px solid ${C.accent}`:"1px solid #eee",borderRadius:16,padding:"24px",cursor:"pointer",transition:"all 0.3s"}}>
           <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 4px",fontWeight:700}}>{t.l}</h4>
-          <p style={{fontFamily:fs,fontSize:13,color:"#999",margin:0}}>{t.d}</p>
-        </div>
+          <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:0}}>{t.d}</p>
+        </Clickable>
       )}
     </div>},
     {title:"Provide Details",content:<div>
-      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Policy Number</label><input value={policy} onChange={e=>setPolicy(e.target.value)} placeholder="Enter your policy number" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Date of Incident</label><input type="date" value={incidentDate} onChange={e=>setIncidentDate(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Description of Claim</label><textarea rows={4} value={details} onChange={e=>setDetails(e.target.value)} placeholder="Please describe what happened..." style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box"}}/></div>
+      <div style={{marginBottom:16}}><label htmlFor="claim-policy" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Policy Number</label><input id="claim-policy" value={policy} onChange={e=>setPolicy(e.target.value)} placeholder="Enter your policy number" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+      <div style={{marginBottom:16}}><label htmlFor="claim-date" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Date of Incident</label><input type="date" id="claim-date" value={incidentDate} onChange={e=>setIncidentDate(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+      <div style={{marginBottom:16}}><label htmlFor="claim-details" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Description of Claim</label><textarea id="claim-details" rows={4} value={details} onChange={e=>setDetails(e.target.value)} placeholder="Please describe what happened..." style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box"}}/></div>
       <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:16,marginBottom:16}}>
-        <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Name</label><input value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
-        <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Phone</label><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
+        <div><label htmlFor="booking-name" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Name</label><input id="booking-name" value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
+        <div><label htmlFor="booking-phone" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Phone</label><input id="booking-phone" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
       </div>
-      <div style={{marginBottom:16}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
+      <div style={{marginBottom:16}}><label htmlFor="booking-email" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Email</label><input id="booking-email" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
       <div style={{background:`${C.amber}08`,borderRadius:12,padding:"14px 18px",marginBottom:16,borderLeft:`4px solid ${C.amber}`}}>
         <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.6}}>Have photos, receipts, or a police report ready. Documents are not uploaded through this form &mdash; the adjuster will tell you where to send them when they call.</p>
       </div>
@@ -971,12 +979,12 @@ function ClaimsPage(){
       <div style={{display:"flex",gap:12}}><Btn outline onClick={()=>setStep(0)}>Back</Btn><Btn color={sending||!canSubmit?"#ccc":C.accent} onClick={sending||!canSubmit?undefined:submit}>{sending?"Sending...":"Submit Claim Request"}</Btn></div></>
     </div>},
     {title:"Request Sent",content:<div id="claim-confirmation" style={{textAlign:"center",padding:"40px 0"}}>
-      <div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.green}}>&#10003;</span></div>
+      <div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div>
       <h3 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 12px"}}>Claim Request Sent</h3>
-      <p style={{fontFamily:fs,fontSize:15,color:"#777",lineHeight:1.7,maxWidth:500,margin:"0 auto 8px"}}>We have passed your details to the insurer. Your claim number is issued by them, not by us, and comes with their first call.</p>
-      <p style={{fontFamily:fs,fontSize:14,color:"#999",lineHeight:1.7,maxWidth:500,margin:"0 auto 24px"}}>A claims adjuster will contact you within 1-2 business days. You can track your claim status through the Insurance Dashboard in your online banking.</p>
+      <p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.7,maxWidth:500,margin:"0 auto 8px"}}>We have passed your details to the insurer. Your claim number is issued by them, not by us, and comes with their first call.</p>
+      <p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",lineHeight:1.7,maxWidth:500,margin:"0 auto 24px"}}>A claims adjuster will contact you within 1-2 business days. You can track your claim status through the Insurance Dashboard in your online banking.</p>
       <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
-        <Btn onClick={()=>exportToPDF("claim-confirmation","Claim Request")} color={C.accent}>&#128190; Download Request (PDF)</Btn>
+        <Btn onClick={()=>exportToPDF("claim-confirmation","Claim Request")} color={C.accentText}>&#128190; Download Request (PDF)</Btn>
         <Btn outline onClick={()=>{setStep(0);setClaimType("");setPolicy("");setDetails("")}}>File Another Claim</Btn>
       </div>
     </div>},
@@ -984,11 +992,11 @@ function ClaimsPage(){
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
-        <SH tag="Claims Centre" tagColor={C.red} title="File an insurance claim" desc="Start your claim online. We'll guide you through the process step by step."/>
+        <SH tag="Claims Centre" tagColor={C.redText} title="File an insurance claim" desc="Start your claim online. We'll guide you through the process step by step."/>
         <div style={{display:"flex",gap:0,marginBottom:32}}>
           {steps.map((s,i)=><div key={i} style={{flex:1,display:"flex",alignItems:"center"}}>
             <div style={{width:32,height:32,borderRadius:"50%",background:i<=step?C.accent:"#ddd",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:fs,fontSize:13,color:"#fff",fontWeight:700}}>{i+1}</span></div>
-            <div style={{fontFamily:fs,fontSize:12,color:i<=step?C.navy:"#bbb",marginLeft:8,fontWeight:i===step?700:400}}>{s.title}</div>
+            <div style={{fontFamily:fs,fontSize:12,color:i<=step?C.navy:"#707070",marginLeft:8,fontWeight:i===step?700:400}}>{s.title}</div>
             {i<steps.length-1&&<div style={{flex:1,height:2,background:i<step?C.accent:"#eee",margin:"0 12px"}}/>}
           </div>)}
         </div>
@@ -996,7 +1004,7 @@ function ClaimsPage(){
         <div style={{marginTop:32,background:`${C.amber}08`,borderRadius:16,padding:"24px 28px",borderLeft:`4px solid ${C.amber}`}}>
           <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 8px",fontWeight:700}}>Claim Contact Numbers</h4>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>
-            {[{n:"The Personal (Home/Auto/Travel)",p:"1-888-476-8737"},{n:"CUMIS (Life/Creditor)",p:"1-800-263-9120"},{n:"Manulife (Group Benefits)",p:"1-800-268-6195"}].map((c2,i)=><div key={i}><div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{c2.n}</div><div style={{fontFamily:fs,fontSize:14,color:C.accent,fontWeight:700}}>{c2.p}</div></div>)}
+            {[{n:"The Personal (Home/Auto/Travel)",p:"1-888-476-8737"},{n:"CUMIS (Life/Creditor)",p:"1-800-263-9120"},{n:"Manulife (Group Benefits)",p:"1-800-268-6195"}].map((c2,i)=><div key={i}><div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{c2.n}</div><div style={{fontFamily:fs,fontSize:14,color:C.accentText,fontWeight:700}}>{c2.p}</div></div>)}
           </div>
         </div>
       </div>
@@ -1040,48 +1048,48 @@ function CalculatorsPage(){
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
-        <SH tag="Financial Calculators" tagColor={C.green} title="Plan with confidence" desc="Mortgage payments, insurance needs, and retirement projections -- all the numbers you need to make informed decisions."/>
+        <SH tag="Financial Calculators" tagColor={C.greenText} title="Plan with confidence" desc="Mortgage payments, insurance needs, and retirement projections -- all the numbers you need to make informed decisions."/>
         <div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>
           {[{l:"Mortgage",v:"mortgage"},{l:"Insurance Needs",v:"insurance"},{l:"Retirement",v:"retirement"}].map(tab=><button key={tab.v} onClick={()=>setCalc(tab.v)} style={{flex:1,minWidth:isMob?0:150,background:calc===tab.v?C.navy:"#fff",border:calc===tab.v?"none":"1px solid #ddd",borderRadius:12,padding:"14px 16px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:calc===tab.v?"#fff":C.navy}}>{tab.l}</button>)}
         </div>
         <div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
           {calc==="mortgage"&&<>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Mortgage Amount</label><input type="number" value={mAmt} onChange={e=>setMAmt(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Interest Rate (%)</label><input type="number" step="0.01" value={mRate} onChange={e=>setMRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Amortization (Years)</label><select value={mYrs} onChange={e=>setMYrs(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box",background:"#fff"}}>{[15,20,25,30].map(y=><option key={y} value={y}>{y} years</option>)}</select></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Mortgage Amount</label><input type="number" value={mAmt} onChange={e=>setMAmt(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Interest Rate (%)</label><input type="number" step="0.01" value={mRate} onChange={e=>setMRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="sel-0" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Amortization (Years)</label><select id="sel-0" value={mYrs} onChange={e=>setMYrs(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box",background:"#fff"}}>{[15,20,25,30].map(y=><option key={y} value={y}>{y} years</option>)}</select></div>
             </div>
             <button onClick={calcMortgage} style={{width:"100%",background:C.green,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Payment</button>
             {mResult&&<div id="mortgage-result" style={{marginTop:24,background:`${C.green}08`,borderRadius:16,padding:"28px 32px",textAlign:"center"}}>
-              <div style={{fontFamily:fs,fontSize:13,color:"#999",textTransform:"uppercase",letterSpacing:1}}>Estimated Monthly Payment</div>
-              <div style={{fontFamily:ff,fontSize:48,color:C.green,fontWeight:700,margin:"8px 0"}}>C${mResult.toLocaleString()}</div>
-              <p style={{fontFamily:fs,fontSize:13,color:"#999",margin:"8px 0 12px"}}>Based on {mRate}% rate, {mYrs}-year amortization. Current NBCU rates: 3-year closed 4.39%, 5-year high ratio 3.89%.</p>
+              <div style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>Estimated Monthly Payment</div>
+              <div style={{fontFamily:ff,fontSize:48,color:C.greenText,fontWeight:700,margin:"8px 0"}}>C${mResult.toLocaleString()}</div>
+              <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:"8px 0 12px"}}>Based on {mRate}% rate, {mYrs}-year amortization. Current NBCU rates: 3-year closed 4.39%, 5-year high ratio 3.89%.</p>
               <button onClick={()=>exportToPDF("mortgage-result","Mortgage Calculation")} style={{background:C.green,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download PDF</button>
             </div>}
           </>}
           {calc==="insurance"&&<>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Annual Household Income</label><input type="number" value={income} onChange={e=>setIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Number of Dependents</label><input type="number" value={deps} onChange={e=>setDeps(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Outstanding Mortgage</label><input type="number" value={mortgage} onChange={e=>setMortgage(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Household Income</label><input type="number" value={income} onChange={e=>setIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Number of Dependents</label><input type="number" value={deps} onChange={e=>setDeps(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Outstanding Mortgage</label><input type="number" value={mortgage} onChange={e=>setMortgage(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
             </div>
             <button onClick={calcInsurance} style={{width:"100%",background:C.accent,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Insurance Need</button>
             {insResult&&<div id="insurance-needs-result" style={{marginTop:24,background:`${C.accent}08`,borderRadius:16,padding:"28px 32px"}}>
-              <div style={{textAlign:"center",marginBottom:20}}><div style={{fontFamily:fs,fontSize:13,color:"#999",textTransform:"uppercase",letterSpacing:1}}>Recommended Life Insurance Coverage</div><div style={{fontFamily:ff,fontSize:48,color:C.accent,fontWeight:700,margin:"8px 0"}}>C${(insResult.total/1000).toFixed(0)}K</div></div>
+              <div style={{textAlign:"center",marginBottom:20}}><div style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>Recommended Life Insurance Coverage</div><div style={{fontFamily:ff,fontSize:48,color:C.accentText,fontWeight:700,margin:"8px 0"}}>C${(insResult.total/1000).toFixed(0)}K</div></div>
               <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:16}}>
-                {[{l:"Income Replacement (10x)",v:`C$${(insResult.income/1000).toFixed(0)}K`},{l:"Mortgage Payoff",v:`C$${(insResult.debt/1000).toFixed(0)}K`},{l:`Education (${deps} children)`,v:`C$${(insResult.edu/1000).toFixed(0)}K`}].map((m,i)=><div key={i} style={{textAlign:"center",background:"#fff",borderRadius:12,padding:16}}><div style={{fontFamily:ff,fontSize:22,color:C.navy,fontWeight:700}}>{m.v}</div><div style={{fontFamily:fs,fontSize:11,color:"#999",marginTop:2}}>{m.l}</div></div>)}
+                {[{l:"Income Replacement (10x)",v:`C$${(insResult.income/1000).toFixed(0)}K`},{l:"Mortgage Payoff",v:`C$${(insResult.debt/1000).toFixed(0)}K`},{l:`Education (${deps} children)`,v:`C$${(insResult.edu/1000).toFixed(0)}K`}].map((m,i)=><div key={i} style={{textAlign:"center",background:"#fff",borderRadius:12,padding:16}}><div style={{fontFamily:ff,fontSize:22,color:C.navy,fontWeight:700}}>{m.v}</div><div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",marginTop:2}}>{m.l}</div></div>)}
               </div>
               <div style={{textAlign:"center",marginTop:20}}><button onClick={()=>exportToPDF("insurance-needs-result","Insurance Needs Analysis")} style={{background:C.accent,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download PDF</button></div>
             </div>}
           </>}
           {calc==="retirement"&&<>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:20}}>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Current Age</label><input type="number" value={rAge} onChange={e=>setRAge(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Target Retirement Age</label><input type="number" value={rRetire} onChange={e=>setRRetire(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Current Annual Income</label><input type="number" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Current Retirement Savings</label><input type="number" value={rSaved} onChange={e=>setRSaved(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Monthly Contribution</label><input type="number" value={rMonthly} onChange={e=>setRMonthly(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Expected Annual Return (%)</label><input type="number" step="0.5" value={rReturn} onChange={e=>setRReturn(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Current Age</label><input type="number" value={rAge} onChange={e=>setRAge(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Target Retirement Age</label><input type="number" value={rRetire} onChange={e=>setRRetire(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Annual Income</label><input type="number" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Retirement Savings</label><input type="number" value={rSaved} onChange={e=>setRSaved(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Monthly Contribution</label><input type="number" value={rMonthly} onChange={e=>setRMonthly(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Expected Annual Return (%)</label><input type="number" step="0.5" value={rReturn} onChange={e=>setRReturn(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
             </div>
             <button onClick={calcRetirement} style={{width:"100%",background:C.purple,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Retirement Plan</button>
             {rResult&&<div id="retirement-result" style={{marginTop:24}}>
@@ -1089,14 +1097,14 @@ function CalculatorsPage(){
               <div style={{background:`${C.purple}08`,borderRadius:16,padding:"28px 32px",marginBottom:16}}>
                 <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr",gap:20}}>
                   <div style={{textAlign:"center"}}>
-                    <div style={{fontFamily:fs,fontSize:12,color:"#999",textTransform:"uppercase",letterSpacing:1}}>Projected Savings at {rRetire}</div>
+                    <div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>Projected Savings at {rRetire}</div>
                     <div style={{fontFamily:ff,fontSize:42,color:C.purple,fontWeight:700,margin:"8px 0"}}>C${(rResult.totalAtRetire/1000).toFixed(0)}K</div>
-                    <div style={{fontFamily:fs,fontSize:12,color:"#999"}}>{rResult.years} years of growth at {rReturn}% return</div>
+                    <div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>{rResult.years} years of growth at {rReturn}% return</div>
                   </div>
                   <div style={{textAlign:"center"}}>
-                    <div style={{fontFamily:fs,fontSize:12,color:"#999",textTransform:"uppercase",letterSpacing:1}}>Total Retirement Need (to age 90)</div>
+                    <div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>Total Retirement Need (to age 90)</div>
                     <div style={{fontFamily:ff,fontSize:42,color:C.navy,fontWeight:700,margin:"8px 0"}}>C${(rResult.totalNeed/1000).toFixed(0)}K</div>
-                    <div style={{fontFamily:fs,fontSize:12,color:"#999"}}>70% of income x {rResult.retYears} years</div>
+                    <div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>70% of income x {rResult.retYears} years</div>
                   </div>
                 </div>
               </div>
@@ -1111,14 +1119,14 @@ function CalculatorsPage(){
                     {l:"Monthly Target (70%)",v:`C$${rResult.monthlyTarget.toLocaleString()}`,c:C.navy},
                   ].map((m,i)=><div key={i} style={{textAlign:"center",background:`${m.c}06`,borderRadius:12,padding:"16px 12px"}}>
                     <div style={{fontFamily:ff,fontSize:22,color:m.c,fontWeight:700}}>{m.v}</div>
-                    <div style={{fontFamily:fs,fontSize:11,color:"#999",marginTop:4}}>{m.l}</div>
+                    <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",marginTop:4}}>{m.l}</div>
                   </div>)}
                 </div>
               </div>
               {/* Gap or Surplus */}
               <div style={{background:rResult.gap>0?`${C.red}08`:`${C.green}08`,borderRadius:16,padding:"24px 32px",borderLeft:`4px solid ${rResult.gap>0?C.red:C.green}`,marginBottom:16}}>
                 {rResult.gap>0?<>
-                  <h4 style={{fontFamily:fs,fontSize:15,color:C.red,margin:"0 0 8px",fontWeight:700}}>Monthly Gap: C${rResult.gap.toLocaleString()}</h4>
+                  <h4 style={{fontFamily:fs,fontSize:15,color:C.redText,margin:"0 0 8px",fontWeight:700}}>Monthly Gap: C${rResult.gap.toLocaleString()}</h4>
                   <p style={{fontFamily:fs,fontSize:14,color:"#666",margin:"0 0 12px",lineHeight:1.7}}>Based on current savings and contributions, you'll have a shortfall of C${rResult.gap.toLocaleString()}/month in retirement. Here's how to close it:</p>
                   <div style={{display:"flex",flexDirection:"column",gap:8}}>
                     {[
@@ -1130,11 +1138,11 @@ function CalculatorsPage(){
                     ].map((tip,i)=><div key={i} style={{display:"flex",gap:8,alignItems:"flex-start"}}><div style={{width:6,height:6,borderRadius:"50%",background:C.amber,flexShrink:0,marginTop:7}}/><span style={{fontFamily:fs,fontSize:13,color:"#555",lineHeight:1.6}}>{tip}</span></div>)}
                   </div>
                 </>:<>
-                  <h4 style={{fontFamily:fs,fontSize:15,color:C.green,margin:"0 0 8px",fontWeight:700}}>On Track: Monthly Surplus of C${Math.abs(rResult.gap).toLocaleString()}</h4>
+                  <h4 style={{fontFamily:fs,fontSize:15,color:C.greenText,margin:"0 0 8px",fontWeight:700}}>On Track: Monthly Surplus of C${Math.abs(rResult.gap).toLocaleString()}</h4>
                   <p style={{fontFamily:fs,fontSize:14,color:"#666",margin:0,lineHeight:1.7}}>Great news -- at your current pace, you'll have more than enough for retirement. Consider using the surplus for travel to Estonia and Latvia, maximizing your TFSA, or exploring estate planning strategies to pass wealth to the next generation tax-efficiently.</p>
                 </>}
               </div>
-              <p style={{fontFamily:fs,fontSize:11,color:"#bbb",lineHeight:1.6}}>Estimates assume {rReturn}% annual return, 2% inflation, 70% income replacement target, CPP/OAS at ~C$18,000/year combined, and living to age 90. Actual results will vary. This calculator does not account for employer pensions, rental income, or other assets. Book a Financial Check-Up with our wealth team for a comprehensive retirement plan.</p>
+              <p style={{fontFamily:fs,fontSize:11,color:"#707070",lineHeight:1.6}}>Estimates assume {rReturn}% annual return, 2% inflation, 70% income replacement target, CPP/OAS at ~C$18,000/year combined, and living to age 90. Actual results will vary. This calculator does not account for employer pensions, rental income, or other assets. Book a Financial Check-Up with our wealth team for a comprehensive retirement plan.</p>
               <div style={{textAlign:"center",marginTop:16}}><button onClick={()=>exportToPDF("retirement-result","Retirement Plan Projection")} style={{background:C.purple,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download Retirement Plan (PDF)</button></div>
             </div>}
           </>}
@@ -1160,12 +1168,12 @@ function BookingPage(){
   if(submitted)return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:600,margin:"0 auto"}}>
       <div id="booking-confirmation" style={{textAlign:"center"}}>
-        <div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.green}}>&#10003;</span></div>
+        <div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div>
         <h2 style={{fontFamily:ff,fontSize:32,color:C.navy}}>Appointment Requested</h2>
-        <p style={{fontFamily:fs,fontSize:16,color:"#777",lineHeight:1.7}}>We have received your request for the {branch} branch for {service}{date?` for ${date}`:""}{time?` at ${time}`:""}. You'll receive a confirmation email shortly. If you need to reschedule, call us at 416-465-4659.</p>
+        <p style={{fontFamily:fs,fontSize:16,color:"#666",lineHeight:1.7}}>We have received your request for the {branch} branch for {service}{date?` for ${date}`:""}{time?` at ${time}`:""}. You'll receive a confirmation email shortly. If you need to reschedule, call us at 416-465-4659.</p>
       </div>
       <div style={{display:"flex",gap:12,justifyContent:"center",marginTop:24,flexWrap:"wrap"}}>
-        <Btn onClick={()=>exportToPDF("booking-confirmation","Appointment Request")} color={C.accent}>&#128190; Download Confirmation (PDF)</Btn>
+        <Btn onClick={()=>exportToPDF("booking-confirmation","Appointment Request")} color={C.accentText}>&#128190; Download Confirmation (PDF)</Btn>
         <Btn outline onClick={()=>setSubmitted(false)}>Book Another Appointment</Btn>
       </div>
     </div></section>
@@ -1173,22 +1181,22 @@ function BookingPage(){
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:700,margin:"0 auto"}}>
-        <SH tag="Book an Appointment" tagColor={C.green} title="Meet with an advisor" desc="Schedule a meeting at any branch for personalized insurance, investment, or financial planning advice."/>
+        <SH tag="Book an Appointment" tagColor={C.greenText} title="Meet with an advisor" desc="Schedule a meeting at any branch for personalized insurance, investment, or financial planning advice."/>
         <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>
-          <div style={{marginBottom:20}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Select Branch</label><select value={branch} onChange={e=>setBranch(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">Choose a branch...</option><option>Latvian Centre Branch - North York</option><option>Tartu College Branch - Bloor St</option><option>Hamilton Branch</option><option>KESKUS Branch (Coming Soon)</option></select></div>
-          <div style={{marginBottom:20}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Service Needed</label><select value={service} onChange={e=>setService(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">What do you need help with?</option><option>Insurance Quote & Advisory</option><option>Mortgage Consultation</option><option>Investment & Wealth Review</option><option>Estate Planning</option><option>Business Insurance & Benefits</option><option>International Transfers Setup</option><option>Financial Check-Up (General)</option><option>New Member Onboarding</option></select></div>
+          <div style={{marginBottom:20}}><label htmlFor="sel-1" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Select Branch</label><select id="sel-1" value={branch} onChange={e=>setBranch(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">Choose a branch...</option><option>Latvian Centre Branch - North York</option><option>Tartu College Branch - Bloor St</option><option>Hamilton Branch</option><option>KESKUS Branch (Coming Soon)</option></select></div>
+          <div style={{marginBottom:20}}><label htmlFor="sel-2" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Service Needed</label><select id="sel-2" value={service} onChange={e=>setService(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">What do you need help with?</option><option>Insurance Quote & Advisory</option><option>Mortgage Consultation</option><option>Investment & Wealth Review</option><option>Estate Planning</option><option>Business Insurance & Benefits</option><option>International Transfers Setup</option><option>Financial Check-Up (General)</option><option>New Member Onboarding</option></select></div>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:16,marginBottom:20}}>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Preferred Date</label><input type="date" value={date} onChange={e=>setDate(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Preferred Time</label><select value={time} onChange={e=>setTime(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">Select time...</option>{["10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","1:00 PM","1:30 PM","2:00 PM","2:30 PM"].map(t=><option key={t}>{t}</option>)}</select></div>
+            <div><label htmlFor="booking-date" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Preferred Date</label><input type="date" id="booking-date" value={date} onChange={e=>setDate(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="sel-3" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Preferred Time</label><select id="sel-3" value={time} onChange={e=>setTime(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">Select time...</option>{["10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","1:00 PM","1:30 PM","2:00 PM","2:30 PM"].map(t=><option key={t}>{t}</option>)}</select></div>
           </div>
-          <div style={{marginBottom:20}}><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Name</label><input value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+          <div style={{marginBottom:20}}><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Name</label><input value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:16,marginBottom:24}}>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Phone</label><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Phone</label><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           </div>
           {error&&<div style={errBox}>{error}</div>}
           <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.green,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Request Appointment"}</button>
-          <p style={{fontFamily:fs,fontSize:12,color:"#999",textAlign:"center",margin:"10px 0 0"}}>A branch representative will confirm your appointment by phone or email.</p>
+          <p style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",textAlign:"center",margin:"10px 0 0"}}>A branch representative will confirm your appointment by phone or email.</p>
         </div>
       </div>
     </section>
@@ -1200,11 +1208,11 @@ function RatesPage(){
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
-        <SH tag="Current Rates" tagColor={C.green} title="Competitive rates for members" desc="All rates are subject to change. Contact your branch for the most current rates and special offers."/>
+        <SH tag="Current Rates" tagColor={C.greenText} title="Competitive rates for members" desc="All rates are subject to change. Contact your branch for the most current rates and special offers."/>
         {[
-          {title:"Mortgage Rates",color:C.accent,rates:[{term:"1-Year Fixed",rate:"5.54%"},{term:"2-Year Fixed",rate:"4.69%"},{term:"3-Year Fixed",rate:RATE.m3},{term:"4-Year Fixed",rate:"4.29%"},{term:"5-Year Fixed",rate:RATE.m5},{term:"5-Year High Ratio",rate:RATE.m5hr},{term:"Variable Rate",rate:RATE.mvar},{term:"HELOC",rate:RATE.heloc}]},
-          {title:"Deposit & Savings Rates",color:C.green,rates:[{term:"High-Interest Savings",rate:RATE.hisa},{term:"90-Day GIC",rate:"2.25%"},{term:"6-Month GIC",rate:"2.50%"},{term:"1-Year GIC",rate:RATE.gic1},{term:"2-Year GIC",rate:"2.60%"},{term:"3-Year GIC",rate:"2.55%"},{term:"4-Year GIC",rate:"2.50%"},{term:"5-Year GIC",rate:RATE.gic5}]},
-          {title:"Lending Rates",color:C.amber,rates:[{term:"Personal Loan",rate:"From 7.45%"},{term:"Personal Line of Credit",rate:"From Prime + 2%"},{term:"Collabria Mastercard",rate:RATE.mc},{term:"Collabria Low Rate",rate:RATE.mcLow},{term:"Commercial Mortgage",rate:"Contact us"},{term:"Commercial LOC",rate:"Contact us"},{term:"Equipment Financing",rate:"Contact us"},{term:"CEBA Loan",rate:"0% (govt program)"}]},
+          {title:"Mortgage Rates",color:C.accentText,rates:[{term:"1-Year Fixed",rate:"5.54%"},{term:"2-Year Fixed",rate:"4.69%"},{term:"3-Year Fixed",rate:RATE.m3},{term:"4-Year Fixed",rate:"4.29%"},{term:"5-Year Fixed",rate:RATE.m5},{term:"5-Year High Ratio",rate:RATE.m5hr},{term:"Variable Rate",rate:RATE.mvar},{term:"HELOC",rate:RATE.heloc}]},
+          {title:"Deposit & Savings Rates",color:C.greenText,rates:[{term:"High-Interest Savings",rate:RATE.hisa},{term:"90-Day GIC",rate:"2.25%"},{term:"6-Month GIC",rate:"2.50%"},{term:"1-Year GIC",rate:RATE.gic1},{term:"2-Year GIC",rate:"2.60%"},{term:"3-Year GIC",rate:"2.55%"},{term:"4-Year GIC",rate:"2.50%"},{term:"5-Year GIC",rate:RATE.gic5}]},
+          {title:"Lending Rates",color:C.amberText,rates:[{term:"Personal Loan",rate:"From 7.45%"},{term:"Personal Line of Credit",rate:"From Prime + 2%"},{term:"Collabria Mastercard",rate:RATE.mc},{term:"Collabria Low Rate",rate:RATE.mcLow},{term:"Commercial Mortgage",rate:"Contact us"},{term:"Commercial LOC",rate:"Contact us"},{term:"Equipment Financing",rate:"Contact us"},{term:"CEBA Loan",rate:"0% (govt program)"}]},
         ].map((section,si)=>(
           <Fade key={si} delay={si*0.1}><div style={{marginBottom:32}}>
             <h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>{section.title}</h3>
@@ -1241,27 +1249,27 @@ function ReferralsPage(){
   return(
     <section style={{background:C.birchLight,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
-        <SH tag="Member Referral Program" tagColor={C.amber} title="Friends don't let friends go to big banks" desc="Refer a friend to Northern Birch and you both earn $50. There's no limit to the number of friends you can refer."/>
+        <SH tag="Member Referral Program" tagColor={C.amberText} title="Friends don't let friends go to big banks" desc="Refer a friend to Northern Birch and you both earn $50. There's no limit to the number of friends you can refer."/>
         <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr 1fr",gap:16,marginBottom:32}}>
           {[{step:"1",title:"Refer a Friend",desc:"Share your unique referral link or tell a friend to mention your name when they join."},{step:"2",title:"They Join",desc:"Your friend opens an account and completes their first qualifying transaction."},{step:"3",title:"You Both Earn $50",desc:"$50 is deposited into both your account and your friend's account. Win-win!"}].map((s,i)=>
             <Fade key={i} delay={i*0.1}><div style={{background:"#fff",borderRadius:20,padding:28,border:"1px solid #eee",textAlign:"center"}}>
               <div style={{width:40,height:40,borderRadius:"50%",background:C.amber,margin:"0 auto 12px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontFamily:fs,fontSize:16,color:"#fff",fontWeight:800}}>{s.step}</span></div>
               <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{s.title}</h4>
-              <p style={{fontFamily:fs,fontSize:13,color:"#888",margin:0,lineHeight:1.6}}>{s.desc}</p>
+              <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.6}}>{s.desc}</p>
             </div></Fade>
           )}
         </div>
         {!submitted?<div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>
           <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 20px"}}>Refer Someone Now</h3>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:16,marginBottom:16}}>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Name</label><input value={yourName} onChange={e=>setYourName(e.target.value)} placeholder="Your full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Your Member Number</label><input value={memberNo} onChange={e=>setMemberNo(e.target.value)} placeholder="Member #" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Friend's Name</label><input value={friendName} onChange={e=>setFriendName(e.target.value)} placeholder="Their full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Friend's Email</label><input value={friendEmail} onChange={e=>setFriendEmail(e.target.value)} placeholder="their@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="ref-your-name" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Name</label><input id="ref-your-name" value={yourName} onChange={e=>setYourName(e.target.value)} placeholder="Your full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="ref-member-no" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Member Number</label><input id="ref-member-no" value={memberNo} onChange={e=>setMemberNo(e.target.value)} placeholder="Member #" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="ref-friend-name" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Friend's Name</label><input id="ref-friend-name" value={friendName} onChange={e=>setFriendName(e.target.value)} placeholder="Their full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="ref-friend-email" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Friend's Email</label><input id="ref-friend-email" value={friendEmail} onChange={e=>setFriendEmail(e.target.value)} placeholder="their@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           </div>
           {error&&<div style={errBox}>{error}</div>}
           <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.amber,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Send Referral"}</button>
-        </div>:<div style={{textAlign:"center",padding:40}}><div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.green}}>&#10003;</span></div><h3 style={{fontFamily:ff,fontSize:28,color:C.navy}}>Referral Sent!</h3><p style={{fontFamily:fs,fontSize:15,color:"#777"}}>Your friend will receive an invitation email. Once they join and complete a qualifying transaction, you'll both earn $50.</p><Btn onClick={()=>setSubmitted(false)}>Refer Another Friend</Btn></div>}
+        </div>:<div style={{textAlign:"center",padding:40}}><div style={{width:80,height:80,borderRadius:"50%",background:`${C.green}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div><h3 style={{fontFamily:ff,fontSize:28,color:C.navy}}>Referral Sent!</h3><p style={{fontFamily:fs,fontSize:15,color:"#666"}}>Your friend will receive an invitation email. Once they join and complete a qualifying transaction, you'll both earn $50.</p><Btn onClick={()=>setSubmitted(false)}>Refer Another Friend</Btn></div>}
       </div>
     </section>
   );
@@ -1270,29 +1278,29 @@ function ReferralsPage(){
 // ============ BLOG PAGE ============
 function BlogPage({setPage}){
   const posts=[
-    {title:"Introducing Northern Birch Insurance Shield",date:"March 2026",cat:"Announcement",excerpt:"We're excited to announce comprehensive insurance services for all Northern Birch members. Life, home, auto, travel, and business insurance -- all with exclusive member rates through The Personal, CUMIS, and Manulife.",color:C.accent},
-    {title:"Why Every Homeowner Needs Mortgage Protection",date:"March 2026",cat:"Insurance Education",excerpt:"Your home is likely your family's biggest asset. Mortgage protection insurance ensures your family keeps their home if the unexpected happens. Here's what you need to know about creditor insurance.",color:C.green},
-    {title:"Travelling to Estonia or Latvia This Summer?",date:"March 2026",cat:"Travel",excerpt:"Annual multi-trip travel insurance now available for Northern Birch members. Emergency medical up to $5M, pre-existing condition coverage for seniors, and 24/7 assistance in Estonian and Latvian.",color:C.amber},
+    {title:"Introducing Northern Birch Insurance Shield",date:"March 2026",cat:"Announcement",excerpt:"We're excited to announce comprehensive insurance services for all Northern Birch members. Life, home, auto, travel, and business insurance -- all with exclusive member rates through The Personal, CUMIS, and Manulife.",color:C.accentText},
+    {title:"Why Every Homeowner Needs Mortgage Protection",date:"March 2026",cat:"Insurance Education",excerpt:"Your home is likely your family's biggest asset. Mortgage protection insurance ensures your family keeps their home if the unexpected happens. Here's what you need to know about creditor insurance.",color:C.greenText},
+    {title:"Travelling to Estonia or Latvia This Summer?",date:"March 2026",cat:"Travel",excerpt:"Annual multi-trip travel insurance now available for Northern Birch members. Emergency medical up to $5M, pre-existing condition coverage for seniors, and 24/7 assistance in Estonian and Latvian.",color:C.amberText},
     {title:"Co-op Apartment Insurance: What You Need to Know",date:"March 2026",cat:"Insurance Education",excerpt:"Living in a co-op? Standard condo insurance won't adequately cover you. Northern Birch is one of the few institutions offering specialized co-op insurance in Ontario. Here's why it matters.",color:C.purple},
-    {title:"5 Insurance Mistakes Young Professionals Make",date:"February 2026",cat:"Financial Literacy",excerpt:"From skipping tenant insurance to underestimating disability risk, young professionals often overlook critical coverage. Here are the five most common mistakes and how to avoid them.",color:C.red},
+    {title:"5 Insurance Mistakes Young Professionals Make",date:"February 2026",cat:"Financial Literacy",excerpt:"From skipping tenant insurance to underestimating disability risk, young professionals often overlook critical coverage. Here are the five most common mistakes and how to avoid them.",color:C.redText},
     {title:"KESKUS Branch: What to Expect",date:"February 2026",cat:"Community",excerpt:"Our new flagship branch at the KESKUS International Estonian Centre is under construction. Here's a preview of the services, technology, and community features you'll find when we open.",color:C.birch},
-    {title:"Group Benefits: A Small Business Owner's Guide",date:"February 2026",cat:"Business",excerpt:"Offering employee benefits doesn't have to be complicated or expensive. Northern Birch now offers group health and dental plans for businesses with as few as 2 employees through Manulife.",color:C.green},
+    {title:"Group Benefits: A Small Business Owner's Guide",date:"February 2026",cat:"Business",excerpt:"Offering employee benefits doesn't have to be complicated or expensive. Northern Birch now offers group health and dental plans for businesses with as few as 2 employees through Manulife.",color:C.greenText},
     {title:"Estate Planning at Every Life Stage",date:"January 2026",cat:"Planning",excerpt:"Estate planning isn't just for retirees. From your first will to your final legacy plan, here's what you need at each life stage -- and how insurance plays a critical role.",color:C.navy},
   ];
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:1100,margin:"0 auto"}}>
-        <SH tag="Blog & News" tagColor={C.accent} title="Financial insights for our community" desc="Expert advice, product updates, and community news from Northern Birch Credit Union."/>
+        <SH tag="Blog & News" tagColor={C.accentText} title="Financial insights for our community" desc="Expert advice, product updates, and community news from Northern Birch Credit Union."/>
         <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:20}}>
           {posts.map((p,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:20,overflow:"hidden",border:"1px solid #eee",cursor:"pointer"}}>
             <div style={{height:6,background:p.color}}/>
             <div style={{padding:"28px 28px 24px"}}>
               <div style={{display:"flex",gap:8,marginBottom:12}}>
                 <span style={{fontFamily:fs,fontSize:11,color:p.color,fontWeight:700,background:`${p.color}10`,padding:"3px 10px",borderRadius:6}}>{p.cat}</span>
-                <span style={{fontFamily:fs,fontSize:11,color:"#bbb"}}>{p.date}</span>
+                <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>{p.date}</span>
               </div>
               <h3 style={{fontFamily:ff,fontSize:20,color:C.navy,margin:"0 0 8px",lineHeight:1.3}}>{p.title}</h3>
-              <p style={{fontFamily:fs,fontSize:14,color:"#888",margin:0,lineHeight:1.7}}>{p.excerpt}</p>
+              <p style={{fontFamily:fs,fontSize:14,color:"#666",margin:0,lineHeight:1.7}}>{p.excerpt}</p>
             </div>
           </div></Fade>)}
         </div>
@@ -1335,7 +1343,7 @@ function GlossaryPage(){
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
           {filtered.map((t,i)=><div key={i} style={{background:"#fff",borderRadius:14,padding:"20px 24px",border:"1px solid #eee"}}>
             <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{t.term}</h4>
-            <p style={{fontFamily:fs,fontSize:14,color:"#777",margin:0,lineHeight:1.7}}>{t.def}</p>
+            <p style={{fontFamily:fs,fontSize:14,color:"#666",margin:0,lineHeight:1.7}}>{t.def}</p>
           </div>)}
         </div>
       </div>
@@ -1348,7 +1356,7 @@ function MobileAppPage(){
   return(
     <section style={{background:C.dark,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
-        <SH dark tag="Mobile Banking" tagColor={C.accent} title="Northern Birch in your pocket" desc="Download the Northern Birch mobile app for full-service banking, insurance management, international transfers, and more -- 24/7 from anywhere."/>
+        <SH dark tag="Mobile Banking" tagColor={C.accentText} title="Northern Birch in your pocket" desc="Download the Northern Birch mobile app for full-service banking, insurance management, international transfers, and more -- 24/7 from anywhere."/>
         <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:32}}>
           <div>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
@@ -1364,8 +1372,8 @@ function MobileAppPage(){
                 {title:"Real-Time Notifications",desc:"Get alerts for transactions, payments, transfers, and insurance renewals."},
                 {title:"Apple Pay & Google Pay",desc:"Add your Northern Birch debit and credit cards to your mobile wallet."},
               ].map((f,i)=><div key={i} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:14,padding:"16px 20px",display:"flex",gap:14,alignItems:"flex-start"}}>
-                <div style={{width:28,height:28,borderRadius:8,background:`${C.accent}20`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}><span style={{fontFamily:fs,fontSize:11,color:C.accent,fontWeight:800}}>{String(i+1).padStart(2,"0")}</span></div>
-                <div><h4 style={{fontFamily:fs,fontSize:14,color:"#fff",margin:"0 0 4px",fontWeight:700}}>{f.title}</h4><p style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.4)",margin:0,lineHeight:1.6}}>{f.desc}</p></div>
+                <div style={{width:28,height:28,borderRadius:8,background:`${C.accent}20`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}><span style={{fontFamily:fs,fontSize:11,color:C.accentText,fontWeight:800}}>{String(i+1).padStart(2,"0")}</span></div>
+                <div><h4 style={{fontFamily:fs,fontSize:14,color:"#fff",margin:"0 0 4px",fontWeight:700}}>{f.title}</h4><p style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.6}}>{f.desc}</p></div>
               </div>)}
             </div>
           </div>
@@ -1373,14 +1381,14 @@ function MobileAppPage(){
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:32,padding:"48px 40px",textAlign:"center",border:"1px solid rgba(255,255,255,0.06)"}}>
               <div style={{width:80,height:80,borderRadius:20,background:`linear-gradient(135deg,${C.birch},${C.accent})`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:28,fontWeight:800,color:"#fff"}}>NB</span></div>
               <h3 style={{fontFamily:ff,fontSize:24,color:"#fff",margin:"0 0 8px"}}>Northern Birch App</h3>
-              <p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.5)",margin:"0 0 24px",lineHeight:1.6}}>Available for iOS and Android. Free to download with your Northern Birch membership.</p>
+              <p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",margin:"0 0 24px",lineHeight:1.6}}>Available for iOS and Android. Free to download with your Northern Birch membership.</p>
               <div style={{display:"flex",gap:12,justifyContent:"center"}}>
                 <div style={{background:"rgba(255,255,255,0.08)",borderRadius:12,padding:"12px 20px",cursor:"pointer"}}><span style={{fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>App Store</span></div>
                 <div style={{background:"rgba(255,255,255,0.08)",borderRadius:12,padding:"12px 20px",cursor:"pointer"}}><span style={{fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Google Play</span></div>
               </div>
             </div>
             <div style={{background:"rgba(255,255,255,0.03)",borderRadius:16,padding:"20px 24px",textAlign:"center",border:"1px solid rgba(255,255,255,0.06)"}}>
-              <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.4)",margin:0}}>Need help? 24/7 online banking support: <span style={{color:C.accent,fontWeight:600}}>1-866-992-2490</span></p>
+              <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:0}}>Need help? 24/7 online banking support: <span style={{color:C.accentText,fontWeight:600}}>1-866-992-2490</span></p>
             </div>
           </div>
         </div>
@@ -1392,19 +1400,19 @@ function MobileAppPage(){
 // ============ REUSE EXISTING PAGES (condensed) ============
 function InsurancePage({setPage}){
   const cats=[
-    {name:"Life & Health",color:C.accent,products:[
+    {name:"Life & Health",color:C.accentText,products:[
       {t:"Term Life Insurance",d:"Flexible 10/20/30-year coverage from $100K to $2M. Competitive credit union rates through CUMIS.",f:["Guaranteed level premiums","Convertible to permanent","Spousal and child riders","No exam up to $500K"]},
       {t:"Critical Illness",d:"Tax-free lump sum for 25+ conditions. Use however you choose.",f:["25+ covered conditions","Return of premium option","Partial early-stage payout","Coverage up to $500K"]},
       {t:"Disability Insurance",d:"Replace up to 70% of income. Short and long-term options.",f:["Own-occupation available","Choice of waiting periods","Cost-of-living rider","Covers illness and injury"]},
       {t:"Mortgage Protection",d:"Life and disability tied to your mortgage balance. Easy application.",f:["Apply at mortgage signing","No medical exam","Life, disability, CI options","Joint borrower coverage"]},
     ]},
-    {name:"Home & Auto",color:C.green,products:[
+    {name:"Home & Auto",color:C.greenText,products:[
       {t:"Home Insurance",d:"Exclusive group rates through The Personal. 98% renewal rate.",f:["Exclusive member rates","Replacement cost","Liability up to $2M","Bundle discounts up to 20%"]},
       {t:"Co-op Insurance",d:"Specialized co-op coverage only Northern Birch can provide.",f:["Unit improvement coverage","Loss assessment protection","Co-op bylaw specific","Expert underwriting"]},
       {t:"Auto Insurance",d:"Full Ontario coverage with Ajusto telematics discounts.",f:["Ajusto safe-driving savings","Multi-vehicle discounts","Accident forgiveness","24/7 claims"]},
       {t:"Tenant Insurance",d:"From $25/month. Quote in 2 minutes on the app.",f:["Personal property coverage","Liability up to $2M","Additional living expenses","Quick mobile quoting"]},
     ]},
-    {name:"Travel & Specialty",color:C.amber,products:[
+    {name:"Travel & Specialty",color:C.amberText,products:[
       {t:"Annual Multi-Trip Travel",d:"Emergency medical up to $5M. Perfect for Baltic travellers.",f:["Up to $5M medical","24/7 multilingual assistance","Pre-existing condition options","Group cultural event rates"]},
       {t:"Single-Trip Travel",d:"Flexible coverage for individual trips up to 365 days.",f:["Customizable coverage","Medical evacuation","Cancel for any reason upgrade","Last-minute purchase OK"]},
       {t:"Pet Insurance",d:"Bronze, Silver, Gold plans. 80% reimbursement.",f:["Three plan tiers","No breed restrictions","One annual deductible","Direct vet payment"]},
@@ -1414,7 +1422,7 @@ function InsurancePage({setPage}){
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:1320,margin:"0 auto"}}>
-        <SH tag="Insurance Protection" tagColor={C.accent} title="Protection for every stage of your life" desc="Exclusive member rates through The Personal, CUMIS, and Co-operators. Click any product to learn more."/>
+        <SH tag="Insurance Protection" tagColor={C.accentText} title="Protection for every stage of your life" desc="Exclusive member rates through The Personal, CUMIS, and Co-operators. Click any product to learn more."/>
         {cats.map((cat,ci)=><Fade key={ci} delay={ci*0.08}><div style={{marginBottom:40}}>
           <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16}}>
             <div style={{width:40,height:40,borderRadius:12,background:`${cat.color}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:cat.color,fontSize:18,fontWeight:800}}>{ci+1}</span></div>
@@ -1422,21 +1430,21 @@ function InsurancePage({setPage}){
           </div>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:16}}>
             {cat.products.map((p,pi)=>{const[open,setOpen]=useState(false);return(
-              <div key={pi} onClick={()=>setOpen(!open)} style={{background:"#fff",borderRadius:20,padding:"28px 32px",border:open?`2px solid ${cat.color}25`:"1px solid #eee",cursor:"pointer",transition:"all 0.3s"}}>
+              <Clickable key={pi} onClick={()=>setOpen(!open)} style={{background:"#fff",borderRadius:20,padding:"28px 32px",border:open?`2px solid ${cat.color}25`:"1px solid #eee",cursor:"pointer",transition:"all 0.3s"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-                  <div><h4 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{p.t}</h4><p style={{fontFamily:fs,fontSize:14,color:"#999",margin:0,lineHeight:1.6}}>{p.d}</p></div>
-                  <span style={{color:open?cat.color:"#ccc",fontSize:18,fontWeight:600,transform:open?"rotate(45deg)":"none",transition:"transform 0.3s",marginLeft:12}}>+</span>
+                  <div><h4 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{p.t}</h4><p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",margin:0,lineHeight:1.6}}>{p.d}</p></div>
+                  <span style={{color:open?cat.color:"#707070",fontSize:18,fontWeight:600,transform:open?"rotate(45deg)":"none",transition:"transform 0.3s",marginLeft:12}}>+</span>
                 </div>
                 {open&&<div style={{marginTop:16,paddingTop:16,borderTop:"1px solid #f0f0f0",display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8}}>
                   {p.f.map((feat,fi)=><div key={fi} style={{display:"flex",gap:8,alignItems:"center"}}><div style={{width:16,height:16,borderRadius:4,background:`${cat.color}12`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:9,color:cat.color,fontWeight:700}}>{"\u2713"}</span></div><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{feat}</span></div>)}
                   <div style={{gridColumn:"1/-1",marginTop:8,display:"flex",gap:8}}><Btn small color={cat.color} onClick={e=>{e.stopPropagation();setPage("quote")}}>Get a Quote</Btn><Btn small outline color={cat.color} onClick={e=>{e.stopPropagation();setPage("compare")}}>Compare Plans</Btn></div>
                 </div>}
-              </div>
+              </Clickable>
             )})}
           </div>
         </div></Fade>)}
         <Fade><div style={{background:`linear-gradient(135deg,${C.navy},#2a4a6a)`,borderRadius:24,padding:typeof window!=="undefined"&&window.innerWidth<=768?"28px 24px":"44px 52px",display:"flex",flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row",justifyContent:"space-between",alignItems:"center",gap:typeof window!=="undefined"&&window.innerWidth<=768?24:40}}>
-          <div style={{flex:1}}><div style={{fontFamily:fs,fontSize:11,color:C.birch,letterSpacing:2,textTransform:"uppercase",fontWeight:600,marginBottom:8}}>Powered by The Personal (Desjardins) + CUMIS (Co-operators) + Manulife</div><h3 style={{fontFamily:ff,fontSize:24,color:"#fff",margin:"0 0 8px"}}>Exclusive rates for Northern Birch members</h3><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.5)",margin:0,lineHeight:1.7}}>650+ organization partnerships. 380+ credit union partnerships. 98% policy renewal rate. Best-in-class partners for every insurance line.</p></div>
+          <div style={{flex:1}}><div style={{fontFamily:fs,fontSize:11,color:C.birch,letterSpacing:2,textTransform:"uppercase",fontWeight:600,marginBottom:8}}>Powered by The Personal (Desjardins) + CUMIS (Co-operators) + Manulife</div><h3 style={{fontFamily:ff,fontSize:24,color:"#fff",margin:"0 0 8px"}}>Exclusive rates for Northern Birch members</h3><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.7}}>650+ organization partnerships. 380+ credit union partnerships. 98% policy renewal rate. Best-in-class partners for every insurance line.</p></div>
           <Btn onClick={()=>setPage("quote")}>Get Your Quote</Btn>
         </div></Fade>
         <div style={{marginTop:48}}><h3 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 24px"}}>Insurance FAQ</h3>
@@ -1448,13 +1456,13 @@ function InsurancePage({setPage}){
 }
 
 // ============ SIMPLIFIED OTHER PAGES (keep routing) ============
-function TravelPage(){return <section style={{background:C.navy,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Connected to Your Heritage" tagColor={C.birch} title="Travel, transfers & foreign exchange" desc="Baltic travel insurance, international money transfers, and competitive FX -- built for our community."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr 1fr",gap:16}}>{[{t:"Travel Insurance",d:"Annual multi-trip coverage. Emergency medical up to $5M. 24/7 assistance in Estonian & Latvian. Pre-existing condition coverage for seniors.",c:C.amber},{t:"International Transfers",d:"Send money to Estonia & Latvia from the app. Competitive EUR rates, real-time tracking, recurring transfers, transparent fees.",c:C.accent},{t:"Foreign Exchange",d:"Competitive EUR/CAD rates. Cash and draft services. Transparent pricing with no hidden markups. In-branch assistance available.",c:C.green}].map((s,i)=><Fade key={i} delay={i*0.1}><div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:24,padding:36,height:"100%"}}><div style={{width:40,height:40,borderRadius:12,background:`${s.c}20`,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:16}}><span style={{color:s.c,fontSize:16,fontWeight:800}}>{i+1}</span></div><h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:"0 0 10px"}}>{s.t}</h3><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.45)",lineHeight:1.75,margin:0}}>{s.d}</p></div></Fade>)}</div></div></section>}
-function BusinessPage(){return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Business Solutions" tagColor={C.green} title="Everything your business needs" desc="Group benefits, commercial insurance, key person coverage, payroll, and succession planning."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>{[{t:"Group Health & Dental",d:"Plans for 2-50 employees via Manulife. Health, dental, vision, disability.",c:C.green},{t:"Commercial Insurance",d:"Property, liability, and business interruption via Co-operators.",c:C.accent},{t:"Key Person Insurance",d:"Protect your business if a critical person can't work.",c:C.amber},{t:"Succession Planning",d:"Funded buy-sell agreements and ownership transitions.",c:C.purple},{t:"Payroll & HR",d:"Integrated payroll connected to your NBCU business account.",c:C.navy},{t:"Commercial Lending",d:"Mortgages, loans, lines of credit with personalized underwriting.",c:C.red}].map((s,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:20,padding:28,border:"1px solid #eee",borderTop:`3px solid ${s.c}`}}><h3 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{s.t}</h3><p style={{fontFamily:fs,fontSize:13,color:"#888",margin:0,lineHeight:1.7}}>{s.d}</p></div></Fade>)}</div></div></section>}
-function DigitalPage(){return <section style={{background:C.dark,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Digital Banking" tagColor={C.accent} title="Heritage values. Digital convenience." desc="Insurance dashboard, smart quotes, financial planning, mobile banking, and more."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(4,1fr)",gap:16}}>{["Insurance Dashboard","Smart Quote Engine","Financial Planning","Life Event Intelligence","International Transfers","Mobile Banking","Estate Planning Portal","Business Hub"].map((f,i)=><Fade key={i} delay={i*0.04}><div style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:20,padding:24,borderTop:`2px solid ${[C.accent,C.green,C.amber,C.purple][i%4]}30`}}><span style={{fontFamily:fs,fontSize:11,color:[C.accent,C.green,C.amber,C.purple][i%4],fontWeight:700,opacity:0.7}}>{String(i+1).padStart(2,"0")}</span><h3 style={{fontFamily:fs,fontSize:15,color:"#fff",margin:"8px 0",fontWeight:700}}>{f}</h3></div></Fade>)}</div></div></section>}
-function EstatePage(){const[s,setS]=useState(0);const stages=["Young Family","Mid-Career","Pre-Retirement","Senior"];return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1000,margin:"0 auto"}}><SH tag="Estate Planning" tagColor={C.purple} title="Protect your family across generations"/><div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>{stages.map((st,i)=><button key={i} onClick={()=>setS(i)} style={{flex:1,background:s===i?C.purple:"#fff",border:s===i?"none":"1px solid #ddd",borderRadius:12,padding:14,cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:s===i?"#fff":C.navy}}>{st}</button>)}</div><div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}><h3 style={{fontFamily:ff,fontSize:24,color:C.navy}}>Planning for: {stages[s]}</h3><p style={{fontFamily:fs,fontSize:15,color:"#777",lineHeight:1.8}}>Northern Birch advisors combine insurance, investments, and professional referrals to build comprehensive estate plans. Contact Heili Orav, Manager of Wealth & Estate Services, to get started.</p></div></div></section>}
-function CommunityPage(){return <section style={{background:C.birchLight,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Our Community" tagColor={C.amber} title="70 years of trust"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:24}}><Fade><div style={{background:"#fff",borderRadius:24,padding:40}}><h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>Our Heritage</h3><p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.8}}>Founded through the merger of the Estonian and Latvian Credit Unions in 2020, Northern Birch carries forward 70+ years of serving our community. We invest $50,000+ annually in scholarships, cultural sponsorships, and heritage programs.</p></div></Fade><Fade delay={0.1}><div style={{background:"#fff",borderRadius:24,padding:40}}><h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>KESKUS Flagship</h3><p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.8}}>Our new branch at the KESKUS International Estonian Centre in downtown Toronto -- full-service banking and insurance advisory, digital kiosks, community event space, and multilingual staff.</p></div></Fade></div></div></section>}
-function PersonalPage(){return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Personal Banking" tagColor={C.green} title="Banking designed around you"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>{[{t:"Daily Banking",c:C.green,items:["No-fee chequing","High-interest savings","Trust accounts","Student banking","e-Transfer","Debit card","Mobile app","Online banking"]},{t:"Borrowing",c:C.accent,items:["Fixed/variable mortgages","Co-op mortgages","HELOCs","Personal loans","Credit lines","Mastercard credit cards","Student loans","Pre-approval"]},{t:"Investing",c:C.amber,items:["GICs & term deposits","TFSA","RRSP","FHSA","RESP","RDSP","Mutual funds","Qtrade trading","VirtualWealth"]}].map((cat,i)=><Fade key={i} delay={i*0.08}><div style={{background:"#fff",borderRadius:20,overflow:"hidden",border:"1px solid #eee"}}><div style={{background:cat.c,padding:"20px 28px"}}><h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:0}}>{cat.t}</h3></div><div style={{padding:"12px 28px"}}>{cat.items.map((item,ii)=><div key={ii} style={{padding:"8px 0",borderBottom:ii<cat.items.length-1?"1px solid #f5f5f5":"none",display:"flex",gap:8,alignItems:"center"}}><div style={{width:5,height:5,borderRadius:"50%",background:cat.c}}/><span style={{fontFamily:fs,fontSize:14,color:"#555"}}>{item}</span></div>)}</div></div></Fade>)}</div></div></section>}
-function ContactPage(){return <section style={{background:C.navy,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Contact Us" tagColor={C.birch} title="We're here for you"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:24}}>{[{n:"Latvian Centre (HQ)",a:"4 Credit Union Dr, North York",h:"M-W 10-3, Th 10-7, F 10-3, Sa 9-1",p:"416-465-4659"},{n:"Tartu College",a:"310 Bloor St W, Toronto",h:"M-F 10-3 (Cashless)",p:"416-922-2551"},{n:"Hamilton",a:"16 Queen St N",h:"Tu-F 10-3, Th 10-7",p:"905-527-4344"},{n:"KESKUS",a:"Madison Ave, Toronto",h:"Coming Soon",p:"TBD"}].map((b,i)=><Fade key={i} delay={i*0.08}><div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:28}}><h3 style={{fontFamily:fs,fontSize:18,color:"#fff",margin:"0 0 4px",fontWeight:700}}>{b.n}</h3><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.4)",margin:"0 0 2px"}}>{b.a}</p><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.4)",margin:"0 0 8px"}}>{b.h}</p><p style={{fontFamily:fs,fontSize:15,color:C.accent,fontWeight:600,margin:0}}>{b.p}</p></div></Fade>)}</div><Fade delay={0.3}><div style={{marginTop:24,background:"rgba(255,255,255,0.03)",borderRadius:20,padding:"24px 32px"}}><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.4)",margin:0}}>Toll-Free: 1-866-844-3828 | 24/7 Support: 1-866-992-2490 | Financial Check-Up: FinancialCheckup@northernbirchcu.com</p></div></Fade></div></section>}
+function TravelPage(){return <section style={{background:C.navy,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Connected to Your Heritage" tagColor={C.birch} title="Travel, transfers & foreign exchange" desc="Baltic travel insurance, international money transfers, and competitive FX -- built for our community."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr 1fr",gap:16}}>{[{t:"Travel Insurance",d:"Annual multi-trip coverage. Emergency medical up to $5M. 24/7 assistance in Estonian & Latvian. Pre-existing condition coverage for seniors.",c:C.amber},{t:"International Transfers",d:"Send money to Estonia & Latvia from the app. Competitive EUR rates, real-time tracking, recurring transfers, transparent fees.",c:C.accent},{t:"Foreign Exchange",d:"Competitive EUR/CAD rates. Cash and draft services. Transparent pricing with no hidden markups. In-branch assistance available.",c:C.green}].map((s,i)=><Fade key={i} delay={i*0.1}><div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:24,padding:36,height:"100%"}}><div style={{width:40,height:40,borderRadius:12,background:`${s.c}20`,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:16}}><span style={{color:s.c,fontSize:16,fontWeight:800}}>{i+1}</span></div><h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:"0 0 10px"}}>{s.t}</h3><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.75,margin:0}}>{s.d}</p></div></Fade>)}</div></div></section>}
+function BusinessPage(){return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Business Solutions" tagColor={C.greenText} title="Everything your business needs" desc="Group benefits, commercial insurance, key person coverage, payroll, and succession planning."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>{[{t:"Group Health & Dental",d:"Plans for 2-50 employees via Manulife. Health, dental, vision, disability.",c:C.green},{t:"Commercial Insurance",d:"Property, liability, and business interruption via Co-operators.",c:C.accent},{t:"Key Person Insurance",d:"Protect your business if a critical person can't work.",c:C.amber},{t:"Succession Planning",d:"Funded buy-sell agreements and ownership transitions.",c:C.purple},{t:"Payroll & HR",d:"Integrated payroll connected to your NBCU business account.",c:C.navy},{t:"Commercial Lending",d:"Mortgages, loans, lines of credit with personalized underwriting.",c:C.red}].map((s,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:20,padding:28,border:"1px solid #eee",borderTop:`3px solid ${s.c}`}}><h3 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{s.t}</h3><p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.7}}>{s.d}</p></div></Fade>)}</div></div></section>}
+function DigitalPage(){return <section style={{background:C.dark,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Digital Banking" tagColor={C.accentText} title="Heritage values. Digital convenience." desc="Insurance dashboard, smart quotes, financial planning, mobile banking, and more."/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(4,1fr)",gap:16}}>{["Insurance Dashboard","Smart Quote Engine","Financial Planning","Life Event Intelligence","International Transfers","Mobile Banking","Estate Planning Portal","Business Hub"].map((f,i)=><Fade key={i} delay={i*0.04}><div style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:20,padding:24,borderTop:`2px solid ${[C.accent,C.green,C.amber,C.purple][i%4]}30`}}><span style={{fontFamily:fs,fontSize:11,color:[C.accent,C.green,C.amber,C.purple][i%4],fontWeight:700,opacity:0.7}}>{String(i+1).padStart(2,"0")}</span><h3 style={{fontFamily:fs,fontSize:15,color:"#fff",margin:"8px 0",fontWeight:700}}>{f}</h3></div></Fade>)}</div></div></section>}
+function EstatePage(){const[s,setS]=useState(0);const stages=["Young Family","Mid-Career","Pre-Retirement","Senior"];return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1000,margin:"0 auto"}}><SH tag="Estate Planning" tagColor={C.purple} title="Protect your family across generations"/><div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>{stages.map((st,i)=><button key={i} onClick={()=>setS(i)} style={{flex:1,background:s===i?C.purple:"#fff",border:s===i?"none":"1px solid #ddd",borderRadius:12,padding:14,cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:s===i?"#fff":C.navy}}>{st}</button>)}</div><div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}><h3 style={{fontFamily:ff,fontSize:24,color:C.navy}}>Planning for: {stages[s]}</h3><p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.8}}>Northern Birch advisors combine insurance, investments, and professional referrals to build comprehensive estate plans. Contact Heili Orav, Manager of Wealth & Estate Services, to get started.</p></div></div></section>}
+function CommunityPage(){return <section style={{background:C.birchLight,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Our Community" tagColor={C.amberText} title="70 years of trust"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:24}}><Fade><div style={{background:"#fff",borderRadius:24,padding:40}}><h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>Our Heritage</h3><p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.8}}>Founded through the merger of the Estonian and Latvian Credit Unions in 2020, Northern Birch carries forward 70+ years of serving our community. We invest $50,000+ annually in scholarships, cultural sponsorships, and heritage programs.</p></div></Fade><Fade delay={0.1}><div style={{background:"#fff",borderRadius:24,padding:40}}><h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>KESKUS Flagship</h3><p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.8}}>Our new branch at the KESKUS International Estonian Centre in downtown Toronto -- full-service banking and insurance advisory, digital kiosks, community event space, and multilingual staff.</p></div></Fade></div></div></section>}
+function PersonalPage(){return <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH tag="Personal Banking" tagColor={C.greenText} title="Banking designed around you"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>{[{t:"Daily Banking",c:C.green,items:["No-fee chequing","High-interest savings","Trust accounts","Student banking","e-Transfer","Debit card","Mobile app","Online banking"]},{t:"Borrowing",c:C.accent,items:["Fixed/variable mortgages","Co-op mortgages","HELOCs","Personal loans","Credit lines","Mastercard credit cards","Student loans","Pre-approval"]},{t:"Investing",c:C.amber,items:["GICs & term deposits","TFSA","RRSP","FHSA","RESP","RDSP","Mutual funds","Qtrade trading","VirtualWealth"]}].map((cat,i)=><Fade key={i} delay={i*0.08}><div style={{background:"#fff",borderRadius:20,overflow:"hidden",border:"1px solid #eee"}}><div style={{background:cat.c,padding:"20px 28px"}}><h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:0}}>{cat.t}</h3></div><div style={{padding:"12px 28px"}}>{cat.items.map((item,ii)=><div key={ii} style={{padding:"8px 0",borderBottom:ii<cat.items.length-1?"1px solid #f5f5f5":"none",display:"flex",gap:8,alignItems:"center"}}><div style={{width:5,height:5,borderRadius:"50%",background:cat.c}}/><span style={{fontFamily:fs,fontSize:14,color:"#555"}}>{item}</span></div>)}</div></div></Fade>)}</div></div></section>}
+function ContactPage(){return <section style={{background:C.navy,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}><div style={{maxWidth:1320,margin:"0 auto"}}><SH dark tag="Contact Us" tagColor={C.birch} title="We're here for you"/><div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:24}}>{[{n:"Latvian Centre (HQ)",a:"4 Credit Union Dr, North York",h:"M-W 10-3, Th 10-7, F 10-3, Sa 9-1",p:"416-465-4659"},{n:"Tartu College",a:"310 Bloor St W, Toronto",h:"M-F 10-3 (Cashless)",p:"416-922-2551"},{n:"Hamilton",a:"16 Queen St N",h:"Tu-F 10-3, Th 10-7",p:"905-527-4344"},{n:"KESKUS",a:"Madison Ave, Toronto",h:"Coming Soon",p:"TBD"}].map((b,i)=><Fade key={i} delay={i*0.08}><div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:28}}><h3 style={{fontFamily:fs,fontSize:18,color:"#fff",margin:"0 0 4px",fontWeight:700}}>{b.n}</h3><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:"0 0 2px"}}>{b.a}</p><p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:"0 0 8px"}}>{b.h}</p><p style={{fontFamily:fs,fontSize:15,color:C.accentText,fontWeight:600,margin:0}}>{b.p}</p></div></Fade>)}</div><Fade delay={0.3}><div style={{marginTop:24,background:"rgba(255,255,255,0.03)",borderRadius:20,padding:"24px 32px"}}><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",margin:0}}>Toll-Free: 1-866-844-3828 | 24/7 Support: 1-866-992-2490 | Financial Check-Up: FinancialCheckup@northernbirchcu.com</p></div></Fade></div></section>}
 
 // ============ HOME PAGE ============
 // ============ MORTGAGES ============
@@ -1473,18 +1481,18 @@ function MortgagesPage({setPage,lang}){
   const steps=[{n:"01",t:"Get pre-approved",d:"A short conversation gives you a budget and a rate hold while you shop."},{n:"02",t:"Find your home",d:"Your advisor is reachable directly, not through a call centre."},{n:"03",t:"Close with us",d:"We coordinate with your lawyer and fund on your closing date."}];
   return <section style={{background:C.cream,padding:w<=768?"60px 16px":"80px 24px",paddingTop:w<=768?80:100}}>
     <div style={{maxWidth:1320,margin:"0 auto"}}>
-      <SH tag={T("Mortgages")} tagColor={C.green} title={T("A mortgage from people you can meet")} desc={T("Fixed, variable, and high-ratio mortgages -- plus co-op apartment financing most lenders will not touch. Decisions are made in Toronto, by the same advisor who takes your call.")}/>
+      <SH tag={T("Mortgages")} tagColor={C.greenText} title={T("A mortgage from people you can meet")} desc={T("Fixed, variable, and high-ratio mortgages -- plus co-op apartment financing most lenders will not touch. Decisions are made in Toronto, by the same advisor who takes your call.")}/>
       <Fade><div style={{background:"#fff",borderRadius:20,padding:w<=768?24:32,border:"1px solid #eee",marginBottom:32}}>
         <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:20}}>
-          <span style={{fontFamily:ff,fontSize:44,color:C.green,fontWeight:700}}>{RATE.m5}</span>
-          <span style={{fontFamily:fs,fontSize:13,color:"#999"}}>{T("5-year closed fixed")}</span>
+          <span style={{fontFamily:ff,fontSize:44,color:C.greenText,fontWeight:700}}>{RATE.m5}</span>
+          <span style={{fontFamily:fs,fontSize:13,color:"#6B6B6B"}}>{T("5-year closed fixed")}</span>
         </div>
         {posted.map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"13px 0",borderBottom:i<posted.length-1?"1px solid #f5f5f5":"none"}}>
           <span style={{fontFamily:fs,fontSize:14,color:C.navy}}>{r.term}</span>
-          <span style={{fontFamily:fs,fontSize:16,color:C.green,fontWeight:700}}>{r.rate}</span>
+          <span style={{fontFamily:fs,fontSize:16,color:C.greenText,fontWeight:700}}>{r.rate}</span>
         </div>)}
         <div style={{display:"flex",gap:12,marginTop:24,flexWrap:"wrap"}}>
-          <Btn color={C.green} onClick={()=>setPage("booking")}>{T("Get Pre-Approved")}</Btn>
+          <Btn color={C.greenFill} onClick={()=>setPage("booking")}>{T("Get Pre-Approved")}</Btn>
           <Btn outline color={C.navy} onClick={()=>setPage("calculators")}>{T("Payment Calculator")}</Btn>
         </div>
       </div></Fade>
@@ -1492,15 +1500,15 @@ function MortgagesPage({setPage,lang}){
       <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16,marginBottom:40}}>
         {options.map((o,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:20,padding:26,border:"1px solid #eee",borderTop:`3px solid ${o.c}`,height:"100%"}}>
           <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{o.t}</h4>
-          <p style={{fontFamily:fs,fontSize:13.5,color:"#888",lineHeight:1.7,margin:0}}>{o.d}</p>
+          <p style={{fontFamily:fs,fontSize:13.5,color:"#666",lineHeight:1.7,margin:0}}>{o.d}</p>
         </div></Fade>)}
       </div>
       <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 16px"}}>{T("How it works")}</h3>
       <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16,marginBottom:32}}>
         {steps.map((st,i)=><Fade key={i} delay={i*0.08}><div style={{background:"#fff",borderRadius:20,padding:26,border:"1px solid #eee",height:"100%"}}>
-          <span style={{fontFamily:fs,fontSize:12,color:C.green,fontWeight:700}}>{st.n}</span>
+          <span style={{fontFamily:fs,fontSize:12,color:C.greenText,fontWeight:700}}>{st.n}</span>
           <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"6px 0 8px",fontWeight:700}}>{st.t}</h4>
-          <p style={{fontFamily:fs,fontSize:13.5,color:"#888",lineHeight:1.7,margin:0}}>{st.d}</p>
+          <p style={{fontFamily:fs,fontSize:13.5,color:"#666",lineHeight:1.7,margin:0}}>{st.d}</p>
         </div></Fade>)}
       </div>
       <div style={{background:`${C.green}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.green}`}}>
@@ -1532,9 +1540,9 @@ function CardsPage({setPage,lang}){
           <div style={{padding:26,display:"flex",flexDirection:"column",flex:1}}>
             <div style={{display:"flex",alignItems:"baseline",gap:8}}>
               <span style={{fontFamily:ff,fontSize:30,color:C.navy,fontWeight:700}}>{cd.rate}</span>
-              <span style={{fontFamily:fs,fontSize:12,color:"#999"}}>{T("purchase APR")}</span>
+              <span style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>{T("purchase APR")}</span>
             </div>
-            <div style={{fontFamily:fs,fontSize:13,color:"#888",margin:"4px 0 18px"}}>{cd.fee}</div>
+            <div style={{fontFamily:fs,fontSize:13,color:"#666",margin:"4px 0 18px"}}>{cd.fee}</div>
             <div style={{flex:1,marginBottom:18}}>
               {cd.perks.map((pk,pi)=><div key={pi} style={{display:"flex",gap:8,alignItems:"flex-start",marginBottom:8}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:cd.c,marginTop:6,flexShrink:0}}/>
@@ -1548,7 +1556,7 @@ function CardsPage({setPage,lang}){
       <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(4,1fr)","repeat(2,1fr)","1fr"),gap:12,marginBottom:24}}>
         {shared.map((sh,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:16,padding:22,border:"1px solid #eee",height:"100%"}}>
           <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{sh.t}</h4>
-          <p style={{fontFamily:fs,fontSize:13,color:"#888",lineHeight:1.65,margin:0}}>{sh.d}</p>
+          <p style={{fontFamily:fs,fontSize:13,color:"#666",lineHeight:1.65,margin:0}}>{sh.d}</p>
         </div></Fade>)}
       </div>
       <div style={{background:`${C.purple}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.purple}`}}>
@@ -1585,7 +1593,7 @@ function AccountsPage({setPage,lang}){
       <h4 style={{fontFamily:ff,fontSize:20,color:C.navy,margin:"0 0 12px"}}>{a.n}</h4>
       {a.h&&<div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:16}}>
         <span style={{fontFamily:ff,fontSize:28,color:a.c,fontWeight:700}}>{a.h}</span>
-        <span style={{fontFamily:fs,fontSize:12,color:"#aaa"}}>{a.hl}</span>
+        <span style={{fontFamily:fs,fontSize:12,color:"#707070"}}>{a.hl}</span>
       </div>}
       {a.items.map((x,xi)=><div key={xi} style={{display:"flex",gap:8,alignItems:"flex-start",marginBottom:8}}>
         <div style={{width:5,height:5,borderRadius:"50%",background:a.c,marginTop:6,flexShrink:0}}/>
@@ -1595,22 +1603,22 @@ function AccountsPage({setPage,lang}){
   </div>;
   return <section style={{background:C.cream,padding:w<=768?"60px 16px":"80px 24px",paddingTop:w<=768?80:100}}>
     <div style={{maxWidth:1320,margin:"0 auto"}}>
-      <SH tag={T("Chequing, Savings & Registered")} tagColor={C.accent} title={T("Compare accounts side by side")} desc={T("No-fee everyday chequing, high-interest savings, GIC terms from 90 days to 5 years, and every registered plan a Canadian household needs.")}/>
+      <SH tag={T("Chequing, Savings & Registered")} tagColor={C.accentText} title={T("Compare accounts side by side")} desc={T("No-fee everyday chequing, high-interest savings, GIC terms from 90 days to 5 years, and every registered plan a Canadian household needs.")}/>
       <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 16px"}}>{T("Chequing")}</h3>
       {grid(chequing)}
       <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 16px"}}>{T("Savings & GICs")}</h3>
       {grid(savings)}
       <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 6px"}}>{T("Registered accounts")}</h3>
-      <p style={{fontFamily:fs,fontSize:14,color:"#888",margin:"0 0 16px"}}>{T("Each plan can hold savings, a GIC, or an investment portfolio -- the wrapper is the tax treatment, not the product.")}</p>
+      <p style={{fontFamily:fs,fontSize:14,color:"#666",margin:"0 0 16px"}}>{T("Each plan can hold savings, a GIC, or an investment portfolio -- the wrapper is the tax treatment, not the product.")}</p>
       <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16,marginBottom:32}}>
         {registered.map((r,i)=><Fade key={i} delay={i*0.05}><div style={{background:"#fff",borderRadius:20,padding:24,border:"1px solid #eee",height:"100%"}}>
           <span style={{display:"inline-block",padding:"4px 10px",borderRadius:8,background:`${C.navy}0F`,fontFamily:fs,fontSize:12,fontWeight:700,color:C.navy,marginBottom:10}}>{r.n}</span>
           <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{r.f}</h4>
-          <p style={{fontFamily:fs,fontSize:13.5,color:"#888",lineHeight:1.7,margin:0}}>{r.d}</p>
+          <p style={{fontFamily:fs,fontSize:13.5,color:"#666",lineHeight:1.7,margin:0}}>{r.d}</p>
         </div></Fade>)}
       </div>
       <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:24}}>
-        <Btn color={C.accent} onClick={()=>setPage("booking")}>{T("Open an Account")}</Btn>
+        <Btn color={C.accentText} onClick={()=>setPage("booking")}>{T("Open an Account")}</Btn>
         <Btn outline color={C.navy} onClick={()=>setPage("rates")}>{T("See All Rates")}</Btn>
       </div>
       <div style={{background:`${C.accent}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.accent}`}}>
@@ -1626,15 +1634,15 @@ function BankingProducts({setPage,lang}){
   const w=useW();
   return <section style={{background:C.birchLight,padding:w<=768?"56px 16px":"80px 24px"}}>
     <div style={{maxWidth:1320,margin:"0 auto"}}>
-      <SH tag={T("Banking Products")} tagColor={C.green} title={T("Everyday banking, start to finish")} desc={T("Northern Birch is a full-service credit union. Open a chequing account, finance a home, carry a card, save in a GIC or TFSA, and invest -- all in one membership.")}/>
+      <SH tag={T("Banking Products")} tagColor={C.greenText} title={T("Everyday banking, start to finish")} desc={T("Northern Birch is a full-service credit union. Open a chequing account, finance a home, carry a card, save in a GIC or TFSA, and invest -- all in one membership.")}/>
       <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(5,1fr)","repeat(2,1fr)","1fr"),gap:12}}>
         {BANKING.map((b,i)=><Fade key={b.k} delay={i*0.06}>
-          <div onClick={()=>setPage(b.p)} style={{background:"#fff",borderRadius:20,padding:24,border:"1px solid #EDE7D8",borderTop:`3px solid ${b.c}`,cursor:"pointer",height:"100%",display:"flex",flexDirection:"column"}}>
+          <Clickable onClick={()=>setPage(b.p)} style={{background:"#fff",borderRadius:20,padding:24,border:"1px solid #EDE7D8",borderTop:`3px solid ${b.c}`,cursor:"pointer",height:"100%",display:"flex",flexDirection:"column"}}>
             <h3 style={{fontFamily:ff,fontSize:21,color:C.navy,margin:"0 0 8px"}}>{T(b.t)}</h3>
-            <p style={{fontFamily:fs,fontSize:13,color:"#888",lineHeight:1.65,margin:"0 0 16px"}}>{b.d}</p>
+            <p style={{fontFamily:fs,fontSize:13,color:"#666",lineHeight:1.65,margin:"0 0 16px"}}>{b.d}</p>
             <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:16}}>
               <span style={{fontFamily:ff,fontSize:28,color:b.c,fontWeight:700}}>{b.rate}</span>
-              <span style={{fontFamily:fs,fontSize:11,color:"#aaa"}}>{b.rl}</span>
+              <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>{b.rl}</span>
             </div>
             <div style={{flex:1,marginBottom:18}}>
               {b.b.map((x,xi)=><div key={xi} style={{display:"flex",gap:8,alignItems:"flex-start",marginBottom:8}}>
@@ -1642,8 +1650,8 @@ function BankingProducts({setPage,lang}){
                 <span style={{fontFamily:fs,fontSize:13,color:"#666",lineHeight:1.5}}>{x}</span>
               </div>)}
             </div>
-            <span style={{fontFamily:fs,fontSize:13,color:C.accent,fontWeight:700}}>{T(b.cta)} &rarr;</span>
-          </div>
+            <span style={{fontFamily:fs,fontSize:13,color:C.accentText,fontWeight:700}}>{T(b.cta)} &rarr;</span>
+          </Clickable>
         </Fade>)}
       </div>
       <Fade delay={0.35}><div style={{display:"flex",gap:12,marginTop:28,flexWrap:"wrap"}}>
@@ -1673,10 +1681,10 @@ function HomePage({setPage,lang}){
           <Daisy size={14} color={C.birch} center="rgba(255,255,255,0.5)"/>
         </div></Fade>
         <Fade delay={0.08}><h1 style={{fontFamily:ff,fontSize:"clamp(36px,5vw,64px)",color:"#fff",lineHeight:1.07,maxWidth:780,margin:"0 0 24px"}}>{T("Your whole financial life.")}<br/><span style={{color:C.birch}}>{T("Under one Birch.")}</span></h1></Fade>
-        <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.5)",maxWidth:560,lineHeight:1.75,margin:"0 0 40px"}}>{T("Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus investments, insurance and international transfers, all from one Toronto credit union.")}</p></Fade>
+        <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.6)",maxWidth:560,lineHeight:1.75,margin:"0 0 40px"}}>{T("Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus investments, insurance and international transfers, all from one Toronto credit union.")}</p></Fade>
         <Fade delay={0.24}><div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-          <Btn color={C.accent} onClick={()=>setPage("accounts")}>{T("Compare Accounts")}</Btn>
-          <Btn color={C.green} onClick={()=>setPage("mortgages")}>{T("Explore Mortgages")}</Btn>
+          <Btn color={C.accentText} onClick={()=>setPage("accounts")}>{T("Compare Accounts")}</Btn>
+          <Btn color={C.greenFill} onClick={()=>setPage("mortgages")}>{T("Explore Mortgages")}</Btn>
           <Btn color={C.purple} onClick={()=>setPage("cards")}>{T("Apply for a Credit Card")}</Btn>
           <Btn outline onClick={()=>setPage("quote")}>{T("Get an Insurance Quote")}</Btn>
         </div></Fade>
@@ -1687,19 +1695,19 @@ function HomePage({setPage,lang}){
     <section style={{background:C.cream,padding:"64px 24px"}}><div style={{maxWidth:1320,margin:"0 auto"}}>
       <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"repeat(2,1fr)":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(3,1fr)":"repeat(6,1fr)",gap:12}}>
         {[{l:"AI Insurance Advisor",p:"aiadvisor",c:C.purple},{l:"Life Event Simulator",p:"lifesim",c:C.amber},{l:"Coverage Analyzer",p:"analyzer",c:C.accent},{l:"Health Check",p:"healthcheck",c:C.green},{l:"Document Reader",p:"docreader",c:C.navy},{l:"My Dashboard",p:"dashboard",c:C.red}].map((qi,i)=>
-          <Fade key={i} delay={i*0.05}><div onClick={()=>setPage(qi.p)} style={{background:"#fff",borderRadius:16,padding:"24px 20px",border:"1px solid #eee",cursor:"pointer",textAlign:"center",transition:"all 0.3s",borderTop:`3px solid ${qi.c}`}}>
+          <Fade key={i} delay={i*0.05}><Clickable onClick={()=>setPage(qi.p)} style={{background:"#fff",borderRadius:16,padding:"24px 20px",border:"1px solid #eee",cursor:"pointer",textAlign:"center",transition:"all 0.3s",borderTop:`3px solid ${qi.c}`}}>
             <h4 style={{fontFamily:fs,fontSize:14,color:C.navy,margin:0,fontWeight:700}}>{qi.l}</h4>
-          </div></Fade>
+          </Clickable></Fade>
         )}
       </div>
     </div></section>
     <section style={{background:C.cream,padding:"0 24px 64px"}}><div style={{maxWidth:1320,margin:"0 auto"}}>
       <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(4,1fr)",gap:12}}>
         {[{l:"Insurance",p:"insurance",d:"Life, home, auto, travel, co-op",c:C.accent},{l:"Travel & FX",p:"travel",d:"Baltic travel, transfers, exchange",c:C.amber},{l:"Business",p:"business",d:"Benefits, commercial, succession",c:C.green},{l:"Digital Banking",p:"digital",d:"Dashboard, app, planning tools",c:C.accent},{l:"Estate Planning",p:"estate",d:"Wills, trusts, insurance strategies",c:C.purple},{l:"Rates",p:"rates",d:"Mortgage, GIC, lending rates",c:C.green},{l:"Blog & News",p:"blog",d:"Articles, education, updates",c:C.navy},{l:"Tax & Savings",p:"tax",d:"RRSP, TFSA, tax-smart insurance",c:C.green},{l:"Referral Program",p:"referrals",d:"Earn $50 per referral",c:C.amber}].map((s,i)=>
-          <Fade key={i} delay={i*0.04}><div onClick={()=>setPage(s.p)} style={{background:"#fff",borderRadius:16,padding:"24px",border:"1px solid #eee",cursor:"pointer",borderLeft:`4px solid ${s.c}`}}>
+          <Fade key={i} delay={i*0.04}><Clickable onClick={()=>setPage(s.p)} style={{background:"#fff",borderRadius:16,padding:"24px",border:"1px solid #eee",cursor:"pointer",borderLeft:`4px solid ${s.c}`}}>
             <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 4px",fontWeight:700}}>{s.l}</h4>
-            <p style={{fontFamily:fs,fontSize:12,color:"#999",margin:0}}>{s.d}</p>
-          </div></Fade>
+            <p style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",margin:0}}>{s.d}</p>
+          </Clickable></Fade>
         )}
       </div>
     </div></section>
@@ -1714,7 +1722,7 @@ function Footer({setPage}){
     <div style={{padding:typeof window!=="undefined"&&window.innerWidth<=768?"32px 16px":"48px 24px"}}>
     <div style={{maxWidth:1320,margin:"0 auto"}}>
       <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr 1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"2fr 1fr 1fr 1fr":"2fr 1fr 1fr 1fr 1fr 1fr",gap:24,marginBottom:32}}>
-        <div><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><div style={{width:28,height:28,borderRadius:"50%",background:`linear-gradient(135deg,${C.birch},${C.navy})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:10,fontWeight:800,color:"#fff"}}>NB</span></div><span style={{fontFamily:ff,fontSize:15,color:"#fff",fontWeight:600}}>Northern Birch</span></div><p style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.25)",lineHeight:1.7,maxWidth:200,marginBottom:12}}>Your whole financial life. Under one Birch.</p>
+        <div><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><div style={{width:28,height:28,borderRadius:"50%",background:`linear-gradient(135deg,${C.birch},${C.navy})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:10,fontWeight:800,color:"#fff"}}>NB</span></div><span style={{fontFamily:ff,fontSize:15,color:"#fff",fontWeight:600}}>Northern Birch</span></div><p style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",lineHeight:1.7,maxWidth:200,marginBottom:12}}>Your whole financial life. Under one Birch.</p>
           <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
             <Cornflower size={14} color={C.birch}/>
             {["Eesti","Latviesu","English"].map((l,i)=><span key={i} style={{fontFamily:fs,fontSize:10,color:C.birch,background:"rgba(200,184,138,0.08)",padding:"3px 10px",borderRadius:6,fontWeight:500}}>{l}</span>)}
@@ -1726,27 +1734,27 @@ function Footer({setPage}){
           {t:"Tools",items:[["Compare Plans","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["Refer a Friend","referrals"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
           {t:"Banking",items:[["Chequing & Savings","accounts"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
           {t:"About",items:[["Community","community"],["Blog & News","blog"],["Glossary","glossary"],["Contact & Branches","contact"],["Careers","contact"],["KESKUS Branch","community"]]},
-        ].map((col,i)=><div key={i}><h4 style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.4)",margin:"0 0 10px",textTransform:"uppercase",letterSpacing:1}}>{col.t}</h4>{col.items.map(([l,p],ii)=><div key={ii}><button onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.25)",fontFamily:fs,fontSize:12,padding:"2px 0",cursor:"pointer",display:"block"}}>{l}</button></div>)}</div>)}
+        ].map((col,i)=><div key={i}><h4 style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:"0 0 10px",textTransform:"uppercase",letterSpacing:1}}>{col.t}</h4>{col.items.map(([l,p],ii)=><div key={ii}><button onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.6)",fontFamily:fs,fontSize:12,padding:"2px 0",cursor:"pointer",display:"block"}}>{l}</button></div>)}</div>)}
       </div>
       {/* Canadian Legal Links */}
       <div style={{borderTop:"1px solid rgba(255,255,255,0.05)",paddingTop:16,marginBottom:12,display:"flex",gap:16,flexWrap:"wrap"}}>
-        {[["Privacy Policy","privacy"],["Terms of Use","terms"],["Accessibility (AODA)","accessibility"],["Complaint Resolution","complaints"]].map(([l,p],i)=><button key={i} onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.3)",fontFamily:fs,fontSize:11,cursor:"pointer",padding:0}}>{l}</button>)}
+        {[["Privacy Policy","privacy"],["Terms of Use","terms"],["Accessibility (AODA)","accessibility"],["Complaint Resolution","complaints"]].map(([l,p],i)=><button key={i} onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.6)",fontFamily:fs,fontSize:11,cursor:"pointer",padding:0}}>{l}</button>)}
       </div>
       {/* FSRA Deposit Insurance & Regulatory */}
       <div style={{background:"rgba(255,255,255,0.03)",borderRadius:12,padding:"14px 20px",marginBottom:16}}>
         <div style={{display:"flex",alignItems:typeof window!=="undefined"&&window.innerWidth<=768?"flex-start":"center",gap:16,flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row"}}>
           <div style={{background:"rgba(39,174,96,0.15)",borderRadius:8,padding:"6px 14px",flexShrink:0}}>
-            <span style={{fontFamily:fs,fontSize:11,color:C.green,fontWeight:700}}>FSRA INSURED</span>
+            <span style={{fontFamily:fs,fontSize:11,color:C.greenText,fontWeight:700}}>FSRA INSURED</span>
           </div>
-          <p style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.3)",margin:0,lineHeight:1.6}}>Eligible deposits at Northern Birch Credit Union are insured by the Financial Services Regulatory Authority of Ontario (FSRA). Registered account deposits have unlimited coverage. Other eligible deposits are insured up to $250,000 per depositor. Insurance products are not deposits and are not insured by FSRA.</p>
+          <p style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.6}}>Eligible deposits at Northern Birch Credit Union are insured by the Financial Services Regulatory Authority of Ontario (FSRA). Registered account deposits have unlimited coverage. Other eligible deposits are insured up to $250,000 per depositor. Insurance products are not deposits and are not insured by FSRA.</p>
         </div>
       </div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:typeof window!=="undefined"&&window.innerWidth<=768?"flex-start":"center",flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row",gap:8}}>
         <div>
-          <span style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.12)",display:"block"}}>Northern Birch Credit Union Limited. Member of Central 1 Credit Union. Regulated by FSRA.</span>
-          <span style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.12)",display:"block"}}>Insurance distributed on behalf of The Personal Insurance Company, CUMIS/Co-operators, and Manulife Financial.</span>
+          <span style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",display:"block"}}>Northern Birch Credit Union Limited. Member of Central 1 Credit Union. Regulated by FSRA.</span>
+          <span style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",display:"block"}}>Insurance distributed on behalf of The Personal Insurance Company, CUMIS/Co-operators, and Manulife Financial.</span>
         </div>
-        <span style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.08)"}}>Prepared by Thomas Genua, CEO Oodler</span>
+        <span style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)"}}>Prepared by Thomas Genua, CEO Oodler</span>
       </div>
     </div>
     </div>
@@ -1790,10 +1798,10 @@ function AIAdvisorPage({setPage}){
         <Fade>
           <div style={{width:80,height:80,borderRadius:24,background:`linear-gradient(135deg,${C.accent},${C.purple})`,margin:"0 auto 24px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:"#fff"}}>&#9889;</span></div>
           <h1 style={{fontFamily:ff,fontSize:typeof window!=="undefined"&&window.innerWidth<=768?28:42,color:"#fff",margin:"0 0 16px"}}>AI Insurance Advisor</h1>
-          <p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.5)",maxWidth:500,margin:"0 auto 48px",lineHeight:1.7}}>Tell me about your life situation and I'll recommend the right insurance products for you. Powered by Claude AI -- available 24/7 in English, Estonian, and Latvian.</p>
+          <p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.6)",maxWidth:500,margin:"0 auto 48px",lineHeight:1.7}}>Tell me about your life situation and I'll recommend the right insurance products for you. Powered by Claude AI -- available 24/7 in English, Estonian, and Latvian.</p>
         </Fade>
         <Fade delay={0.15}>
-          <p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.35)",marginBottom:20}}>Choose a scenario or type your own question:</p>
+          <p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",marginBottom:20}}>Choose a scenario or type your own question:</p>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:12,marginBottom:32}}>
             {[
               {label:"I just bought my first home",icon:"&#127968;",desc:"Mortgage protection, home insurance, life insurance review"},
@@ -1806,7 +1814,7 @@ function AIAdvisorPage({setPage}){
               <button key={i} onClick={()=>startConversation(s.label)} style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,padding:"20px 24px",cursor:"pointer",textAlign:"left",transition:"all 0.3s"}}>
                 <span style={{fontSize:20,display:"block",marginBottom:8}} dangerouslySetInnerHTML={{__html:s.icon}}/>
                 <div style={{fontFamily:fs,fontSize:15,color:"#fff",fontWeight:600,marginBottom:4}}>{s.label}</div>
-                <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.35)"}}>{s.desc}</div>
+                <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)"}}>{s.desc}</div>
               </button>
             ))}
           </div>
@@ -1829,7 +1837,7 @@ function AIAdvisorPage({setPage}){
           <div style={{width:40,height:40,borderRadius:12,background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:"#fff"}}>&#9889;</span></div>
           <div>
             <div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>AI Insurance Advisor</div>
-            <div style={{fontFamily:fs,fontSize:11,color:"#999"}}>Powered by Claude -- Northern Birch Credit Union</div>
+            <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B"}}>Powered by Claude -- Northern Birch Credit Union</div>
           </div>
           <div style={{marginLeft:"auto"}}><Btn small onClick={()=>setPage("booking")}>Book Real Advisor</Btn></div>
         </div>
@@ -1838,7 +1846,7 @@ function AIAdvisorPage({setPage}){
           {msgs.map((m,i)=><div key={i} style={{alignSelf:m.from==="user"?"flex-end":"flex-start",maxWidth:"80%"}}>
             <div style={{background:m.from==="user"?`linear-gradient(135deg,${C.accent},${C.purple})`:"#fff",color:m.from==="user"?"#fff":C.navy,borderRadius:m.from==="user"?"18px 18px 4px 18px":"18px 18px 18px 4px",padding:"14px 20px",fontFamily:fs,fontSize:14,lineHeight:1.7,boxShadow:m.from==="bot"?"0 1px 4px rgba(0,0,0,0.06)":"none",whiteSpace:"pre-wrap"}}>{m.text}</div>
           </div>)}
-          {loading&&<div style={{alignSelf:"flex-start",maxWidth:"60%"}}><div style={{background:"#fff",borderRadius:"18px 18px 18px 4px",padding:"14px 20px",boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}><span style={{fontFamily:fs,fontSize:14,color:"#bbb"}}>
+          {loading&&<div style={{alignSelf:"flex-start",maxWidth:"60%"}}><div style={{background:"#fff",borderRadius:"18px 18px 18px 4px",padding:"14px 20px",boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}><span style={{fontFamily:fs,fontSize:14,color:"#707070"}}>
             <span style={{animation:"blink 1s infinite"}}>Analyzing your needs</span><span style={{animation:"blink 1s infinite 0.2s"}}>.</span><span style={{animation:"blink 1s infinite 0.4s"}}>.</span><span style={{animation:"blink 1s infinite 0.6s"}}>.</span>
           </span></div></div>}
           <div ref={bottomRef}/>
@@ -1850,8 +1858,8 @@ function AIAdvisorPage({setPage}){
             <button onClick={()=>send()} disabled={loading} style={{background:loading?"#ddd":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:12,padding:"14px 24px",cursor:loading?"default":"pointer",color:"#fff",fontFamily:fs,fontSize:14,fontWeight:600}}>Send</button>
           </div>
           <div style={{display:"flex",justifyContent:"space-between",marginTop:8}}>
-            <span style={{fontFamily:fs,fontSize:11,color:"#bbb"}}>AI recommendations are for informational purposes. Book an advisor for personalized quotes.</span>
-            <button onClick={()=>{setStarted(false);setMsgs([])}} style={{background:"none",border:"none",fontFamily:fs,fontSize:11,color:C.accent,cursor:"pointer"}}>Start Over</button>
+            <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>AI recommendations are for informational purposes. Book an advisor for personalized quotes.</span>
+            <button onClick={()=>{setStarted(false);setMsgs([])}} style={{background:"none",border:"none",fontFamily:fs,fontSize:11,color:C.accentText,cursor:"pointer"}}>Start Over</button>
           </div>
         </div>
       </div>
@@ -1881,34 +1889,34 @@ function PolicyAnalyzerPage({setPage}){
         {!result?<div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
             <div style={{width:40,height:40,borderRadius:12,background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:"#fff"}}>&#9889;</span></div>
-            <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>Tell us about your current coverage</div><div style={{fontFamily:fs,fontSize:12,color:"#999"}}>Powered by Claude Opus 4.6</div></div>
+            <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>Tell us about your current coverage</div><div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>Powered by Claude Opus 4.6</div></div>
           </div>
           <textarea value={input} onChange={e=>setInput(e.target.value)} rows={8} placeholder={"Describe your current insurance situation. For example:\n\n\"I'm 35, married with 2 kids. I have a $500K mortgage with Northern Birch. My employer gives me basic life insurance (1x salary = $85K) and health/dental. I have home insurance with TD ($180/month) and auto with Intact ($165/month). No disability, no critical illness, no travel insurance. We visit my parents in Tallinn every summer.\"\n\nThe more detail you provide, the better our analysis."} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
           <div style={{display:"flex",gap:12,marginTop:16}}>
             <button onClick={analyze} disabled={loading||!input.trim()} style={{flex:1,background:loading?"#ccc":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:12,padding:"16px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{loading?"Analyzing your coverage...":"Analyze My Coverage"}</button>
           </div>
           <div style={{marginTop:20}}>
-            <div style={{fontFamily:fs,fontSize:12,color:"#bbb",marginBottom:10}}>Or try a sample scenario:</div>
+            <div style={{fontFamily:fs,fontSize:12,color:"#707070",marginBottom:10}}>Or try a sample scenario:</div>
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-              {["Young couple, first mortgage, no life insurance","Retiree, travelling to Estonia, no travel coverage","Small business owner, 8 employees, no group benefits","Renting downtown, no tenant insurance, drives to work"].map((s,i)=><button key={i} onClick={()=>setInput(s)} style={{background:`${C.accent}06`,border:`1px solid ${C.accent}15`,borderRadius:8,padding:"8px 14px",cursor:"pointer",fontFamily:fs,fontSize:12,color:C.accent}}>{s}</button>)}
+              {["Young couple, first mortgage, no life insurance","Retiree, travelling to Estonia, no travel coverage","Small business owner, 8 employees, no group benefits","Renting downtown, no tenant insurance, drives to work"].map((s,i)=><button key={i} onClick={()=>setInput(s)} style={{background:`${C.accent}06`,border:`1px solid ${C.accent}15`,borderRadius:8,padding:"8px 14px",cursor:"pointer",fontFamily:fs,fontSize:12,color:C.accentText}}>{s}</button>)}
             </div>
           </div>
         </div>:
         <div>
           <div id="coverage-analysis-result" style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee",marginBottom:20}}>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
-              <div style={{width:40,height:40,borderRadius:12,background:`${C.green}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:C.green}}>&#10003;</span></div>
-              <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>Coverage Analysis Complete</div><div style={{fontFamily:fs,fontSize:12,color:"#999"}}>AI-generated recommendations based on your profile</div></div>
+              <div style={{width:40,height:40,borderRadius:12,background:`${C.green}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:C.greenText}}>&#10003;</span></div>
+              <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>Coverage Analysis Complete</div><div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>AI-generated recommendations based on your profile</div></div>
             </div>
             <div style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{result}</div>
           </div>
           <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-            <Btn onClick={()=>exportToPDF("coverage-analysis-result","Coverage Gap Analysis")} color={C.accent}>&#128190; Download Analysis (PDF)</Btn>
+            <Btn onClick={()=>exportToPDF("coverage-analysis-result","Coverage Gap Analysis")} color={C.accentText}>&#128190; Download Analysis (PDF)</Btn>
             <Btn onClick={()=>setPage("booking")}>Book Advisor to Discuss</Btn>
-            <Btn onClick={()=>setPage("quote")} color={C.green}>Get Quotes for Recommendations</Btn>
+            <Btn onClick={()=>setPage("quote")} color={C.greenFill}>Get Quotes for Recommendations</Btn>
             <Btn outline onClick={()=>{setResult(null);setInput("")}}>Analyze Again</Btn>
           </div>
-          <p style={{fontFamily:fs,fontSize:11,color:"#bbb",marginTop:16}}>AI analysis is for informational purposes only. Book an advisor appointment for personalized quotes and binding coverage.</p>
+          <p style={{fontFamily:fs,fontSize:11,color:"#707070",marginTop:16}}>AI analysis is for informational purposes only. Book an advisor appointment for personalized quotes and binding coverage.</p>
         </div>}
       </div>
     </section>
@@ -1961,7 +1969,7 @@ function HealthAssessmentPage({setPage}){
       <div style={{textAlign:"center"}}>
         <div style={{width:80,height:80,borderRadius:24,background:`linear-gradient(135deg,${C.accent},${C.purple})`,margin:"0 auto 24px",display:"flex",alignItems:"center",justifyContent:"center",animation:"pulse 1.5s infinite"}}><span style={{fontSize:36,color:"#fff"}}>&#9889;</span></div>
         <h2 style={{fontFamily:ff,fontSize:28,color:"#fff",margin:"0 0 12px"}}>Analyzing your financial health...</h2>
-        <p style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.4)"}}>Claude is reviewing your answers and generating personalized recommendations.</p>
+        <p style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.6)"}}>Claude is reviewing your answers and generating personalized recommendations.</p>
       </div>
       <style>{`@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:0.8}}`}</style>
     </section>
@@ -1981,9 +1989,9 @@ function HealthAssessmentPage({setPage}){
           <div style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{result.replace(/SCORE:\s*\d+\n?/,"")}</div>
         </div>
         <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-          <Btn onClick={()=>exportToPDF("health-assessment-result","Financial Health Report")} color={C.accent}>&#128190; Download Report (PDF)</Btn>
+          <Btn onClick={()=>exportToPDF("health-assessment-result","Financial Health Report")} color={C.accentText}>&#128190; Download Report (PDF)</Btn>
           <Btn onClick={()=>setPage("booking")}>Book Advisor to Close Gaps</Btn>
-          <Btn color={C.green} onClick={()=>setPage("quote")}>Get Insurance Quotes</Btn>
+          <Btn color={C.greenFill} onClick={()=>setPage("quote")}>Get Insurance Quotes</Btn>
           <Btn color={C.purple} onClick={()=>setPage("analyzer")}>Analyze Existing Coverage</Btn>
           <Btn outline onClick={()=>{setResult(null);setStep(0);setAnswers({})}}>Retake Assessment</Btn>
         </div>
@@ -2001,7 +2009,7 @@ function HealthAssessmentPage({setPage}){
         </div>
         <Fade>
           <div style={{textAlign:"center",marginBottom:12}}>
-            <span style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.35)"}}>Question {step+1} of {questions.length}</span>
+            <span style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)"}}>Question {step+1} of {questions.length}</span>
           </div>
           <h2 style={{fontFamily:ff,fontSize:typeof window!=="undefined"&&window.innerWidth<=768?24:32,color:"#fff",textAlign:"center",margin:"0 0 32px"}}>{q.q}</h2>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:12}}>
@@ -2011,7 +2019,7 @@ function HealthAssessmentPage({setPage}){
               </button>
             ))}
           </div>
-          {step>0&&<div style={{textAlign:"center",marginTop:20}}><button onClick={()=>setStep(step-1)} style={{background:"none",border:"none",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.3)",cursor:"pointer"}}>&#8592; Back</button></div>}
+          {step>0&&<div style={{textAlign:"center",marginTop:20}}><button onClick={()=>setStep(step-1)} style={{background:"none",border:"none",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",cursor:"pointer"}}>&#8592; Back</button></div>}
         </Fade>
       </div>
     </section>
@@ -2051,7 +2059,7 @@ function LifeSimPage({setPage}){
       <div style={{textAlign:"center"}}>
         <div style={{fontSize:48,marginBottom:16}} dangerouslySetInnerHTML={{__html:event?.icon||"&#9889;"}}/>
         <h2 style={{fontFamily:ff,fontSize:28,color:"#fff",margin:"0 0 12px"}}>Analyzing how this changes your needs...</h2>
-        <p style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.4)"}}>Claude is building your personalized action plan.</p>
+        <p style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.6)"}}>Claude is building your personalized action plan.</p>
       </div>
     </section>
   );
@@ -2061,15 +2069,15 @@ function LifeSimPage({setPage}){
       <div style={{maxWidth:900,margin:"0 auto"}}>
         <div id="life-event-result"><div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
           <span style={{fontSize:32}} dangerouslySetInnerHTML={{__html:event?.icon}}/>
-          <div><h2 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:0}}>Life Event: {event?.label}</h2><p style={{fontFamily:fs,fontSize:13,color:"#999",margin:0}}>AI-generated action plan</p></div>
+          <div><h2 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:0}}>Life Event: {event?.label}</h2><p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:0}}>AI-generated action plan</p></div>
         </div>
         <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee",marginBottom:24}}>
           <div style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{result}</div>
         </div>
         </div><div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-          <Btn onClick={()=>exportToPDF("life-event-result","Life Event Action Plan - "+(event?.label||""))} color={C.accent}>&#128190; Download Action Plan (PDF)</Btn>
+          <Btn onClick={()=>exportToPDF("life-event-result","Life Event Action Plan - "+(event?.label||""))} color={C.accentText}>&#128190; Download Action Plan (PDF)</Btn>
           <Btn onClick={()=>setPage("booking")}>Book Advisor to Discuss</Btn>
-          <Btn color={C.green} onClick={()=>setPage("quote")}>Get Insurance Quotes</Btn>
+          <Btn color={C.greenFill} onClick={()=>setPage("quote")}>Get Insurance Quotes</Btn>
           <Btn color={C.purple} onClick={()=>setPage("healthcheck")}>Full Health Assessment</Btn>
           <Btn outline onClick={()=>{setResult(null);setEvent(null);setDetails("")}}>Try Another Event</Btn>
         </div>
@@ -2080,7 +2088,7 @@ function LifeSimPage({setPage}){
   return(
     <section style={{background:`linear-gradient(170deg,${C.dark},${C.navy})`,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
-        <SH dark tag="AI Life Event Simulator" tagColor={C.amber} title="Life is changing. Are you protected?" desc="Select a life event and our AI will show you exactly how your insurance and financial needs change -- and what to do about it."/>
+        <SH dark tag="AI Life Event Simulator" tagColor={C.amberText} title="Life is changing. Are you protected?" desc="Select a life event and our AI will show you exactly how your insurance and financial needs change -- and what to do about it."/>
         <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr 1fr":"repeat(5,1fr)",gap:12,marginBottom:32}}>
           {events.map(ev=>(
             <button key={ev.id} onClick={()=>run(ev)} style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,padding:"20px 12px",cursor:"pointer",textAlign:"center",transition:"all 0.3s"}}>
@@ -2090,7 +2098,7 @@ function LifeSimPage({setPage}){
           ))}
         </div>
         <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:"24px 28px"}}>
-          <label style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.4)",display:"block",marginBottom:8}}>Add context for a more personalized analysis (optional):</label>
+          <label style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",display:"block",marginBottom:8}}>Add context for a more personalized analysis (optional):</label>
           <input value={details} onChange={e=>setDetails(e.target.value)} placeholder="e.g. I'm 34, married, $450K mortgage with NBCU, no life insurance..." style={{width:"100%",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:"14px 20px",fontFamily:fs,fontSize:14,outline:"none",background:"rgba(255,255,255,0.04)",color:"#fff",boxSizing:"border-box"}}/>
         </div>
       </div>
@@ -2115,27 +2123,27 @@ function DocReaderPage({setPage}){
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
-        <SH tag="AI Document Reader" tagColor={C.accent} title="Understand your existing coverage" desc="Paste text from any insurance policy, renewal notice, or coverage summary. Our AI will extract the key details, compare with Northern Birch rates, and flag any gaps."/>
+        <SH tag="AI Document Reader" tagColor={C.accentText} title="Understand your existing coverage" desc="Paste text from any insurance policy, renewal notice, or coverage summary. Our AI will extract the key details, compare with Northern Birch rates, and flag any gaps."/>
         {!result?<div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>
           <textarea value={input} onChange={e=>setInput(e.target.value)} rows={12} placeholder={"Paste your policy text, renewal notice, or coverage details here. For example:\n\n\"TD Insurance Home Policy #HO-2024-887721\nDwelling: $650,000 replacement cost\nContents: $325,000\nDeductible: $1,000\nPersonal Liability: $1,000,000\nAdditional Living Expenses: $130,000\nWater damage: Sewer backup included\nPremium: $2,340/year ($195/month)\nRenewal: April 15, 2026\"\n\nYou can also paste a description in your own words, or copy text from a PDF renewal notice."} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
           <button onClick={analyze} disabled={loading||!input.trim()} style={{width:"100%",marginTop:16,background:loading?"#ccc":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:12,padding:"16px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{loading?"Reading and analyzing your document...":"Analyze My Policy"}</button>
           <div style={{marginTop:16,display:"flex",gap:8,flexWrap:"wrap"}}>
-            <span style={{fontFamily:fs,fontSize:12,color:"#bbb"}}>Try with:</span>
-            {["Home insurance renewal","Auto policy summary","Life insurance certificate","Group benefits booklet"].map((s,i)=><button key={i} onClick={()=>setInput(`I have a ${s.toLowerCase()} from my current provider. Here are the details: [paste your ${s.toLowerCase()} details here]`)} style={{background:`${C.accent}06`,border:`1px solid ${C.accent}15`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accent}}>{s}</button>)}
+            <span style={{fontFamily:fs,fontSize:12,color:"#707070"}}>Try with:</span>
+            {["Home insurance renewal","Auto policy summary","Life insurance certificate","Group benefits booklet"].map((s,i)=><button key={i} onClick={()=>setInput(`I have a ${s.toLowerCase()} from my current provider. Here are the details: [paste your ${s.toLowerCase()} details here]`)} style={{background:`${C.accent}06`,border:`1px solid ${C.accent}15`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.accentText}}>{s}</button>)}
           </div>
         </div>:
         <div>
           <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee",marginBottom:24}}>
             <div id="doc-reader-result"><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
-              <div style={{width:40,height:40,borderRadius:12,background:`${C.green}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:C.green}}>&#10003;</span></div>
-              <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>Policy Analysis Complete</div><div style={{fontFamily:fs,fontSize:12,color:"#999"}}>Powered by Claude Opus 4.6</div></div>
+              <div style={{width:40,height:40,borderRadius:12,background:`${C.green}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:C.greenText}}>&#10003;</span></div>
+              <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>Policy Analysis Complete</div><div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>Powered by Claude Opus 4.6</div></div>
             </div>
             <div style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{result}</div>
           </div></div>
           <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-            <Btn onClick={()=>exportToPDF("doc-reader-result","Policy Analysis Report")} color={C.accent}>&#128190; Download Analysis (PDF)</Btn>
+            <Btn onClick={()=>exportToPDF("doc-reader-result","Policy Analysis Report")} color={C.accentText}>&#128190; Download Analysis (PDF)</Btn>
             <Btn onClick={()=>setPage("quote")}>Get NBCU Comparison Quote</Btn>
-            <Btn color={C.green} onClick={()=>setPage("booking")}>Book Advisor to Switch</Btn>
+            <Btn color={C.greenFill} onClick={()=>setPage("booking")}>Book Advisor to Switch</Btn>
             <Btn color={C.purple} onClick={()=>setPage("analyzer")}>Full Coverage Analysis</Btn>
             <Btn outline onClick={()=>{setResult(null);setInput("")}}>Analyze Another Document</Btn>
           </div>
@@ -2170,7 +2178,7 @@ function TaxPage({setPage}){
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
-        <SH tag="AI Tax & Savings Optimizer" tagColor={C.green} title="Keep more of what you earn" desc="Canadian tax optimization strategies, RRSP/TFSA planning, and insurance tax benefits -- personalized for your situation."/>
+        <SH tag="AI Tax & Savings Optimizer" tagColor={C.greenText} title="Keep more of what you earn" desc="Canadian tax optimization strategies, RRSP/TFSA planning, and insurance tax benefits -- personalized for your situation."/>
         <div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>
           {[{l:"AI Tax Advisor",v:"optimizer"},{l:"RRSP/TFSA Calculator",v:"calculator"},{l:"Tax-Smart Insurance",v:"insurance"}].map(tab=><button key={tab.v} onClick={()=>{setMode(tab.v);setResult(null)}} style={{flex:1,minWidth:isMob?0:150,background:mode===tab.v?C.green:"#fff",border:mode===tab.v?"none":"1px solid #ddd",borderRadius:12,padding:"14px 16px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:mode===tab.v?"#fff":C.navy}}>{tab.l}</button>)}
         </div>
@@ -2178,12 +2186,12 @@ function TaxPage({setPage}){
         {mode==="optimizer"&&!result&&<div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
             <div style={{width:40,height:40,borderRadius:12,background:`linear-gradient(135deg,${C.green},${C.accent})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:"#fff"}}>&#9889;</span></div>
-            <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>AI Tax Advisor</div><div style={{fontFamily:fs,fontSize:12,color:"#999"}}>Powered by Claude Opus 4.6 -- Canadian tax expertise</div></div>
+            <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>AI Tax Advisor</div><div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>Powered by Claude Opus 4.6 -- Canadian tax expertise</div></div>
           </div>
           <textarea value={input} onChange={e=>setInput(e.target.value)} rows={6} placeholder={"Describe your tax situation. For example:\n\n\"I'm 42, married, household income $180K (I earn $120K, spouse $60K). We have 2 kids (ages 5 and 8). $90K in RRSPs, $25K in TFSAs, $400K mortgage with NBCU. No RESP for the kids yet. No FHSA. My employer doesn't offer a pension. I'm paying $2,400/year in home insurance to TD. Looking to reduce our tax bill and save smarter.\""} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
           <button onClick={analyze} disabled={loading||!input.trim()} style={{width:"100%",marginTop:16,background:loading?"#ccc":`linear-gradient(135deg,${C.green},${C.accent})`,border:"none",borderRadius:12,padding:"16px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{loading?"Analyzing your tax situation...":"Optimize My Taxes"}</button>
           <div style={{marginTop:16,display:"flex",gap:8,flexWrap:"wrap"}}>
-            {["Maximize RRSP deductions","Best TFSA vs RRSP strategy","Tax-efficient estate planning","Small business tax optimization","Retirement income splitting"].map((s,i)=><button key={i} onClick={()=>setInput(s+" -- please advise based on typical Ontario resident situation")} style={{background:`${C.green}06`,border:`1px solid ${C.green}15`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.green}}>{s}</button>)}
+            {["Maximize RRSP deductions","Best TFSA vs RRSP strategy","Tax-efficient estate planning","Small business tax optimization","Retirement income splitting"].map((s,i)=><button key={i} onClick={()=>setInput(s+" -- please advise based on typical Ontario resident situation")} style={{background:`${C.green}06`,border:`1px solid ${C.green}15`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.greenText}}>{s}</button>)}
           </div>
         </div>}
 
@@ -2192,8 +2200,8 @@ function TaxPage({setPage}){
             <div style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{result}</div>
           </div>
           <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-            <Btn onClick={()=>exportToPDF("tax-optimizer-result","Tax Optimization Strategy")} color={C.accent}>&#128190; Download Strategy (PDF)</Btn>
-            <Btn onClick={()=>setPage("booking")} color={C.green}>Book Wealth Advisor</Btn>
+            <Btn onClick={()=>exportToPDF("tax-optimizer-result","Tax Optimization Strategy")} color={C.accentText}>&#128190; Download Strategy (PDF)</Btn>
+            <Btn onClick={()=>setPage("booking")} color={C.greenFill}>Book Wealth Advisor</Btn>
             <Btn onClick={()=>setPage("rates")}>View NBCU Rates</Btn>
             <Btn outline onClick={()=>{setResult(null);setInput("")}}>Ask Another Question</Btn>
           </div>
@@ -2202,9 +2210,9 @@ function TaxPage({setPage}){
         {mode==="calculator"&&<div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
           <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 24px"}}>RRSP vs. TFSA Comparison</h3>
           <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Annual Income</label><input type="number" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>RRSP Contribution</label><input type="number" value={rContrib} onChange={e=>setRContrib(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#999",display:"block",marginBottom:6}}>Marginal Tax Rate (%)</label><select value={rRate} onChange={e=>setRRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value={20}>20.05% ($0-$51K)</option><option value={30}>29.65% ($51K-$102K)</option><option value={31}>31.48% ($102K-$150K)</option><option value={33}>33.89% ($150K-$220K)</option><option value={46}>46.41% ($220K+)</option></select></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Income</label><input type="number" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>RRSP Contribution</label><input type="number" value={rContrib} onChange={e=>setRContrib(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="sel-4" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Marginal Tax Rate (%)</label><select id="sel-4" value={rRate} onChange={e=>setRRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value={20}>20.05% ($0-$51K)</option><option value={30}>29.65% ($51K-$102K)</option><option value={31}>31.48% ($102K-$150K)</option><option value={33}>33.89% ($150K-$220K)</option><option value={46}>46.41% ($220K+)</option></select></div>
           </div>
           <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr",gap:16}}>
             <div style={{background:`${C.accent}06`,borderRadius:16,padding:24,borderTop:`3px solid ${C.accent}`}}>
@@ -2216,8 +2224,8 @@ function TaxPage({setPage}){
                 {l:"Value in 20 years (6% return)",v:`C$${rrspGrowth20.toLocaleString()}`},
                 {l:"Tax on withdrawal",v:`Taxed as income`},
                 {l:"2025 limit",v:`18% of income, max $31,560`},
-              ].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<5?"1px solid rgba(0,0,0,0.05)":"none"}}><span style={{fontFamily:fs,fontSize:13,color:"#777"}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.v}</span></div>)}
-              <div style={{marginTop:12,background:`${C.accent}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.accent,margin:0,lineHeight:1.6}}>Best for: High income now, lower income in retirement. Reinvest the refund in your TFSA for maximum benefit.</p></div>
+              ].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<5?"1px solid rgba(0,0,0,0.05)":"none"}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.v}</span></div>)}
+              <div style={{marginTop:12,background:`${C.accent}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.accentText,margin:0,lineHeight:1.6}}>Best for: High income now, lower income in retirement. Reinvest the refund in your TFSA for maximum benefit.</p></div>
             </div>
             <div style={{background:`${C.green}06`,borderRadius:16,padding:24,borderTop:`3px solid ${C.green}`}}>
               <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 16px",fontWeight:700}}>TFSA</h4>
@@ -2228,26 +2236,26 @@ function TaxPage({setPage}){
                 {l:"Value in 20 years (6% return)",v:`C$${tfsaGrowth20.toLocaleString()}`},
                 {l:"Tax on withdrawal",v:"Completely tax-free"},
                 {l:"Cumulative room (since 2009)",v:"Up to $95,000"},
-              ].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<5?"1px solid rgba(0,0,0,0.05)":"none"}}><span style={{fontFamily:fs,fontSize:13,color:"#777"}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.v}</span></div>)}
-              <div style={{marginTop:12,background:`${C.green}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.green,margin:0,lineHeight:1.6}}>Best for: Everyone. Tax-free growth forever. Ideal emergency fund, medium-term savings, or supplement to RRSP.</p></div>
+              ].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<5?"1px solid rgba(0,0,0,0.05)":"none"}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.v}</span></div>)}
+              <div style={{marginTop:12,background:`${C.green}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.greenText,margin:0,lineHeight:1.6}}>Best for: Everyone. Tax-free growth forever. Ideal emergency fund, medium-term savings, or supplement to RRSP.</p></div>
             </div>
           </div>
           <div style={{marginTop:20,background:`${C.amber}08`,borderRadius:14,padding:"16px 20px",borderLeft:`4px solid ${C.amber}`}}>
             <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.7}}><strong style={{color:C.navy}}>Pro tip:</strong> The optimal strategy for most Canadians is to contribute to your RRSP first (get the tax refund), then invest that refund into your TFSA. At a {rRate}% marginal rate, your C${rContrib.toLocaleString()} RRSP contribution generates a C${rrspRefund.toLocaleString()} refund -- put that into your TFSA for tax-free growth. Northern Birch offers both RRSP and TFSA GICs, mutual funds, and high-interest savings.</p>
           </div>
-          <div style={{marginTop:16,textAlign:"center"}}><Btn onClick={()=>setPage("booking")} color={C.green}>Book a Wealth Review with Heili Orav</Btn></div>
+          <div style={{marginTop:16,textAlign:"center"}}><Btn onClick={()=>setPage("booking")} color={C.greenFill}>Book a Wealth Review with Heili Orav</Btn></div>
         </div>}
 
         {mode==="insurance"&&<div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
           <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 8px"}}>Tax-Smart Insurance Strategies</h3>
-          <p style={{fontFamily:fs,fontSize:14,color:"#999",marginBottom:24}}>Insurance isn't just protection -- it's one of the most powerful tax planning tools in Canada.</p>
+          <p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",marginBottom:24}}>Insurance isn't just protection -- it's one of the most powerful tax planning tools in Canada.</p>
           {[
-            {title:"Life Insurance Proceeds Are Tax-Free",desc:"When you die, your life insurance death benefit passes to your beneficiaries completely tax-free. Unlike RRSPs (which trigger a full income tax bill at death) or investment accounts (which trigger capital gains), life insurance bypasses the estate entirely. This means no probate fees (1.5% in Ontario), no estate administration tax, and no income tax on the benefit.",product:"Term Life Insurance via CUMIS -- from C$25/month",color:C.accent},
-            {title:"Critical Illness Benefits Are Tax-Free",desc:"If you're diagnosed with cancer, have a heart attack, or suffer a stroke, your critical illness insurance pays a tax-free lump sum. Use it however you want -- medical treatment, income replacement, mortgage payments, travel for care. Because you paid premiums with after-tax dollars, the CRA doesn't tax the benefit.",product:"Critical Illness Insurance via CUMIS",color:C.green},
+            {title:"Life Insurance Proceeds Are Tax-Free",desc:"When you die, your life insurance death benefit passes to your beneficiaries completely tax-free. Unlike RRSPs (which trigger a full income tax bill at death) or investment accounts (which trigger capital gains), life insurance bypasses the estate entirely. This means no probate fees (1.5% in Ontario), no estate administration tax, and no income tax on the benefit.",product:"Term Life Insurance via CUMIS -- from C$25/month",color:C.accentText},
+            {title:"Critical Illness Benefits Are Tax-Free",desc:"If you're diagnosed with cancer, have a heart attack, or suffer a stroke, your critical illness insurance pays a tax-free lump sum. Use it however you want -- medical treatment, income replacement, mortgage payments, travel for care. Because you paid premiums with after-tax dollars, the CRA doesn't tax the benefit.",product:"Critical Illness Insurance via CUMIS",color:C.greenText},
             {title:"Corporate-Owned Life Insurance",desc:"If you own a business through a corporation, the company can own a life insurance policy on you. Premiums aren't tax-deductible, but the death benefit flows into the Capital Dividend Account (CDA) and can be distributed to shareholders tax-free. This is one of the most powerful estate planning tools for business owners.",product:"Key Person Insurance via CUMIS -- business-owned policies",color:C.purple},
-            {title:"Insurance Replaces Estate Tax Liability",desc:"Canada has no estate tax, but there's a deemed disposition at death that triggers capital gains on investments, rental properties, and cottages. Life insurance can be sized to cover this exact tax liability, ensuring your family inherits assets without selling them to pay the CRA.",product:"Estate Planning Advisory + Term/Permanent Life via CUMIS",color:C.amber},
+            {title:"Insurance Replaces Estate Tax Liability",desc:"Canada has no estate tax, but there's a deemed disposition at death that triggers capital gains on investments, rental properties, and cottages. Life insurance can be sized to cover this exact tax liability, ensuring your family inherits assets without selling them to pay the CRA.",product:"Estate Planning Advisory + Term/Permanent Life via CUMIS",color:C.amberText},
             {title:"Disability Insurance Premiums",desc:"If you pay disability insurance premiums personally (not through your employer), any benefits you receive are completely tax-free. This is important: employer-paid disability benefits are taxable income, but personally-paid benefits are not. Consider paying your own premiums for tax-free benefits.",product:"Disability Insurance via CUMIS",color:C.navy},
-            {title:"RESP + Insurance = Education Security",desc:"RESPs get a 20% government grant (CESG) on contributions up to $2,500/year per child. But what if you die before fully funding the RESP? Life insurance ensures your children's education fund is completed even if you're not here. The insurance proceeds are tax-free and can be contributed to the RESP by your surviving spouse.",product:"RESP at Northern Birch + Term Life via CUMIS",color:C.red},
+            {title:"RESP + Insurance = Education Security",desc:"RESPs get a 20% government grant (CESG) on contributions up to $2,500/year per child. But what if you die before fully funding the RESP? Life insurance ensures your children's education fund is completed even if you're not here. The insurance proceeds are tax-free and can be contributed to the RESP by your surviving spouse.",product:"RESP at Northern Birch + Term Life via CUMIS",color:C.redText},
           ].map((s,i)=>(
             <div key={i} style={{marginBottom:16,padding:"24px 28px",background:`${s.color}04`,borderRadius:16,borderLeft:`4px solid ${s.color}`}}>
               <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{s.title}</h4>
@@ -2256,7 +2264,7 @@ function TaxPage({setPage}){
             </div>
           ))}
           <div style={{marginTop:8,display:"flex",gap:12,flexWrap:"wrap"}}>
-            <Btn onClick={()=>setPage("booking")} color={C.green}>Book Tax-Smart Insurance Review</Btn>
+            <Btn onClick={()=>setPage("booking")} color={C.greenFill}>Book Tax-Smart Insurance Review</Btn>
             <Btn onClick={()=>setPage("estate")} color={C.purple}>Estate Planning</Btn>
             <Btn onClick={()=>{setMode("optimizer");setResult(null)}} outline>Ask AI Tax Advisor</Btn>
           </div>
@@ -2292,11 +2300,11 @@ function DashboardPage({setPage}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:isMob?"flex-start":"center",marginBottom:24,flexDirection:isMob?"column":"row",gap:12}}>
           <div>
             <h2 style={{fontFamily:ff,fontSize:isMob?22:28,color:C.navy,margin:"0 0 4px"}}>Welcome back, Maria</h2>
-            <p style={{fontFamily:fs,fontSize:13,color:"#999",margin:0}}>Member since 2018 -- Last login: March 19, 2026 -- <span style={{color:C.green,fontWeight:600}}>Identity Verified</span> &#9989;</p>
+            <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:0}}>Member since 2018 -- Last login: March 19, 2026 -- <span style={{color:C.greenText,fontWeight:600}}>Identity Verified</span> &#9989;</p>
           </div>
           <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-            <Btn small color={C.accent} onClick={()=>setPage&&setPage("quote")}>Get a Quote</Btn>
-            <Btn small color={C.green}>Send Transfer</Btn>
+            <Btn small color={C.accentText} onClick={()=>setPage&&setPage("quote")}>Get a Quote</Btn>
+            <Btn small color={C.greenFill}>Send Transfer</Btn>
             <Btn small color={C.purple} onClick={()=>setPage&&setPage("messages")}>Messages</Btn>
             <Btn small outline color={C.navy}>Settings</Btn>
           </div>
@@ -2322,9 +2330,9 @@ function DashboardPage({setPage}){
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr 1fr",gap:12,marginBottom:24}}>
               {[{label:"Chequing",balance:"C$4,237.89",num:"****6742",c:C.navy},{label:"TFSA Savings",balance:"C$18,450.00",num:"****3891",c:C.green},{label:"RRSP",balance:"C$47,200.00",num:"****4510",c:C.purple},{label:"Mortgage",balance:"-C$387,200",num:"****1205",c:C.accent}].map((a,i)=>
                 <div key={i} style={{background:"#fff",borderRadius:16,padding:"20px",borderTop:`3px solid ${a.c}`}}>
-                  <div style={{fontFamily:fs,fontSize:11,color:"#999",textTransform:"uppercase",letterSpacing:1}}>{a.label}</div>
+                  <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>{a.label}</div>
                   <div style={{fontFamily:ff,fontSize:isMob?18:20,color:C.navy,fontWeight:700,margin:"6px 0 4px"}}>{a.balance}</div>
-                  <div style={{fontFamily:fs,fontSize:11,color:"#ccc"}}>{a.num}</div>
+                  <div style={{fontFamily:fs,fontSize:11,color:"#707070"}}>{a.num}</div>
                 </div>
               )}
             </div>
@@ -2333,7 +2341,7 @@ function DashboardPage({setPage}){
             <div style={{background:"#fff",borderRadius:20,padding:28,marginBottom:24}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
                 <h3 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:0,fontWeight:700}}>Credit Score</h3>
-                <span style={{fontFamily:fs,fontSize:11,color:"#bbb"}}>Via Equifax -- Updated Mar 1, 2026</span>
+                <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>Via Equifax -- Updated Mar 1, 2026</span>
               </div>
               <div style={{display:"flex",alignItems:isMob?"flex-start":"center",gap:24,flexDirection:isMob?"column":"row"}}>
                 <div style={{textAlign:"center"}}>
@@ -2342,21 +2350,21 @@ function DashboardPage({setPage}){
                       <span style={{fontFamily:ff,fontSize:32,color:C.navy,fontWeight:700}}>782</span>
                     </div>
                   </div>
-                  <div style={{fontFamily:fs,fontSize:12,color:C.green,fontWeight:600,marginTop:8}}>Excellent</div>
+                  <div style={{fontFamily:fs,fontSize:12,color:C.greenText,fontWeight:600,marginTop:8}}>Excellent</div>
                 </div>
                 <div style={{flex:1}}>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
                     {[{l:"Payment History",v:"100%",s:"Excellent"},{l:"Credit Utilization",v:"18%",s:"Good"},{l:"Credit Age",v:"8 years",s:"Good"},{l:"Recent Inquiries",v:"1",s:"Low Impact"}].map((f,i)=>
                       <div key={i} style={{padding:"8px 12px",background:"#f8f8f8",borderRadius:10}}>
-                        <div style={{fontFamily:fs,fontSize:11,color:"#999"}}>{f.l}</div>
+                        <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B"}}>{f.l}</div>
                         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:2}}>
                           <span style={{fontFamily:fs,fontSize:14,color:C.navy,fontWeight:700}}>{f.v}</span>
-                          <span style={{fontFamily:fs,fontSize:10,color:C.green,fontWeight:600}}>{f.s}</span>
+                          <span style={{fontFamily:fs,fontSize:10,color:C.greenText,fontWeight:600}}>{f.s}</span>
                         </div>
                       </div>
                     )}
                   </div>
-                  <p style={{fontFamily:fs,fontSize:11,color:"#bbb",margin:"12px 0 0"}}>Your score has increased 12 points since January. Keep it up! Credit monitoring is free for all Northern Birch members.</p>
+                  <p style={{fontFamily:fs,fontSize:11,color:"#707070",margin:"12px 0 0"}}>Your score has increased 12 points since January. Keep it up! Credit monitoring is free for all Northern Birch members.</p>
                 </div>
               </div>
             </div>
@@ -2365,13 +2373,13 @@ function DashboardPage({setPage}){
             <div style={{background:"#fff",borderRadius:20,padding:28,marginBottom:24}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
                 <h3 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:0,fontWeight:700}}>Monthly Spending</h3>
-                <span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:700}}>C${totalSpend.toLocaleString()} <span style={{color:"#bbb",fontWeight:400}}>this month</span></span>
+                <span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:700}}>C${totalSpend.toLocaleString()} <span style={{color:"#707070",fontWeight:400}}>this month</span></span>
               </div>
               {/* Visual bar chart */}
               <div style={{marginBottom:16}}>
                 {spending.map((s,i)=>(
                   <div key={i} style={{display:"flex",alignItems:"center",gap:12,marginBottom:6}}>
-                    <span style={{fontFamily:fs,fontSize:12,color:"#777",width:110,flexShrink:0}}>{s.cat}</span>
+                    <span style={{fontFamily:fs,fontSize:12,color:"#666",width:110,flexShrink:0}}>{s.cat}</span>
                     <div style={{flex:1,height:20,background:"#f5f5f5",borderRadius:10,overflow:"hidden"}}>
                       <div style={{width:`${s.pct}%`,height:"100%",background:s.c,borderRadius:10,transition:"width 1s ease"}}/>
                     </div>
@@ -2389,7 +2397,7 @@ function DashboardPage({setPage}){
             <div style={{background:"#fff",borderRadius:20,padding:28,marginBottom:24}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
                 <h3 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:0,fontWeight:700}}>My Insurance Policies</h3>
-                <span style={{fontFamily:fs,fontSize:12,color:C.accent,fontWeight:600,cursor:"pointer"}}>View All Details</span>
+                <span style={{fontFamily:fs,fontSize:12,color:C.accentText,fontWeight:600,cursor:"pointer"}}>View All Details</span>
               </div>
               {[
                 {type:"Home Insurance",provider:"The Personal",policy:"HP-2024-88721",status:"Active",renewal:"Apr 15, 2026",premium:"C$142.50/mo",coverage:"C$650,000 Replacement Cost",c:C.green},
@@ -2404,9 +2412,9 @@ function DashboardPage({setPage}){
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                       <div style={{fontFamily:fs,fontSize:14,color:C.navy,fontWeight:700}}>{p.type}</div>
-                      <span style={{fontFamily:fs,fontSize:10,color:C.green,fontWeight:600,background:`${C.green}10`,padding:"3px 8px",borderRadius:6}}>{p.status}</span>
+                      <span style={{fontFamily:fs,fontSize:10,color:C.greenText,fontWeight:600,background:`${C.green}10`,padding:"3px 8px",borderRadius:6}}>{p.status}</span>
                     </div>
-                    <div style={{fontFamily:fs,fontSize:11,color:"#999",marginTop:2}}>{p.provider} -- {p.coverage} -- <span style={{color:C.accent,fontWeight:600}}>{p.premium}</span></div>
+                    <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",marginTop:2}}>{p.provider} -- {p.coverage} -- <span style={{color:C.accentText,fontWeight:600}}>{p.premium}</span></div>
                   </div>
                 </div>
               ))}
@@ -2430,15 +2438,15 @@ function DashboardPage({setPage}){
                   </div>
                   <div style={{flex:1}}>
                     <div style={{fontFamily:fs,fontSize:14,color:C.navy,fontWeight:600}}>{doc.name}</div>
-                    <div style={{fontFamily:fs,fontSize:11,color:"#999"}}>{doc.provider} -- {doc.date}</div>
+                    <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B"}}>{doc.provider} -- {doc.date}</div>
                   </div>
                   {doc.status==="pending"?
                     <button onClick={()=>setSignedDocs(p=>({...p,[i]:true}))} style={{background:signedDocs[i]?C.green:C.accent,border:"none",borderRadius:8,padding:"8px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#fff",fontWeight:600}}>{signedDocs[i]?"Signed ✓":"Sign Now"}</button>:
-                    <span style={{fontFamily:fs,fontSize:11,color:C.green,fontWeight:600}}>Signed &#9989;</span>
+                    <span style={{fontFamily:fs,fontSize:11,color:C.greenText,fontWeight:600}}>Signed &#9989;</span>
                   }
                 </div>
               ))}
-              <p style={{fontFamily:fs,fontSize:11,color:"#bbb",margin:"12px 0 0"}}>E-signatures are legally binding under Canada's Electronic Commerce Act. Documents are encrypted and stored securely.</p>
+              <p style={{fontFamily:fs,fontSize:11,color:"#707070",margin:"12px 0 0"}}>E-signatures are legally binding under Canada's Electronic Commerce Act. Documents are encrypted and stored securely.</p>
             </div>
 
             {/* Recent Transactions */}
@@ -2461,7 +2469,7 @@ function DashboardPage({setPage}){
                     </div>
                     <div>
                       <div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:500}}>{tx.desc}</div>
-                      <div style={{fontFamily:fs,fontSize:10,color:"#ccc"}}>{tx.date} -- <span style={{color:"#bbb"}}>{tx.cat}</span></div>
+                      <div style={{fontFamily:fs,fontSize:10,color:"#707070"}}>{tx.date} -- <span style={{color:"#707070"}}>{tx.cat}</span></div>
                     </div>
                   </div>
                   <span style={{fontFamily:fs,fontSize:14,color:tx.amount.startsWith("+")?C.green:C.navy,fontWeight:600}}>{tx.amount}</span>
@@ -2477,8 +2485,8 @@ function DashboardPage({setPage}){
               <h3 style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.7)",margin:"0 0 16px",fontWeight:700}}>&#127757; Quick Transfer to Baltics</h3>
               {!transferSent?<>
                 <div style={{marginBottom:12}}>
-                  <label style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.4)",display:"block",marginBottom:4}}>To</label>
-                  <select value={transferTo} onChange={e=>setTransferTo(e.target.value)} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:10,padding:"10px 14px",fontFamily:fs,fontSize:13,color:"#fff",outline:"none",boxSizing:"border-box"}}>
+                  <label htmlFor="sel-5" style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",display:"block",marginBottom:4}}>To</label>
+                  <select id="sel-5" value={transferTo} onChange={e=>setTransferTo(e.target.value)} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:10,padding:"10px 14px",fontFamily:fs,fontSize:13,color:"#fff",outline:"none",boxSizing:"border-box"}}>
                     <option>Grandmother Maija - Riga, Latvia</option>
                     <option>Uncle Toomas - Tallinn, Estonia</option>
                     <option>Estonian Song Festival Fund</option>
@@ -2486,21 +2494,21 @@ function DashboardPage({setPage}){
                   </select>
                 </div>
                 <div style={{marginBottom:12}}>
-                  <label style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.4)",display:"block",marginBottom:4}}>Amount (CAD)</label>
+                  <label style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",display:"block",marginBottom:4}}>Amount (CAD)</label>
                   <input value={transferAmt} onChange={e=>setTransferAmt(e.target.value)} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:10,padding:"10px 14px",fontFamily:fs,fontSize:18,color:"#fff",outline:"none",fontWeight:700,boxSizing:"border-box"}}/>
                 </div>
                 <div style={{background:"rgba(255,255,255,0.05)",borderRadius:10,padding:"10px 14px",marginBottom:12}}>
-                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.4)"}}>Exchange Rate</span><span style={{fontFamily:fs,fontSize:12,color:"#fff"}}>1 CAD = 0.6821 EUR</span></div>
-                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.4)"}}>Recipient Gets</span><span style={{fontFamily:fs,fontSize:14,color:C.green,fontWeight:700}}>{"\u20AC"}{(parseFloat(transferAmt||0)*0.6821).toFixed(2)}</span></div>
-                  <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.4)"}}>Fee</span><span style={{fontFamily:fs,fontSize:12,color:"#fff"}}>C$4.99</span></div>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Exchange Rate</span><span style={{fontFamily:fs,fontSize:12,color:"#fff"}}>1 CAD = 0.6821 EUR</span></div>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Recipient Gets</span><span style={{fontFamily:fs,fontSize:14,color:C.greenText,fontWeight:700}}>{"\u20AC"}{(parseFloat(transferAmt||0)*0.6821).toFixed(2)}</span></div>
+                  <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Fee</span><span style={{fontFamily:fs,fontSize:12,color:"#fff"}}>C$4.99</span></div>
                 </div>
                 <button onClick={()=>setTransferSent(true)} style={{width:"100%",background:C.green,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:14,color:"#fff",fontWeight:700}}>Send C${transferAmt} to {transferTo.split(" - ")[0]}</button>
               </>:<div style={{textAlign:"center",padding:"12px 0"}}>
                 <div style={{fontSize:32,marginBottom:8}}>&#9989;</div>
                 <div style={{fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>Transfer Sent!</div>
-                <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.5)",marginTop:4}}>C${transferAmt} to {transferTo}</div>
-                <div style={{fontFamily:fs,fontSize:12,color:C.green,marginTop:2}}>Estimated arrival: 1-2 business days</div>
-                <div style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.3)",marginTop:8}}>Tracking ID: NB-TXN-{Math.floor(Math.random()*900000+100000)}</div>
+                <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:4}}>C${transferAmt} to {transferTo}</div>
+                <div style={{fontFamily:fs,fontSize:12,color:C.greenText,marginTop:2}}>Estimated arrival: 1-2 business days</div>
+                <div style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:8}}>Tracking ID: NB-TXN-{Math.floor(Math.random()*900000+100000)}</div>
                 <button onClick={()=>setTransferSent(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"8px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:12}}>Send Another</button>
               </div>}
             </div>
@@ -2535,13 +2543,13 @@ function DashboardPage({setPage}){
                 <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:i<5?"1px solid #f8f8f8":"none"}}>
                   <div>
                     <div style={{fontFamily:fs,fontSize:12,color:C.navy,fontWeight:500}}>{p.l}</div>
-                    <div style={{fontFamily:fs,fontSize:10,color:"#ccc"}}>{p.d}</div>
+                    <div style={{fontFamily:fs,fontSize:10,color:"#707070"}}>{p.d}</div>
                   </div>
                   <span style={{fontFamily:fs,fontSize:12,color:C.navy,fontWeight:600}}>{p.a}</span>
                 </div>
               ))}
               <div style={{marginTop:12,padding:"10px",background:"#f8f8f8",borderRadius:10,textAlign:"center"}}>
-                <span style={{fontFamily:fs,fontSize:11,color:"#999"}}>Total upcoming: </span>
+                <span style={{fontFamily:fs,fontSize:11,color:"#6B6B6B"}}>Total upcoming: </span>
                 <span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:700}}>C$2,877.55</span>
               </div>
             </div>
@@ -2551,28 +2559,28 @@ function DashboardPage({setPage}){
               <h3 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 16px",fontWeight:700}}>Identity Verification</h3>
               {[{l:"Photo ID Verified",s:true,d:"Ontario Driver's Licence -- Verified Feb 2024"},{l:"Address Verified",s:true,d:"4 Credit Union Dr, North York"},{l:"KYC / AML Compliant",s:true,d:"FINTRAC compliant -- Next review: Feb 2027"},{l:"Biometric Login",s:true,d:"Face ID enabled on iPhone"}].map((v,i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:i<3?"1px solid #f8f8f8":"none"}}>
-                  <span style={{fontSize:14,color:C.green}}>&#9989;</span>
+                  <span style={{fontSize:14,color:C.greenText}}>&#9989;</span>
                   <div>
                     <div style={{fontFamily:fs,fontSize:12,color:C.navy,fontWeight:600}}>{v.l}</div>
-                    <div style={{fontFamily:fs,fontSize:10,color:"#bbb"}}>{v.d}</div>
+                    <div style={{fontFamily:fs,fontSize:10,color:"#707070"}}>{v.d}</div>
                   </div>
                 </div>
               ))}
-              <p style={{fontFamily:fs,fontSize:10,color:"#ccc",margin:"10px 0 0"}}>Identity verification powered by Jumio. Compliant with FINTRAC and FSRA requirements.</p>
+              <p style={{fontFamily:fs,fontSize:10,color:"#707070",margin:"10px 0 0"}}>Identity verification powered by Jumio. Compliant with FINTRAC and FSRA requirements.</p>
             </div>
 
             {/* Coverage Score */}
             <div style={{background:C.navy,borderRadius:20,padding:24,marginBottom:24}}>
-              <h3 style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.5)",margin:"0 0 16px",fontWeight:700}}>Coverage Score</h3>
+              <h3 style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.6)",margin:"0 0 16px",fontWeight:700}}>Coverage Score</h3>
               <div style={{textAlign:"center",marginBottom:16}}>
                 <div style={{width:90,height:90,borderRadius:"50%",border:`5px solid ${C.green}`,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"center"}}>
                   <span style={{fontFamily:ff,fontSize:28,color:"#fff",fontWeight:700}}>87</span>
                 </div>
-                <div style={{fontFamily:fs,fontSize:11,color:C.green,marginTop:6,fontWeight:600}}>Well Protected</div>
+                <div style={{fontFamily:fs,fontSize:11,color:C.greenText,marginTop:6,fontWeight:600}}>Well Protected</div>
               </div>
               {[{l:"Life Insurance",v:true},{l:"Home Insurance",v:true},{l:"Auto Insurance",v:true},{l:"Disability",v:false},{l:"Critical Illness",v:false},{l:"Travel Insurance",v:true}].map((c2,i)=>(
                 <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 0"}}>
-                  <span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.45)"}}>{c2.l}</span>
+                  <span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>{c2.l}</span>
                   <span style={{fontFamily:fs,fontSize:11,color:c2.v?C.green:C.red,fontWeight:600}}>{c2.v?"Covered":"Gap"}</span>
                 </div>
               ))}
@@ -2583,11 +2591,11 @@ function DashboardPage({setPage}){
             <div style={{background:`${C.green}08`,border:`1px solid ${C.green}20`,borderRadius:20,padding:24}}>
               <h3 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 12px",fontWeight:700}}>Next Appointment</h3>
               <div style={{fontFamily:fs,fontSize:14,color:C.navy,fontWeight:600}}>Insurance Review with Heili Orav</div>
-              <div style={{fontFamily:fs,fontSize:12,color:"#888",marginTop:4}}>March 25, 2026 at 10:30 AM</div>
-              <div style={{fontFamily:fs,fontSize:12,color:"#888"}}>Latvian Centre Branch, North York</div>
+              <div style={{fontFamily:fs,fontSize:12,color:"#666",marginTop:4}}>March 25, 2026 at 10:30 AM</div>
+              <div style={{fontFamily:fs,fontSize:12,color:"#666"}}>Latvian Centre Branch, North York</div>
               <div style={{display:"flex",gap:8,marginTop:12}}>
                 <button style={{flex:1,background:C.green,border:"none",borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600}}>Join Video Call</button>
-                <button style={{flex:1,background:"#fff",border:`1px solid ${C.green}`,borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.green,fontWeight:600}}>Reschedule</button>
+                <button style={{flex:1,background:"#fff",border:`1px solid ${C.green}`,borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.greenText,fontWeight:600}}>Reschedule</button>
               </div>
             </div>
           </div>
@@ -2619,7 +2627,7 @@ function LeadershipPage({setPage}){
               {[{v:"C$4.05M",l:"5-Year Net Revenue",c:C.green},{v:"C$56K",l:"3-Year Total Cost to NBCU",c:C.accent},{v:"Day 1",l:"Profitable From",c:C.amber},{v:"1%",l:"Year 5 Cost-to-Revenue",c:C.purple}].map((m,i)=>
                 <div key={i} style={{background:`${m.c}06`,borderRadius:16,padding:20,textAlign:"center",borderTop:`3px solid ${m.c}`}}>
                   <div style={{fontFamily:ff,fontSize:28,color:m.c,fontWeight:700}}>{m.v}</div>
-                  <div style={{fontFamily:fs,fontSize:11,color:"#888",marginTop:4}}>{m.l}</div>
+                  <div style={{fontFamily:fs,fontSize:11,color:"#666",marginTop:4}}>{m.l}</div>
                 </div>
               )}
             </div>
@@ -2629,7 +2637,7 @@ function LeadershipPage({setPage}){
             <p style={{fontFamily:fs,fontSize:14,color:"#666",lineHeight:1.7,marginBottom:16}}>This is not a mockup. Every feature on this site is functional:</p>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr",gap:10}}>
               {["7 AI features powered by Claude Opus 4.6 (real API calls, real conversations)","Real-time insurance quote calculator with actuarial math","Trilingual experience (English, Estonian, Latvian) -- 80+ translated strings","Credit score monitoring, budgeting, and spending categorization","International transfer widget with live EUR exchange rates","Digital document signing and identity verification","Claims filing wizard, appointment booking, coverage comparison","Canadian regulatory compliance (PIPEDA, AODA, FSRA, FINTRAC)","Estonian/Latvian cultural branding (birch trees, cornflowers, daisies, folk patterns)","Tax & savings optimizer with RRSP/TFSA calculators"].map((f,i)=>
-                <div key={i} style={{display:"flex",gap:8,alignItems:"flex-start"}}><span style={{color:C.green,fontSize:14,flexShrink:0}}>&#10003;</span><span style={{fontFamily:fs,fontSize:13,color:"#555",lineHeight:1.6}}>{f}</span></div>
+                <div key={i} style={{display:"flex",gap:8,alignItems:"flex-start"}}><span style={{color:C.greenText,fontSize:14,flexShrink:0}}>&#10003;</span><span style={{fontFamily:fs,fontSize:13,color:"#555",lineHeight:1.6}}>{f}</span></div>
               )}
             </div>
           </div>
@@ -2638,7 +2646,7 @@ function LeadershipPage({setPage}){
         {tab==="costs"&&<div>
           <div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee",marginBottom:24}}>
             <h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 8px"}}>What Northern Birch Actually Pays</h3>
-            <p style={{fontFamily:fs,fontSize:14,color:"#999",marginBottom:24}}>The insurance distribution model is dramatically cheaper than most board members expect.</p>
+            <p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",marginBottom:24}}>The insurance distribution model is dramatically cheaper than most board members expect.</p>
             {/* Cost table */}
             <div style={{borderRadius:16,overflow:"hidden",border:"1px solid #eee",marginBottom:24}}>
               <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",background:C.navy,padding:"14px 20px"}}>
@@ -2666,9 +2674,9 @@ function LeadershipPage({setPage}){
           </div>
           <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:16,marginBottom:24}}>
             {[
-              {title:"What Oodler Provides Free",color:C.green,items:["Insurance partner negotiation","KESKUS launch strategy","Regulatory navigation (FSRA/RIBO)","Website & digital UX audit","Cybersecurity assessment","Payments modernization advisory","Quarterly performance analytics","Ongoing technology advisory"],value:"C$75K-100K estimated value"},
-              {title:"What Insurers Provide Free",color:C.accent,items:["Insurance products & underwriting","Quoting tools & digital infrastructure","Staff training & certification","Marketing materials & co-branding","Policy administration","Claims processing","Dedicated partnership manager","Regulatory compliance support"],value:"They want NBCU's distribution"},
-              {title:"What NBCU Provides",color:C.amber,items:["Member relationships & trust","Branch staff for referrals","Community network","Access to member data (with consent)","Board approval & alignment","RIBO licensing fees","Optional marketing spend","Commitment to offer insurance"],value:"C$56K over 3 years"},
+              {title:"What Oodler Provides Free",color:C.greenText,items:["Insurance partner negotiation","KESKUS launch strategy","Regulatory navigation (FSRA/RIBO)","Website & digital UX audit","Cybersecurity assessment","Payments modernization advisory","Quarterly performance analytics","Ongoing technology advisory"],value:"C$75K-100K estimated value"},
+              {title:"What Insurers Provide Free",color:C.accentText,items:["Insurance products & underwriting","Quoting tools & digital infrastructure","Staff training & certification","Marketing materials & co-branding","Policy administration","Claims processing","Dedicated partnership manager","Regulatory compliance support"],value:"They want NBCU's distribution"},
+              {title:"What NBCU Provides",color:C.amberText,items:["Member relationships & trust","Branch staff for referrals","Community network","Access to member data (with consent)","Board approval & alignment","RIBO licensing fees","Optional marketing spend","Commitment to offer insurance"],value:"C$56K over 3 years"},
             ].map((col,i)=>(
               <div key={i} style={{background:"#fff",borderRadius:20,padding:28,border:"1px solid #eee",borderTop:`3px solid ${col.color}`}}>
                 <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 12px",fontWeight:700}}>{col.title}</h4>
@@ -2684,12 +2692,12 @@ function LeadershipPage({setPage}){
 
         {tab==="legal"&&<div>
           {[
-            {title:"Insurance Distribution Model",color:C.accent,content:"Northern Birch becomes an insurance distributor, NOT an insurance company. NBCU does not manufacture products, underwrite risk, process claims, or hold insurance capital reserves. All of that is done by the insurance manufacturing partners (The Personal, CUMIS, Manulife). NBCU refers members to insurance products and earns commissions on policies sold.",items:["No underwriting risk to NBCU","No claims liability","No insurance capital requirements","No impact on NBCU's capital adequacy ratios"]},
-            {title:"FSRA (Financial Services Regulatory Authority of Ontario)",color:C.green,content:"Northern Birch is regulated by FSRA as an Ontario credit union. FSRA permits credit unions to distribute insurance products through referral arrangements or licensed subsidiaries. The recommended approach starts with a referral arrangement (operational in 6-8 weeks, no RIBO license required) before transitioning to a RIBO-licensed subsidiary as volume justifies.",items:["Referral model: operational in 6-8 weeks","No RIBO license required for referrals","FSRA notification required (not approval)","Full RIBO subsidiary as volume grows"]},
-            {title:"RIBO (Registered Insurance Brokers of Ontario)",color:C.amber,content:"RIBO regulates insurance brokers in Ontario. Under a referral model, NBCU staff refer members to the insurer's licensed agents -- no RIBO license needed. Under a subsidiary model, NBCU creates a RIBO-licensed entity with at least one licensed principal broker. CUMIS and The Personal provide full RIBO navigation support.",items:["Phase 1: Referral (no RIBO needed)","Phase 2: Licensed subsidiary","CUMIS provides regulatory guidance","Annual RIBO fees ~C$2,000-3,000"]},
+            {title:"Insurance Distribution Model",color:C.accentText,content:"Northern Birch becomes an insurance distributor, NOT an insurance company. NBCU does not manufacture products, underwrite risk, process claims, or hold insurance capital reserves. All of that is done by the insurance manufacturing partners (The Personal, CUMIS, Manulife). NBCU refers members to insurance products and earns commissions on policies sold.",items:["No underwriting risk to NBCU","No claims liability","No insurance capital requirements","No impact on NBCU's capital adequacy ratios"]},
+            {title:"FSRA (Financial Services Regulatory Authority of Ontario)",color:C.greenText,content:"Northern Birch is regulated by FSRA as an Ontario credit union. FSRA permits credit unions to distribute insurance products through referral arrangements or licensed subsidiaries. The recommended approach starts with a referral arrangement (operational in 6-8 weeks, no RIBO license required) before transitioning to a RIBO-licensed subsidiary as volume justifies.",items:["Referral model: operational in 6-8 weeks","No RIBO license required for referrals","FSRA notification required (not approval)","Full RIBO subsidiary as volume grows"]},
+            {title:"RIBO (Registered Insurance Brokers of Ontario)",color:C.amberText,content:"RIBO regulates insurance brokers in Ontario. Under a referral model, NBCU staff refer members to the insurer's licensed agents -- no RIBO license needed. Under a subsidiary model, NBCU creates a RIBO-licensed entity with at least one licensed principal broker. CUMIS and The Personal provide full RIBO navigation support.",items:["Phase 1: Referral (no RIBO needed)","Phase 2: Licensed subsidiary","CUMIS provides regulatory guidance","Annual RIBO fees ~C$2,000-3,000"]},
             {title:"PIPEDA (Privacy)",color:C.purple,content:"All member data handling complies with the Personal Information Protection and Electronic Documents Act. Insurance referrals require member consent before sharing information with insurance partners. Members can opt out of insurance marketing at any time. Health information for underwriting requires explicit consent. All data is encrypted and stored in Canada.",items:["Consent required before data sharing","Opt-out available at any time","Health data requires explicit consent","All data stored in Canada"]},
             {title:"FINTRAC (Anti-Money Laundering)",color:C.navy,content:"Northern Birch already complies with FINTRAC for banking operations. Insurance distribution adds minimal AML requirements since the insurers handle their own FINTRAC obligations. International transfer services through partners like Wise are FINTRAC-registered. Digital identity verification (Jumio) satisfies KYC requirements.",items:["Existing FINTRAC compliance covers banking","Insurers handle their own AML","Transfer partners are FINTRAC-registered","Digital ID verification for KYC"]},
-            {title:"AODA (Accessibility)",color:C.red,content:"The Accessibility for Ontarians with Disabilities Act requires all digital services to meet WCAG 2.0 Level AA standards. This website and all member-facing digital tools are designed with accessibility in mind: keyboard navigation, screen reader support, sufficient color contrast, and resizable text. The new KESKUS branch will exceed current physical accessibility standards.",items:["WCAG 2.0 Level AA compliance","Keyboard and screen reader support","Accessible branch design","Staff training on accessible service"]},
+            {title:"AODA (Accessibility)",color:C.redText,content:"The Accessibility for Ontarians with Disabilities Act requires all digital services to meet WCAG 2.0 Level AA standards. This website and all member-facing digital tools are designed with accessibility in mind: keyboard navigation, screen reader support, sufficient color contrast, and resizable text. The new KESKUS branch will exceed current physical accessibility standards.",items:["WCAG 2.0 Level AA compliance","Keyboard and screen reader support","Accessible branch design","Staff training on accessible service"]},
           ].map((section,i)=>(
             <div key={i} style={{background:"#fff",borderRadius:20,padding:isMob?24:32,border:"1px solid #eee",marginBottom:16,borderLeft:`4px solid ${section.color}`}}>
               <h3 style={{fontFamily:fs,fontSize:18,color:C.navy,margin:"0 0 10px",fontWeight:700}}>{section.title}</h3>
@@ -2713,7 +2721,7 @@ function LeadershipPage({setPage}){
                 {item:"Total Costs",vals:["(C$21K)","(C$17.5K)","(C$17.5K)","(C$20K)","(C$20.5K)"],c:C.red},
                 {item:"Net Annual Impact",vals:["C$144K","C$447.5K","C$842.5K","C$1.15M","C$1.47M"],c:C.accent,bold:true},
                 {item:"Cumulative Net",vals:["C$144K","C$591.5K","C$1.43M","C$2.58M","C$4.05M"],c:C.navy,bold:true},
-                {item:"Cost as % of Revenue",vals:["13%","4%","2%","2%","1%"],c:"#999"},
+                {item:"Cost as % of Revenue",vals:["13%","4%","2%","2%","1%"],c:"#6B6B6B"},
               ].map((row,i)=>(
                 <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr 1fr",padding:"12px 20px",background:i%2===0?"#fff":"#fafafa",borderBottom:"1px solid #f0f0f0"}}>
                   <span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:row.bold?700:400}}>{row.item}</span>
@@ -2734,8 +2742,8 @@ function LeadershipPage({setPage}){
                 {l:"Additional Revenue Streams",v:"C$10K-$300K/yr",d:"International transfers, FX, estate, referrals"},
               ].map((r,i)=>(
                 <div key={i} style={{padding:"10px 0",borderBottom:i<5?"1px solid #f5f5f5":"none"}}>
-                  <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.green,fontWeight:700}}>{r.v}</span></div>
-                  <div style={{fontFamily:fs,fontSize:11,color:"#bbb",marginTop:2}}>{r.d}</div>
+                  <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.greenText,fontWeight:700}}>{r.v}</span></div>
+                  <div style={{fontFamily:fs,fontSize:11,color:"#707070",marginTop:2}}>{r.d}</div>
                 </div>
               ))}
             </div>
@@ -2751,7 +2759,7 @@ function LeadershipPage({setPage}){
               ].map((r,i)=>(
                 <div key={i} style={{padding:"10px 0",borderBottom:i<5?"1px solid #f5f5f5":"none"}}>
                   <div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600,marginBottom:2}}>{r.l}</div>
-                  <div style={{fontFamily:fs,fontSize:12,color:"#888",lineHeight:1.6}}>{r.d}</div>
+                  <div style={{fontFamily:fs,fontSize:12,color:"#666",lineHeight:1.6}}>{r.d}</div>
                 </div>
               ))}
             </div>
@@ -2763,9 +2771,9 @@ function LeadershipPage({setPage}){
             <h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>What No Competitor Can Replicate</h3>
             {[
               {title:"AI Insurance Advisor in Estonian & Latvian",desc:"No bank, credit union, or insurer in Canada has an AI advisor that speaks Estonian and Latvian. This isn't a translation -- it's a culturally informed advisor that understands Baltic travel patterns, co-op housing, and cross-border family needs.",color:C.purple},
-              {title:"Co-op Apartment Insurance",desc:"Northern Birch is one of the few Ontario institutions with both co-op mortgage expertise AND co-op insurance products. Standard condo policies don't fit co-op structures. This is a genuinely ownable niche.",color:C.accent},
-              {title:"Baltic Travel Insurance + Transfers",desc:"Annual multi-trip coverage designed for members who visit Estonia and Latvia regularly, combined with in-app international transfers to the Baltics. No competitor bundles these.",color:C.amber},
-              {title:"Multi-Generational Family Intelligence",desc:"NBCU knows members' parents, children, and grandchildren across 70+ years. A home insurance renewal for Juri triggers a life insurance review for his daughter Maria. No big bank has this depth of relationship.",color:C.green},
+              {title:"Co-op Apartment Insurance",desc:"Northern Birch is one of the few Ontario institutions with both co-op mortgage expertise AND co-op insurance products. Standard condo policies don't fit co-op structures. This is a genuinely ownable niche.",color:C.accentText},
+              {title:"Baltic Travel Insurance + Transfers",desc:"Annual multi-trip coverage designed for members who visit Estonia and Latvia regularly, combined with in-app international transfers to the Baltics. No competitor bundles these.",color:C.amberText},
+              {title:"Multi-Generational Family Intelligence",desc:"NBCU knows members' parents, children, and grandchildren across 70+ years. A home insurance renewal for Juri triggers a life insurance review for his daughter Maria. No big bank has this depth of relationship.",color:C.greenText},
               {title:"Community Network Effect",desc:"In tight-knit Estonian and Latvian communities, one satisfied insurance customer generates 3-4 referrals. Juri tells everyone at the Latvian Centre. This word-of-mouth multiplier doesn't exist at TD or Scotiabank.",color:C.navy},
             ].map((s,i)=>(
               <div key={i} style={{padding:"16px 0",borderBottom:i<4?"1px solid #f0f0f0":"none"}}>
@@ -2787,7 +2795,7 @@ function LeadershipPage({setPage}){
                 <div key={i} style={{background:"rgba(255,255,255,0.04)",borderRadius:14,padding:16,border:`1px solid ${i===0?C.green:"rgba(255,255,255,0.06)"}40`,textAlign:"center"}}>
                   <div style={{fontFamily:fs,fontSize:12,color:"#fff",fontWeight:700,whiteSpace:"pre-line",marginBottom:8,minHeight:36}}>{comp.name}</div>
                   <div style={{fontFamily:ff,fontSize:20,color:comp.c,fontWeight:700,marginBottom:8}}>{comp.score}</div>
-                  {comp.features.map((f,fi)=><div key={fi} style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.4)",marginBottom:3}}>{f}</div>)}
+                  {comp.features.map((f,fi)=><div key={fi} style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",marginBottom:3}}>{f}</div>)}
                 </div>
               ))}
             </div>
@@ -2798,12 +2806,12 @@ function LeadershipPage({setPage}){
           <div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee",marginBottom:24}}>
             <h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 20px"}}>18-Month Implementation Roadmap</h3>
             {[
-              {phase:"Month 1-2",title:"Discovery & Partner Selection",color:C.accent,items:["Insurance partner RFP (CUMIS, The Personal, Manulife)","Commission structure negotiation","Regulatory review with FSRA","Member needs survey","KESKUS timeline alignment"]},
-              {phase:"Month 2-3",title:"Licensing & Compliance",color:C.green,items:["FSRA notification filed","Referral agreement with insurers","Privacy assessment (PIPEDA)","Compliance framework established","Staff training program begins"]},
-              {phase:"Month 3-6",title:"Phase 1 Launch: Creditor & Life",color:C.amber,items:["Creditor insurance embedded in mortgage applications","Term life and critical illness referrals begin","Staff certified on insurance products","KESKUS pre-launch marketing","Digital platform soft launch"]},
+              {phase:"Month 1-2",title:"Discovery & Partner Selection",color:C.accentText,items:["Insurance partner RFP (CUMIS, The Personal, Manulife)","Commission structure negotiation","Regulatory review with FSRA","Member needs survey","KESKUS timeline alignment"]},
+              {phase:"Month 2-3",title:"Licensing & Compliance",color:C.greenText,items:["FSRA notification filed","Referral agreement with insurers","Privacy assessment (PIPEDA)","Compliance framework established","Staff training program begins"]},
+              {phase:"Month 3-6",title:"Phase 1 Launch: Creditor & Life",color:C.amberText,items:["Creditor insurance embedded in mortgage applications","Term life and critical illness referrals begin","Staff certified on insurance products","KESKUS pre-launch marketing","Digital platform soft launch"]},
               {phase:"Month 6-10",title:"Phase 2: Home, Auto & Travel",color:C.purple,items:["The Personal P&C quote engine live","Co-op apartment insurance product","Auto insurance referrals active","Baltic travel insurance package","Tenant insurance via mobile app"]},
               {phase:"Month 10-14",title:"Phase 3: Group Benefits & Digital",color:C.navy,items:["Manulife group benefits for business members","Commercial property & liability insurance","International transfer service live","Full insurance dashboard in online banking","AI advisor launched"]},
-              {phase:"Month 14-18",title:"Optimization & Expansion",color:C.red,items:["RIBO subsidiary transition (if volume justifies)","Estate planning advisory program","Payroll partnerships active","Cross-sell analytics and optimization","Board performance reporting"]},
+              {phase:"Month 14-18",title:"Optimization & Expansion",color:C.redText,items:["RIBO subsidiary transition (if volume justifies)","Estate planning advisory program","Payroll partnerships active","Cross-sell analytics and optimization","Board performance reporting"]},
             ].map((phase,i)=>(
               <div key={i} style={{display:"flex",gap:20,marginBottom:i<5?24:0,paddingBottom:i<5?24:0,borderBottom:i<5?"1px solid #f0f0f0":"none"}}>
                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",flexShrink:0}}>
@@ -2821,7 +2829,7 @@ function LeadershipPage({setPage}){
             ))}
           </div>
           <div style={{textAlign:"center"}}>
-            <Btn onClick={()=>setPage("booking")} color={C.green}>Schedule Strategic Alignment Meeting</Btn>
+            <Btn onClick={()=>setPage("booking")} color={C.greenFill}>Schedule Strategic Alignment Meeting</Btn>
           </div>
         </div>}
       </div>
@@ -2836,7 +2844,7 @@ function CookieBanner(){
   return(
     <div style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(15,24,41,0.97)",backdropFilter:"blur(10px)",padding:typeof window!=="undefined"&&window.innerWidth<=768?"16px":"16px 24px",zIndex:1600,borderTop:`1px solid rgba(200,184,138,0.15)`}}>
       <div style={{maxWidth:1320,margin:"0 auto",display:"flex",alignItems:typeof window!=="undefined"&&window.innerWidth<=768?"flex-start":"center",gap:16,flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row"}}>
-        <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:0,flex:1,lineHeight:1.6}}>We use cookies to improve your experience and analyze site usage. By continuing to browse, you consent to our use of cookies in accordance with our <button onClick={()=>setShow(false)} style={{background:"none",border:"none",color:C.accent,fontFamily:fs,fontSize:13,cursor:"pointer",textDecoration:"underline",padding:0}}>Privacy Policy</button> and the Personal Information Protection and Electronic Documents Act (PIPEDA).</p>
+        <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:0,flex:1,lineHeight:1.6}}>We use cookies to improve your experience and analyze site usage. By continuing to browse, you consent to our use of cookies in accordance with our <button onClick={()=>setShow(false)} style={{background:"none",border:"none",color:C.accentText,fontFamily:fs,fontSize:13,cursor:"pointer",textDecoration:"underline",padding:0}}>Privacy Policy</button> and the Personal Information Protection and Electronic Documents Act (PIPEDA).</p>
         <div style={{display:"flex",gap:8,flexShrink:0}}>
           <button onClick={()=>setShow(false)} style={{background:C.accent,border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Accept All</button>
           <button onClick={()=>setShow(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)"}}>Essential Only</button>
@@ -2864,7 +2872,7 @@ function PrivacyPage(){
           {t:"Cookies and Digital Tracking",p:"Our website uses essential cookies for functionality and analytics cookies to improve user experience. You can manage cookie preferences through your browser settings. We do not sell personal information to third parties for advertising purposes."},
           {t:"Contact",p:"Privacy Officer, Northern Birch Credit Union Limited, 4 Credit Union Drive, North York, Ontario M4A 2N8. Email: privacy@northernbirchcu.com. Phone: 416-465-4659. Office of the Privacy Commissioner of Canada: 1-800-282-1376 or www.priv.gc.ca."},
         ].map((s,i)=>(<div key={i} style={{marginBottom:24}}><h3 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{s.t}</h3><p style={{fontFamily:fs,fontSize:14,color:"#666",lineHeight:1.8,margin:0}}>{s.p}</p></div>))}
-        <p style={{fontFamily:fs,fontSize:12,color:"#bbb",marginTop:32}}>Last updated: March 2026. Northern Birch Credit Union Limited is regulated by the Financial Services Regulatory Authority of Ontario (FSRA).</p>
+        <p style={{fontFamily:fs,fontSize:12,color:"#707070",marginTop:32}}>Last updated: March 2026. Northern Birch Credit Union Limited is regulated by the Financial Services Regulatory Authority of Ontario (FSRA).</p>
       </div>
     </section>
   );
@@ -2875,7 +2883,7 @@ function AccessibilityPage(){
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
-        <SH tag="Accessibility" tagColor={C.green} title="Accessibility Commitment" desc="Northern Birch is committed to providing accessible services to all members in accordance with the Accessibility for Ontarians with Disabilities Act (AODA)."/>
+        <SH tag="Accessibility" tagColor={C.greenText} title="Accessibility Commitment" desc="Northern Birch is committed to providing accessible services to all members in accordance with the Accessibility for Ontarians with Disabilities Act (AODA)."/>
         {[
           {t:"Our Commitment",p:"Northern Birch Credit Union is committed to meeting the accessibility needs of people with disabilities in a timely manner. We comply with the Accessibility for Ontarians with Disabilities Act, 2005 (AODA) and the Integrated Accessibility Standards Regulation (Ontario Regulation 191/11)."},
           {t:"Accessible Customer Service",p:"We provide accessible customer service to people with disabilities. Our staff are trained on serving members with various disabilities, including how to interact with people who use assistive devices, service animals, or support persons. If our usual methods of communication don't work for you, we'll work with you to find an alternative."},
@@ -2895,12 +2903,12 @@ function ComplaintsPage(){
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
-        <SH tag="Member Advocacy" tagColor={C.red} title="Complaint Resolution" desc="Northern Birch is committed to resolving member concerns fairly and promptly. Here is our complaint resolution process."/>
+        <SH tag="Member Advocacy" tagColor={C.redText} title="Complaint Resolution" desc="Northern Birch is committed to resolving member concerns fairly and promptly. Here is our complaint resolution process."/>
         <div style={{display:"flex",flexDirection:"column",gap:16,marginBottom:32}}>
           {[
-            {step:"1",title:"Contact Your Branch",desc:"Start by speaking with a staff member at your branch or calling us at 416-465-4659. Most concerns can be resolved at this level. Our team is trained to listen, investigate, and find solutions.",color:C.accent},
-            {step:"2",title:"Escalate to Management",desc:"If you're not satisfied with the branch resolution, ask to speak with the Branch Manager or contact our CEO, Anita Saar, at asaar@northernbirchcu.com. Management will review your concern and respond within 10 business days.",color:C.amber},
-            {step:"3",title:"Contact Our Ombudsperson",desc:"If the matter remains unresolved, you may contact the Ombudsman for Banking Services and Investments (OBSI) -- an independent organization that investigates complaints about financial services providers in Canada. OBSI services are free to consumers.",color:C.red},
+            {step:"1",title:"Contact Your Branch",desc:"Start by speaking with a staff member at your branch or calling us at 416-465-4659. Most concerns can be resolved at this level. Our team is trained to listen, investigate, and find solutions.",color:C.accentText},
+            {step:"2",title:"Escalate to Management",desc:"If you're not satisfied with the branch resolution, ask to speak with the Branch Manager or contact our CEO, Anita Saar, at asaar@northernbirchcu.com. Management will review your concern and respond within 10 business days.",color:C.amberText},
+            {step:"3",title:"Contact Our Ombudsperson",desc:"If the matter remains unresolved, you may contact the Ombudsman for Banking Services and Investments (OBSI) -- an independent organization that investigates complaints about financial services providers in Canada. OBSI services are free to consumers.",color:C.redText},
           ].map((s,i)=>(
             <div key={i} style={{background:"#fff",borderRadius:20,padding:"28px 32px",border:"1px solid #eee",display:"flex",gap:20,alignItems:"flex-start"}}>
               <div style={{width:44,height:44,borderRadius:"50%",background:s.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:fs,fontSize:18,color:"#fff",fontWeight:800}}>{s.step}</span></div>
@@ -2918,8 +2926,8 @@ function ComplaintsPage(){
           ].map((b,i)=>(
             <div key={i} style={{padding:"12px 0",borderBottom:i<3?"1px solid #eee":"none"}}>
               <div style={{fontFamily:fs,fontSize:15,color:C.navy,fontWeight:700}}>{b.name}</div>
-              <div style={{fontFamily:fs,fontSize:13,color:"#888",marginTop:2}}>{b.desc}</div>
-              <div style={{fontFamily:fs,fontSize:13,color:C.accent,marginTop:2}}>{b.phone} | {b.web}</div>
+              <div style={{fontFamily:fs,fontSize:13,color:"#666",marginTop:2}}>{b.desc}</div>
+              <div style={{fontFamily:fs,fontSize:13,color:C.accentText,marginTop:2}}>{b.phone} | {b.web}</div>
             </div>
           ))}
         </div>
@@ -2945,7 +2953,7 @@ function TermsPage(){
           {t:"Anti-Money Laundering",p:"Northern Birch Credit Union complies with the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCMLTFA) and is registered with the Financial Transactions and Reports Analysis Centre of Canada (FINTRAC). We are required to verify the identity of our members and report certain transactions."},
           {t:"Governing Law",p:"These Terms of Use are governed by the laws of the Province of Ontario and the federal laws of Canada. Any disputes arising from or relating to these terms shall be resolved in the courts of Ontario."},
         ].map((s,i)=>(<div key={i} style={{marginBottom:24}}><h3 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{s.t}</h3><p style={{fontFamily:fs,fontSize:14,color:"#666",lineHeight:1.8,margin:0}}>{s.p}</p></div>))}
-        <p style={{fontFamily:fs,fontSize:12,color:"#bbb",marginTop:32}}>Last updated: March 2026. Northern Birch Credit Union Limited. Ontario Corporation. Regulated by FSRA.</p>
+        <p style={{fontFamily:fs,fontSize:12,color:"#707070",marginTop:32}}>Last updated: March 2026. Northern Birch Credit Union Limited. Ontario Corporation. Regulated by FSRA.</p>
       </div>
     </section>
   );
@@ -2995,8 +3003,9 @@ export default function App(){
   return(
     <ToastProvider>
       <div style={{background:C.cream,minHeight:"100vh"}}>
+        <a href="#main" className="skip-link">Skip to main content</a>
         <Nav page={page} setPage={setPage} onSearch={()=>setSearch(true)} onLogin={()=>setLogin(true)} onNotifications={()=>setNotifs(true)} lang={lang} setLang={setLang}/>
-        {pages[page]||pages.home}
+        <main id="main" tabIndex={-1}>{pages[page]||pages.home}</main>
         <Footer setPage={setPage}/>
         <ChatWidget/>
         <SearchOverlay open={search} onClose={()=>setSearch(false)} setPage={setPage}/>

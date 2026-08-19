@@ -7,3 +7,13 @@ input[type=range]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
+
+/* Custom-styled controls lose the default focus ring, which leaves keyboard
+   users with no idea where they are. :focus-visible keeps it off for mouse
+   clicks while restoring it for keyboard navigation. */
+:focus-visible { outline: 3px solid #2E86C1; outline-offset: 2px; border-radius: 4px; }
+
+/* Skip link: visible only once focused. */
+.skip-link { position: absolute; left: -9999px; top: 0; z-index: 3000; }
+.skip-link:focus { left: 8px; top: 8px; background: #1B2A4A; color: #fff; padding: 12px 20px;
+  border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; }
