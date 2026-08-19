@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import './index.css';
 
 const C={navy:"#1B2A4A",accent:"#2E86C1",dark:"#0C1829",green:"#27AE60",amber:"#D4A547",red:"#E74C3C",birch:"#C8B88A",birchLight:"#F5F0E6",cream:"#FDFBF7",purple:"#8E44AD",lightBlue:"#EBF5FB"};
@@ -133,6 +133,67 @@ const TX={
   "Coming Soon":{est:"Tulekul",lat:"Drīzumā"},
 };
 function t(key,lang){if(!lang||lang==="en")return key;return TX[key]?.[lang==="est"?"est":"lat"]||key;}
+
+// ============ ROUTES ============
+// Every page has a real URL, so it can be linked, shared, bookmarked and
+// indexed. Navigation still goes through setPage(key): the router turns that
+// into a history entry, which is why the existing call sites are unchanged.
+const ROUTES={
+  home:"/",personal:"/personal",accounts:"/accounts",mortgages:"/mortgages",cards:"/cards",
+  insurance:"/insurance",travel:"/travel",business:"/business",digital:"/digital",estate:"/estate",
+  community:"/community",contact:"/contact",rates:"/rates",quote:"/quote",compare:"/compare",
+  claims:"/claims",calculators:"/calculators",booking:"/booking",referrals:"/referrals",
+  blog:"/blog",glossary:"/glossary",mobileapp:"/mobile-app",dashboard:"/dashboard",
+  aiadvisor:"/ai-advisor",analyzer:"/coverage-analyzer",healthcheck:"/financial-health-check",
+  lifesim:"/life-event-simulator",docreader:"/policy-document-reader",tax:"/tax-optimizer",
+  messages:"/messages",privacy:"/privacy",accessibility:"/accessibility",complaints:"/complaints",
+  terms:"/terms",leadership:"/leadership",
+};
+const PATH_TO_PAGE=Object.fromEntries(Object.entries(ROUTES).map(([k,v])=>[v,k]));
+function pageFromPath(path){return PATH_TO_PAGE[path.replace(/\/+$/,"")||"/"]||"home"}
+
+// Per-page title and description. Without these every URL shared the one
+// <title> in index.html, so nothing was distinguishable in search or when
+// pasted into a chat.
+const META={
+  home:["Northern Birch Credit Union | Banking, Mortgages & Insurance in Toronto","Chequing, savings, mortgages, credit cards, GICs and registered plans from a full-service Toronto credit union serving the Estonian and Latvian communities since 1954."],
+  accounts:["Chequing, Savings & Registered Accounts | Northern Birch","Compare no-fee chequing, high-interest savings, GIC terms and TFSA, RRSP, FHSA, RESP and RRIF plans at Northern Birch Credit Union."],
+  mortgages:["Mortgages | Northern Birch Credit Union","Fixed, variable and high-ratio mortgages, plus co-op apartment financing most lenders decline. Free pre-approval from a Toronto credit union."],
+  cards:["Credit Cards | Northern Birch Credit Union","Collabria Mastercard cards for members: cash back, low rate and travel rewards, with no-annual-fee options."],
+  personal:["Personal Banking | Northern Birch Credit Union","Everyday accounts, borrowing and investing for Northern Birch members."],
+  rates:["Current Rates | Northern Birch Credit Union","Today's posted mortgage, GIC, savings and lending rates at Northern Birch Credit Union."],
+  insurance:["Insurance | Northern Birch Credit Union","Life, home, auto, travel and co-op insurance distributed through The Personal, CUMIS and Manulife."],
+  travel:["Travel & International Transfers | Northern Birch","Baltic travel insurance, international transfers to Estonia and Latvia, and competitive foreign exchange."],
+  business:["Business Solutions | Northern Birch Credit Union","Group benefits, commercial insurance, payroll and commercial lending for Ontario businesses."],
+  booking:["Book an Appointment | Northern Birch Credit Union","Request a meeting with a Northern Birch advisor at any branch."],
+  claims:["Claims Centre | Northern Birch Credit Union","Start an insurance claim online, or reach your insurer's claims line directly."],
+  calculators:["Financial Calculators | Northern Birch","Mortgage, retirement and insurance-needs calculators for Northern Birch members."],
+  contact:["Contact & Branches | Northern Birch Credit Union","Branch addresses, hours and phone numbers, including the KESKUS location."],
+  community:["Our Community | Northern Birch Credit Union","70+ years serving Toronto's Estonian and Latvian communities."],
+};
+const META_DEFAULT=["Northern Birch Credit Union","A full-service Toronto credit union: everyday banking, mortgages, credit cards, investments and insurance."];
+
+function setTag(selector,attr,value){
+  let el=document.head.querySelector(selector);
+  if(!el){
+    el=document.createElement(selector.startsWith("link")?"link":"meta");
+    if(selector.includes("property="))el.setAttribute("property",selector.match(/property="([^"]+)"/)[1]);
+    else if(selector.includes("name="))el.setAttribute("name",selector.match(/name="([^"]+)"/)[1]);
+    else if(selector.includes("rel="))el.setAttribute("rel",selector.match(/rel="([^"]+)"/)[1]);
+    document.head.appendChild(el);
+  }
+  el.setAttribute(attr,value);
+}
+
+function applyMeta(page){
+  const[title,desc]=META[page]||META_DEFAULT;
+  document.title=title;
+  setTag('meta[name="description"]',"content",desc);
+  setTag('link[rel="canonical"]',"href",window.location.origin+(ROUTES[page]||"/"));
+  setTag('meta[property="og:title"]',"content",title);
+  setTag('meta[property="og:description"]',"content",desc);
+  setTag('meta[property="og:url"]',"content",window.location.origin+(ROUTES[page]||"/"));
+}
 
 // Form submission. Posts to Netlify Forms, which needs no API key: the hidden
 // static forms in index.html are what Netlify detects at build time, and
@@ -2892,7 +2953,20 @@ function TermsPage(){
 
 // ============ MAIN APP ============
 export default function App(){
-  const[page,setPage]=useState("home");
+  // page is derived from the URL, so a deep link, a refresh and the back
+  // button all land on the same screen.
+  const[page,setPageState]=useState(()=>typeof window!=="undefined"?pageFromPath(window.location.pathname):"home");
+  const setPage=useCallback((key)=>{
+    const path=ROUTES[key]||"/";
+    if(window.location.pathname!==path)window.history.pushState({},"",path);
+    setPageState(ROUTES[key]?key:"home");
+  },[]);
+  useEffect(()=>{
+    const onPop=()=>setPageState(pageFromPath(window.location.pathname));
+    window.addEventListener("popstate",onPop);
+    return()=>window.removeEventListener("popstate",onPop);
+  },[]);
+  useEffect(()=>{applyMeta(page)},[page]);
   const[search,setSearch]=useState(false);
   const[login,setLogin]=useState(false);
   const[notifs,setNotifs]=useState(false);
