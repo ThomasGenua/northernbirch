@@ -2868,23 +2868,49 @@ function LeadershipPage({setPage}){
 }
 
 // ============ COOKIE CONSENT BANNER ============
+// Cookie preference.
+//
+// The previous banner claimed the site analyses usage, offered "Accept All"
+// and "Essential Only" — both wired to the same setShow(false) — and stored
+// nothing, so it reappeared on every load and the choice meant nothing. The
+// site also sets no cookies and loads no analytics, so it was asking consent
+// for something that does not happen.
+//
+// This keeps the choice, makes it real, and states what is true today. If
+// analytics is added later, gate it on analyticsAllowed() and the stored
+// answer already applies.
+const COOKIE_PREF_KEY="nb-cookie-pref";
+
+function readCookiePref(){
+  try{return window.localStorage.getItem(COOKIE_PREF_KEY)}catch(e){return null}
+}
+function writeCookiePref(v){
+  try{window.localStorage.setItem(COOKIE_PREF_KEY,v)}catch(e){}
+}
+/** True only if the visitor opted in to measurement. Nothing reads this yet. */
+function analyticsAllowed(){return readCookiePref()==="all"}
+
 function CookieBanner(){
-  const[show,setShow]=useState(true);
+  const[show,setShow]=useState(()=>typeof window!=="undefined"&&!readCookiePref());
+  const ref=useRef(null);
+  useEffect(()=>{if(show&&ref.current)ref.current.focus()},[show]);
   if(!show)return null;
+  const choose=(v)=>{writeCookiePref(v);setShow(false)};
   return(
-    <div style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(15,24,41,0.97)",backdropFilter:"blur(10px)",padding:typeof window!=="undefined"&&window.innerWidth<=768?"16px":"16px 24px",zIndex:1600,borderTop:`1px solid rgba(200,184,138,0.15)`}}>
+    <div role="region" aria-label="Cookie preferences" style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(15,24,41,0.97)",backdropFilter:"blur(10px)",padding:typeof window!=="undefined"&&window.innerWidth<=768?"16px":"16px 24px",zIndex:1600,borderTop:"1px solid rgba(200,184,138,0.2)"}}>
       <div style={{maxWidth:1320,margin:"0 auto",display:"flex",alignItems:typeof window!=="undefined"&&window.innerWidth<=768?"flex-start":"center",gap:16,flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row"}}>
-        <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",margin:0,flex:1,lineHeight:1.6}}>We use cookies to improve your experience and analyze site usage. By continuing to browse, you consent to our use of cookies in accordance with our <button onClick={()=>setShow(false)} style={{background:"none",border:"none",color:C.accentText,fontFamily:fs,fontSize:13,cursor:"pointer",textDecoration:"underline",padding:0}}>Privacy Policy</button> and the Personal Information Protection and Electronic Documents Act (PIPEDA).</p>
+        <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.75)",margin:0,flex:1,lineHeight:1.6}}>
+          This site uses only the storage it needs to work, and does not measure your visit today. If we add measurement later, we will use the choice you make here. Your preference is remembered on this device.
+        </p>
         <div style={{display:"flex",gap:8,flexShrink:0}}>
-          <button onClick={()=>setShow(false)} style={{background:C.accentText,border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Accept All</button>
-          <button onClick={()=>setShow(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)"}}>Essential Only</button>
+          <button ref={ref} onClick={()=>choose("all")} style={{background:C.accentText,border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Allow measurement</button>
+          <button onClick={()=>choose("essential")} style={{background:"rgba(255,255,255,0.12)",border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.85)"}}>Essential only</button>
         </div>
       </div>
     </div>
   );
 }
 
-// ============ PRIVACY POLICY PAGE (PIPEDA) ============
 function PrivacyPage(){
   return(
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
