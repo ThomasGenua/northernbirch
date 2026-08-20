@@ -357,7 +357,39 @@ function FlagStripe({style={}}){
 }
 
 function useInView(t=0.1){const r=useRef(null);const[v,s]=useState(false);useEffect(()=>{const el=r.current;if(!el)return;const o=new IntersectionObserver(([e])=>{if(e.isIntersecting)s(true)},{threshold:t});o.observe(el);return()=>o.disconnect()},[t]);return[r,v]}
-function Fade({children,delay=0,style={}}){const[r,v]=useInView();return <div ref={r} style={{opacity:v?1:0,transform:v?"translateY(0)":"translateY(28px)",transition:`all 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s`,...style}}>{children}</div>}
+// Keeps Tab inside an open dialog and restores focus to whatever opened it.
+// aria-modal already told assistive tech the page behind was inert; without
+// this, keyboard focus wandered out of the dialog anyway.
+function useFocusTrap(open,onClose){
+  const ref=useRef(null);
+  useEffect(()=>{
+    if(!open)return;
+    const root=ref.current;
+    if(!root)return;
+    const restoreTo=document.activeElement;
+    const sel='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+    const items=()=>[...root.querySelectorAll(sel)].filter(e=>e.offsetParent!==null);
+    const first=items()[0];
+    if(first)first.focus();
+    const onKey=(e)=>{
+      if(e.key==="Escape"){onClose&&onClose();return}
+      if(e.key!=="Tab")return;
+      const f=items();
+      if(!f.length)return;
+      const a=f[0],z=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}
+      else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}
+    };
+    document.addEventListener("keydown",onKey);
+    return()=>{document.removeEventListener("keydown",onKey);if(restoreTo&&restoreTo.focus)restoreTo.focus()};
+  },[open,onClose]);
+  return ref;
+}
+
+function prefersReducedMotion(){
+  try{return window.matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){return false}
+}
+function Fade({children,delay=0,style={}}){const[r,v]=useInView();const rm=prefersReducedMotion();return <div ref={r} style={{opacity:rm?1:(v?1:0),transform:rm?"none":(v?"translateY(0)":"translateY(28px)"),transition:rm?"none":`all 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s`,...style}}>{children}</div>}
 const ON_DARK={"#1F6FA5":"#7FB8E0","#197A41":"#6FD79B","#8A6410":"#E8C46A","#8E44AD":"#C89BDB","#B3271A":"#F09A90","#C8B88A":"#C8B88A","#7D6C3E":"#D9C48F"};
 function onDark(c){return ON_DARK[c]||c}
 function SH({tag,tagColor,title,desc,dark}){
@@ -367,6 +399,7 @@ function Btn({children,color=C.accentText,onClick,outline,small}){return <button
 
 // ============ SEARCH OVERLAY ============
 function SearchOverlay({open,onClose,setPage}){
+  const trapRef=useFocusTrap(open,onClose);
   const[q,setQ]=useState("");
   const allItems=[
     {title:"Term Life Insurance",page:"insurance",cat:"Insurance"},{title:"Home Insurance",page:"insurance",cat:"Insurance"},{title:"Auto Insurance",page:"insurance",cat:"Insurance"},
@@ -397,7 +430,7 @@ function SearchOverlay({open,onClose,setPage}){
   if(!open)return null;
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",backdropFilter:"blur(8px)",zIndex:2000,display:"flex",alignItems:"flex-start",justifyContent:"center",paddingTop:120}}>
-      <div role="dialog" aria-modal="true" aria-label="Search Northern Birch" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:"100%",maxWidth:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":640,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
+      <div ref={trapRef} role="dialog" aria-modal="true" aria-label="Search Northern Birch" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:"100%",maxWidth:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":640,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
         <div style={{padding:"24px 28px",borderBottom:"1px solid #eee",display:"flex",gap:12,alignItems:"center"}}>
           <span style={{fontSize:20,color:"#707070"}}>&#128269;</span>
           <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search products, services, tools..." autoFocus style={{flex:1,border:"none",outline:"none",fontFamily:fs,fontSize:17,color:C.navy}}/>
@@ -477,11 +510,12 @@ function ChatWidget(){
 
 // ============ MEMBER LOGIN MODAL ============
 function LoginModal({open,onClose,setPage}){
+  const trapRef=useFocusTrap(open,onClose);
   const[tab,setTab]=useState(0);
   if(!open)return null;
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(6px)",zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center"}}>
-      <div role="dialog" aria-modal="true" aria-label="Member sign in" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":420,overflow:"hidden"}}>
+      <div ref={trapRef} role="dialog" aria-modal="true" aria-label="Member sign in" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":420,overflow:"hidden"}}>
         <div style={{background:C.navy,padding:"28px 32px",textAlign:"center"}}>
           <div style={{width:48,height:48,borderRadius:"50%",background:`linear-gradient(135deg,${C.birch},${C.accent})`,margin:"0 auto 12px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,fontWeight:800,color:"#fff"}}>NB</span></div>
           <h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:0}}>Member Sign In</h3>
@@ -533,6 +567,7 @@ function useToast(){return React.useContext(ToastContext)||((m)=>console.log(m))
 
 // ============ NOTIFICATIONS PANEL ============
 function NotificationsPanel({open,onClose,setPage}){
+  const trapRef=useFocusTrap(open,onClose);
   const[notes,setNotes]=useState([
     {id:1,type:"renewal",icon:"\uD83D\uDD14",title:"Home Insurance Renewal in 28 Days",desc:"Your home insurance with The Personal renews April 15, 2026 at C$142.50/month. Review coverage to ensure you're still adequately protected.",time:"2 hours ago",unread:true,action:"insurance",actionLabel:"Review Coverage",color:C.amberText},
     {id:2,type:"signature",icon:"\u270D\uFE0F",title:"Document Awaiting Your Signature",desc:"Critical Illness Insurance Application from CUMIS is ready for e-signature. Sign now to activate coverage.",time:"5 hours ago",unread:true,action:"dashboard",actionLabel:"Sign Now",color:C.accentText},
@@ -549,7 +584,7 @@ function NotificationsPanel({open,onClose,setPage}){
   const handleAction=(note)=>{markRead(note.id);setPage(note.action);onClose()};
   if(!open)return null;
   return <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:1500,background:"rgba(0,0,0,0.3)",display:"flex",justifyContent:"flex-end",alignItems:"flex-start",paddingTop:64}}>
-    <div role="dialog" aria-modal="true" aria-label="Notifications" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:16,boxShadow:"0 8px 40px rgba(0,0,0,0.15)",width:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":420,maxHeight:"calc(100vh - 100px)",margin:typeof window!=="undefined"&&window.innerWidth<=768?"0 16px":"0 24px",display:"flex",flexDirection:"column",overflow:"hidden",animation:"slideDown 0.25s ease-out"}}>
+    <div ref={trapRef} role="dialog" aria-modal="true" aria-label="Notifications" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:16,boxShadow:"0 8px 40px rgba(0,0,0,0.15)",width:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":420,maxHeight:"calc(100vh - 100px)",margin:typeof window!=="undefined"&&window.innerWidth<=768?"0 16px":"0 24px",display:"flex",flexDirection:"column",overflow:"hidden",animation:"slideDown 0.25s ease-out"}}>
       <div style={{padding:"16px 20px",borderBottom:"1px solid #f0f0f0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <h3 style={{fontFamily:ff,fontSize:18,color:C.navy,margin:0}}>Notifications</h3>
