@@ -210,6 +210,27 @@ async function submitForm(formName,fields){
   }catch(e){return false}
 }
 
+// Consent at the point of collection. Until the forms actually submitted,
+// nothing left the browser and there was nothing to consent to. Now that they
+// reach a processor, PIPEDA requires telling people what is collected, why,
+// and who handles it — before they hand it over, not in a policy page they
+// never open.
+//
+// CONSENT_VERSION travels with each submission so there is a record of which
+// wording someone actually agreed to.
+const CONSENT_VERSION="2026-08-collection-notice-v1";
+
+function ConsentNotice({checked,onChange,purpose,extra,id}){
+  return <div style={{background:"#FAFAF7",border:"1px solid #E8E4D8",borderRadius:12,padding:"16px 18px",marginBottom:16}}>
+    <label htmlFor={id} style={{display:"flex",gap:10,alignItems:"flex-start",cursor:"pointer"}}>
+      <input id={id} type="checkbox" checked={checked} onChange={e=>onChange(e.target.checked)} style={{marginTop:3,width:18,height:18,flexShrink:0,cursor:"pointer"}}/>
+      <span style={{fontFamily:fs,fontSize:13,color:"#555",lineHeight:1.65}}>
+        I consent to Northern Birch collecting the information in this form {purpose}.{extra?" "+extra:""} It is handled by a service provider outside Canada and may be accessible to authorities there. You can withdraw consent at any time by calling 416-465-4659.
+      </span>
+    </label>
+  </div>;
+}
+
 // Shared styles for the inline error shown when a submission does not go through.
 const errBox={background:"#FDECEA",border:"1px solid #F5C6C2",borderRadius:12,padding:"14px 18px",marginBottom:16,fontFamily:fs,fontSize:13.5,color:"#8B2B22",lineHeight:1.6};
 
@@ -947,12 +968,13 @@ function ClaimsPage(){
   const[policy,setPolicy]=useState("");const[incidentDate,setIncidentDate]=useState("");const[details,setDetails]=useState("");
   const[name,setName]=useState("");const[email,setEmail]=useState("");const[phone,setPhone]=useState("");
   const[sending,setSending]=useState(false);const[error,setError]=useState("");
-  const canSubmit=policy.trim()&&details.trim()&&name.trim()&&(email.trim()||phone.trim());
+  const[consent,setConsent]=useState(false);
+  const canSubmit=policy.trim()&&details.trim()&&name.trim()&&(email.trim()||phone.trim())&&consent;
   // No claim number is invented here. Only the insurer can open a claim and
   // issue a number; this form starts that conversation.
   const submit=async()=>{
     setError("");setSending(true);
-    const ok=await submitForm("claim",{claimType,policy,incidentDate,details,name,email,phone});
+    const ok=await submitForm("claim",{claimType,policy,incidentDate,details,name,email,phone,consent:"yes",consentVersion:CONSENT_VERSION});
     setSending(false);
     if(ok)setStep(2);
     else setError("We could not send your claim request. Nothing has been filed. Please try again, or call your insurer directly using the numbers below — for an urgent claim, always call.");
@@ -978,7 +1000,8 @@ function ClaimsPage(){
       <div style={{background:`${C.amber}08`,borderRadius:12,padding:"14px 18px",marginBottom:16,borderLeft:`4px solid ${C.amber}`}}>
         <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.6}}>Have photos, receipts, or a police report ready. Documents are not uploaded through this form &mdash; the adjuster will tell you where to send them when they call.</p>
       </div>
-      <>{error&&<div style={errBox}>{error}</div>}
+      <><ConsentNotice id="claim-consent" checked={consent} onChange={setConsent} purpose="so it can be passed to the insurer to open my claim" extra="Claim details may include information about my health or property."/>
+      {error&&<div style={errBox}>{error}</div>}
       <div style={{display:"flex",gap:12}}><Btn outline onClick={()=>setStep(0)}>Back</Btn><Btn color={sending||!canSubmit?"#ccc":C.accent} onClick={sending||!canSubmit?undefined:submit}>{sending?"Sending...":"Submit Claim Request"}</Btn></div></>
     </div>},
     {title:"Request Sent",content:<div id="claim-confirmation" style={{textAlign:"center",padding:"40px 0"}}>
@@ -1160,10 +1183,11 @@ function BookingPage(){
   const[branch,setBranch]=useState("");const[service,setService]=useState("");const[date,setDate]=useState("");const[time,setTime]=useState("");const[submitted,setSubmitted]=useState(false);
   const[name,setName]=useState("");const[email,setEmail]=useState("");const[phone,setPhone]=useState("");
   const[sending,setSending]=useState(false);const[error,setError]=useState("");
-  const canSubmit=branch&&service&&name.trim()&&email.trim();
+  const[consent,setConsent]=useState(false);
+  const canSubmit=branch&&service&&name.trim()&&email.trim()&&consent;
   const submit=async()=>{
     setError("");setSending(true);
-    const ok=await submitForm("booking",{branch,service,date,time,name,email,phone});
+    const ok=await submitForm("booking",{branch,service,date,time,name,email,phone,consent:"yes",consentVersion:CONSENT_VERSION});
     setSending(false);
     if(ok)setSubmitted(true);
     else setError("We could not send your request just now. Nothing has been booked. Please try again, or call us at 416-465-4659 and we will book it for you.");
@@ -1197,6 +1221,7 @@ function BookingPage(){
             <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
             <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Phone</label><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           </div>
+          <ConsentNotice id="booking-consent" checked={consent} onChange={setConsent} purpose="so a branch representative can contact me about this appointment"/>
           {error&&<div style={errBox}>{error}</div>}
           <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.greenFill,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Request Appointment"}</button>
           <p style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",textAlign:"center",margin:"10px 0 0"}}>A branch representative will confirm your appointment by phone or email.</p>
@@ -1241,10 +1266,11 @@ function ReferralsPage(){
   const[yourName,setYourName]=useState("");const[memberNo,setMemberNo]=useState("");
   const[friendName,setFriendName]=useState("");const[friendEmail,setFriendEmail]=useState("");
   const[sending,setSending]=useState(false);const[error,setError]=useState("");
-  const canSubmit=yourName.trim()&&friendName.trim()&&friendEmail.trim();
+  const[consent,setConsent]=useState(false);
+  const canSubmit=yourName.trim()&&friendName.trim()&&friendEmail.trim()&&consent;
   const submit=async()=>{
     setError("");setSending(true);
-    const ok=await submitForm("referral",{yourName,memberNo,friendName,friendEmail});
+    const ok=await submitForm("referral",{yourName,memberNo,friendName,friendEmail,consent:"yes",consentVersion:CONSENT_VERSION});
     setSending(false);
     if(ok)setSubmitted(true);
     else setError("We could not send that referral. Please try again, or call us at 416-465-4659.");
@@ -1270,6 +1296,7 @@ function ReferralsPage(){
             <div><label htmlFor="ref-friend-name" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Friend's Name</label><input id="ref-friend-name" value={friendName} onChange={e=>setFriendName(e.target.value)} placeholder="Their full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
             <div><label htmlFor="ref-friend-email" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Friend's Email</label><input id="ref-friend-email" value={friendEmail} onChange={e=>setFriendEmail(e.target.value)} placeholder="their@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           </div>
+          <ConsentNotice id="referral-consent" checked={consent} onChange={setConsent} purpose="so we can contact the person I am referring" extra="I confirm I have their permission to share their name and email with Northern Birch."/>
           {error&&<div style={errBox}>{error}</div>}
           <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.amber,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Send Referral"}</button>
         </div>:<div style={{textAlign:"center",padding:40}}><div style={{width:80,height:80,borderRadius:"50%",background:`${C.greenFill}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div><h3 style={{fontFamily:ff,fontSize:28,color:C.navy}}>Referral Sent!</h3><p style={{fontFamily:fs,fontSize:15,color:"#666"}}>Your friend will receive an invitation email. Once they join and complete a qualifying transaction, you'll both earn $50.</p><Btn onClick={()=>setSubmitted(false)}>Refer Another Friend</Btn></div>}
@@ -2870,6 +2897,7 @@ function PrivacyPage(){
           {t:"Sharing with Insurance Partners",p:"When you request insurance quotes or purchase insurance products, we share the minimum necessary information with our insurance manufacturing partners: The Personal Insurance Company (Desjardins), CUMIS (Co-operators), and Manulife Financial. These partners are bound by their own privacy policies and PIPEDA obligations. We obtain your consent before sharing health or sensitive information for insurance underwriting."},
           {t:"Your Rights Under PIPEDA",p:"You have the right to: access your personal information held by Northern Birch; request correction of inaccurate information; withdraw consent for non-essential uses (marketing, insurance referrals); file a complaint with our Privacy Officer or the Office of the Privacy Commissioner of Canada. To exercise these rights, contact our Privacy Officer at privacy@northernbirchcu.com or visit any branch."},
           {t:"Insurance Marketing Opt-Out",p:"You may opt out of insurance-related marketing communications at any time. This will not affect your existing banking relationship or any active insurance policies. To opt out, contact your branch, email privacy@northernbirchcu.com, or adjust your preferences in online banking settings."},
+          {t:"Service Providers and Data Outside Canada",p:"Some information you submit through this website \u2014 appointment requests, claim requests and referrals \u2014 is processed and stored by service providers located outside Canada, including in the United States. While it is in another country it is subject to that country's laws, and may be accessible to its courts, law enforcement and national security authorities. We share only what the form collects, and only for the purpose stated at the point of collection. If you would rather not have your information handled this way, call us at 416-465-4659 or visit a branch and we will take your request in person."},
           {t:"Data Retention",p:"We retain your personal information for as long as necessary to provide services and comply with legal obligations. Financial records are retained for a minimum of 7 years as required by the Income Tax Act and FINTRAC regulations. Insurance records are retained for the life of the policy plus 7 years."},
           {t:"Data Security",p:"We protect your information using industry-standard security measures including SSL/TLS encryption, multi-factor authentication, firewalls, intrusion detection systems, and regular security audits. Our core banking platform (Celero/CGI) meets the security standards required by our regulator, the Financial Services Regulatory Authority of Ontario (FSRA)."},
           {t:"Cookies and Digital Tracking",p:"Our website uses essential cookies for functionality and analytics cookies to improve user experience. You can manage cookie preferences through your browser settings. We do not sell personal information to third parties for advertising purposes."},
