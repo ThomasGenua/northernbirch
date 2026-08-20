@@ -563,6 +563,7 @@ function ToastProvider({children}){
     <style>{`@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}`}</style>
   </ToastContext.Provider>;
 }
+// eslint-disable-next-line no-unused-vars -- public hook for ToastProvider consumers
 function useToast(){return React.useContext(ToastContext)||((m)=>console.log(m))}
 
 // ============ NOTIFICATIONS PANEL ============
@@ -617,7 +618,7 @@ function NotificationsPanel({open,onClose,setPage}){
 }
 
 // ============ ADVISOR MESSAGING ============
-function MessagesPage({setPage}){
+function MessagesPage({setPage:_setPage}){
   const[thread,setThread]=useState("heili");
   const[mobileView,setMobileView]=useState("threads");// threads | chat
   const[input,setInput]=useState("");
@@ -836,7 +837,7 @@ function QuotePage({setPage}){
   const monthly=calc();
   const annual=Math.round(monthly*12*100)/100;
   const sliderStyle=(color)=>({WebkitAppearance:"none",width:"100%",height:8,borderRadius:4,background:`linear-gradient(90deg,${color} 0%,#eee 100%)`,outline:"none",cursor:"pointer"});
-  const SliderLabel=({label,value,sub})=><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{label}</span><span style={{fontFamily:ff,fontSize:20,color:C.navy,fontWeight:700}}>{value}</span></div>;
+  const SliderLabel=({label,value,sub:_sub})=><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{label}</span><span style={{fontFamily:ff,fontSize:20,color:C.navy,fontWeight:700}}>{value}</span></div>;
   const types=[{l:"Term Life",v:"life",icon:"&#9829;",c:C.accentText},{l:"Home",v:"home",icon:"&#9750;",c:C.greenFill},{l:"Auto",v:"auto",icon:"&#9881;",c:C.amber},{l:"Travel",v:"travel",icon:"&#9992;",c:C.purple}];
   const activeType=types.find(t=>t.v===type);
   return(
@@ -1341,7 +1342,7 @@ function ReferralsPage(){
 }
 
 // ============ BLOG PAGE ============
-function BlogPage({setPage}){
+function BlogPage({setPage:_setPage}){
   const posts=[
     {title:"Introducing Northern Birch Insurance Shield",date:"March 2026",cat:"Announcement",excerpt:"We're excited to announce comprehensive insurance services for all Northern Birch members. Life, home, auto, travel, and business insurance -- all with exclusive member rates through The Personal, CUMIS, and Manulife.",color:C.accentText},
     {title:"Why Every Homeowner Needs Mortgage Protection",date:"March 2026",cat:"Insurance Education",excerpt:"Your home is likely your family's biggest asset. Mortgage protection insurance ensures your family keeps their home if the unexpected happens. Here's what you need to know about creditor insurance.",color:C.greenText},
@@ -1463,6 +1464,25 @@ function MobileAppPage(){
 }
 
 // ============ REUSE EXISTING PAGES (condensed) ============
+// One insurance product row. This used to be an inline map callback that
+// called useState per item, so the number of hooks changed with the length of
+// the list — the rule React actually cares about, not a style preference.
+function InsuranceProductRow({p,color,setPage}){
+  const[open,setOpen]=useState(false);
+  return(
+              <Clickable onClick={()=>setOpen(!open)} style={{background:"#fff",borderRadius:20,padding:"28px 32px",border:open?`2px solid ${color}25`:"1px solid #eee",cursor:"pointer",transition:"all 0.3s"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+                  <div><h4 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{p.t}</h4><p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",margin:0,lineHeight:1.6}}>{p.d}</p></div>
+                  <span style={{color:open?color:"#707070",fontSize:18,fontWeight:600,transform:open?"rotate(45deg)":"none",transition:"transform 0.3s",marginLeft:12}}>+</span>
+                </div>
+                {open&&<div style={{marginTop:16,paddingTop:16,borderTop:"1px solid #f0f0f0",display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8}}>
+                  {p.f.map((feat,fi)=><div key={fi} style={{display:"flex",gap:8,alignItems:"center"}}><div style={{width:16,height:16,borderRadius:4,background:`${color}12`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:9,color:color,fontWeight:700}}>{"\u2713"}</span></div><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{feat}</span></div>)}
+                  <div style={{gridColumn:"1/-1",marginTop:8,display:"flex",gap:8}}><Btn small color={color} onClick={e=>{e.stopPropagation();setPage("quote")}}>Get a Quote</Btn><Btn small outline color={color} onClick={e=>{e.stopPropagation();setPage("compare")}}>Compare Plans</Btn></div>
+                </div>}
+              </Clickable>
+            );
+}
+
 function InsurancePage({setPage}){
   const cats=[
     {name:"Life & Health",color:C.accentText,products:[
@@ -1494,18 +1514,7 @@ function InsurancePage({setPage}){
             <h3 style={{fontFamily:ff,fontSize:26,color:C.navy,margin:0}}>{cat.name}</h3>
           </div>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"repeat(2,1fr)",gap:16}}>
-            {cat.products.map((p,pi)=>{const[open,setOpen]=useState(false);return(
-              <Clickable key={pi} onClick={()=>setOpen(!open)} style={{background:"#fff",borderRadius:20,padding:"28px 32px",border:open?`2px solid ${cat.color}25`:"1px solid #eee",cursor:"pointer",transition:"all 0.3s"}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-                  <div><h4 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{p.t}</h4><p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",margin:0,lineHeight:1.6}}>{p.d}</p></div>
-                  <span style={{color:open?cat.color:"#707070",fontSize:18,fontWeight:600,transform:open?"rotate(45deg)":"none",transition:"transform 0.3s",marginLeft:12}}>+</span>
-                </div>
-                {open&&<div style={{marginTop:16,paddingTop:16,borderTop:"1px solid #f0f0f0",display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8}}>
-                  {p.f.map((feat,fi)=><div key={fi} style={{display:"flex",gap:8,alignItems:"center"}}><div style={{width:16,height:16,borderRadius:4,background:`${cat.color}12`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:9,color:cat.color,fontWeight:700}}>{"\u2713"}</span></div><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{feat}</span></div>)}
-                  <div style={{gridColumn:"1/-1",marginTop:8,display:"flex",gap:8}}><Btn small color={cat.color} onClick={e=>{e.stopPropagation();setPage("quote")}}>Get a Quote</Btn><Btn small outline color={cat.color} onClick={e=>{e.stopPropagation();setPage("compare")}}>Compare Plans</Btn></div>
-                </div>}
-              </Clickable>
-            )})}
+            {cat.products.map((p,pi)=><InsuranceProductRow key={pi} p={p} color={cat.color} setPage={setPage}/>)}
           </div>
         </div></Fade>)}
         <Fade><div style={{background:`linear-gradient(135deg,${C.navy},#2a4a6a)`,borderRadius:24,padding:typeof window!=="undefined"&&window.innerWidth<=768?"28px 24px":"44px 52px",display:"flex",flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row",justifyContent:"space-between",alignItems:"center",gap:typeof window!=="undefined"&&window.innerWidth<=768?24:40}}>
@@ -2352,6 +2361,7 @@ function TaxPage({setPage}){
 function DashboardPage({setPage}){
   const[transferAmt,setTransferAmt]=useState("200");
   const[transferTo,setTransferTo]=useState("Grandmother Maija - Riga, Latvia");
+  const[transferRef]=useState(()=>"NB-TXN-"+Math.floor(Math.random()*900000+100000));
   const[transferSent,setTransferSent]=useState(false);
   const[signedDocs,setSignedDocs]=useState({});
   const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
@@ -2573,7 +2583,7 @@ function DashboardPage({setPage}){
                 <div style={{fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>Transfer Sent!</div>
                 <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:4}}>C${transferAmt} to {transferTo}</div>
                 <div style={{fontFamily:fs,fontSize:12,color:C.greenText,marginTop:2}}>Estimated arrival: 1-2 business days</div>
-                <div style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:8}}>Tracking ID: NB-TXN-{Math.floor(Math.random()*900000+100000)}</div>
+                <div style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:8}}>Tracking ID: {transferRef}</div>
                 <button onClick={()=>setTransferSent(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"8px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:12}}>Send Another</button>
               </div>}
             </div>
@@ -2922,7 +2932,10 @@ function readCookiePref(){
 function writeCookiePref(v){
   try{window.localStorage.setItem(COOKIE_PREF_KEY,v)}catch(e){}
 }
-/** True only if the visitor opted in to measurement. Nothing reads this yet. */
+/** True only if the visitor opted in to measurement. Nothing reads this yet:
+ *  it is the gate any future measurement should hang off, so the consent
+ *  exists before the tracker does. */
+// eslint-disable-next-line no-unused-vars
 function analyticsAllowed(){return readCookiePref()==="all"}
 
 function CookieBanner(){
