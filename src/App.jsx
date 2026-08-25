@@ -729,7 +729,11 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
   const w=useW();
   const isMob=w<=900;
   useEffect(()=>{const h=()=>setSc(window.scrollY>50);window.addEventListener("scroll",h);return()=>window.removeEventListener("scroll",h)},[]);
-  useEffect(()=>{window.scrollTo({top:0});setMobileMenu(false);setMenu(null)},[page]);
+  useEffect(()=>{window.scrollTo({top:0})},[page]);
+  // Close the menus when the route changes. Done during render rather than in
+  // an effect, which would queue a second render pass on every navigation.
+  const[lastPage,setLastPage]=useState(page);
+  if(page!==lastPage){setLastPage(page);setMobileMenu(false);setMenu(null)}
   const isDark=page==="home"&&!sc;
   // Banking leads: chequing, savings, mortgages and cards are what most visitors arrive looking for.
   const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"quote"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
@@ -814,6 +818,10 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
 }
 
 // ============ QUOTE CALCULATOR ============
+// Rendered by QuotePage. Kept at module scope so React sees one stable
+// component identity instead of a new one on every render.
+const SliderLabel=({label,value,sub:_sub})=><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{label}</span><span style={{fontFamily:ff,fontSize:20,color:C.navy,fontWeight:700}}>{value}</span></div>;
+
 function QuotePage({setPage}){
   const[type,setType]=useState("life");
   const[age,setAge]=useState(35);
@@ -837,7 +845,6 @@ function QuotePage({setPage}){
   const monthly=calc();
   const annual=Math.round(monthly*12*100)/100;
   const sliderStyle=(color)=>({WebkitAppearance:"none",width:"100%",height:8,borderRadius:4,background:`linear-gradient(90deg,${color} 0%,#eee 100%)`,outline:"none",cursor:"pointer"});
-  const SliderLabel=({label,value,sub:_sub})=><div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{label}</span><span style={{fontFamily:ff,fontSize:20,color:C.navy,fontWeight:700}}>{value}</span></div>;
   const types=[{l:"Term Life",v:"life",icon:"&#9829;",c:C.accentText},{l:"Home",v:"home",icon:"&#9750;",c:C.greenFill},{l:"Auto",v:"auto",icon:"&#9881;",c:C.amber},{l:"Travel",v:"travel",icon:"&#9992;",c:C.purple}];
   const activeType=types.find(t=>t.v===type);
   return(

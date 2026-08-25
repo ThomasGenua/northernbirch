@@ -33,11 +33,10 @@ export default [
       // Catch params are deliberately unused in the storage and network
       // fallbacks that must never break the page.
       'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrors: 'none' }],
-      // Known and worth addressing, but structural rather than broken: several
-      // components are defined during render, and a couple of effects reset
-      // state on navigation. Warn so they stay visible without failing the run.
-      'react-hooks/static-components': 'warn',
-      'react-hooks/set-state-in-effect': 'warn',
+      // Both were deferred as warnings when this config landed and are now
+      // fixed, so they are errors again and cannot regress quietly.
+      'react-hooks/static-components': 'error',
+      'react-hooks/set-state-in-effect': 'error',
     },
   },
   {
