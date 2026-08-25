@@ -131,8 +131,28 @@ const TX={
   "Send":{est:"Saada",lat:"Sūtīt"},
   "Book Appointment":{est:"Broneeri kohtumine",lat:"Rezervēt tikšanos"},
   "Coming Soon":{est:"Tulekul",lat:"Drīzumā"},
+  // Shown only when a non-English language is selected. NOTE: like the rest of
+  // this table these two strings should be confirmed by a native speaker.
+  "Parts of this site are still only in English. Call us and we will serve you in your language.":{est:"Osa sellest veebisaidist on praegu ainult inglise keeles. Helistage meile ja teenindame teid eesti keeles.",lat:"Daļa šīs vietnes pašlaik ir pieejama tikai angļu valodā. Zvaniet mums, un mēs jūs apkalposim latviešu valodā."},
 };
 function t(key,lang){if(!lang||lang==="en")return key;return TX[key]?.[lang==="est"?"est":"lat"]||key;}
+
+// The language switcher only lived in React state, so a refresh, a bookmark or
+// a shared link always came back in English -- the choice was silently thrown
+// away every time. Keep it next to the cookie preference, and tell assistive
+// technology which language the page chrome is actually in.
+const LANG_KEY="nb-lang";
+// The pages that actually read the translation table. Everything else renders
+// English regardless of the switcher, so it is marked lang="en" rather than
+// inheriting the selected language and being read out with the wrong voice.
+const TRANSLATED_PAGES=new Set(["home","mortgages","cards","accounts"]);
+const LANG_TAG={en:"en",est:"et",lat:"lv"};
+function readLang(){
+  try{const v=window.localStorage.getItem(LANG_KEY);return v==="est"||v==="lat"?v:"en"}catch(e){return "en"}
+}
+function writeLang(v){
+  try{window.localStorage.setItem(LANG_KEY,v)}catch(e){}
+}
 
 // ============ ROUTES ============
 // Every page has a real URL, so it can be linked, shared, bookmarked and
@@ -421,6 +441,7 @@ function Btn({children,color=C.accentText,onClick,outline,small}){return <button
 // ============ SEARCH OVERLAY ============
 function SearchOverlay({open,onClose,setPage}){
   const trapRef=useFocusTrap(open,onClose);
+  const listRef=useRef(null);
   const[q,setQ]=useState("");
   const allItems=[
     {title:"Term Life Insurance",page:"insurance",cat:"Insurance"},{title:"Home Insurance",page:"insurance",cat:"Insurance"},{title:"Auto Insurance",page:"insurance",cat:"Insurance"},
@@ -429,7 +450,7 @@ function SearchOverlay({open,onClose,setPage}){
     {title:"Travel Insurance",page:"travel",cat:"Travel"},{title:"International Transfers",page:"travel",cat:"Travel"},{title:"Foreign Exchange",page:"travel",cat:"Travel"},
     {title:"Group Health & Dental Benefits",page:"business",cat:"Business"},{title:"Commercial Insurance",page:"business",cat:"Business"},{title:"Key Person Insurance",page:"business",cat:"Business"},
     {title:"Business Succession Planning",page:"business",cat:"Business"},{title:"Payroll & HR",page:"business",cat:"Business"},
-    {title:"Insurance Dashboard",page:"digital",cat:"Digital"},{title:"Smart Quote Engine",page:"digital",cat:"Digital"},{title:"Financial Planning Tools",page:"digital",cat:"Digital"},
+    {title:"Insurance Dashboard",page:"dashboard",cat:"Digital"},{title:"Smart Quote Engine",page:"quote",cat:"Digital"},{title:"Financial Planning Tools",page:"calculators",cat:"Digital"},{title:"Digital Banking",page:"digital",cat:"Digital",kw:"digital online tools hub"},
     {title:"Mobile Banking App",page:"mobileapp",cat:"Digital"},{title:"Estate Planning",page:"estate",cat:"Planning"},{title:"KESKUS Branch",page:"community",cat:"Community"},
     {title:"Scholarships",page:"community",cat:"Community"},
     {title:"Chequing Accounts",page:"accounts",cat:"Banking",kw:"chequing checking everyday banking debit e-transfer no fee student senior us dollar"},
@@ -447,27 +468,59 @@ function SearchOverlay({open,onClose,setPage}){
     {title:"Privacy Policy",page:"privacy",cat:"Legal"},{title:"Accessibility (AODA)",page:"accessibility",cat:"Legal"},
     {title:"Complaint Resolution",page:"complaints",cat:"Legal"},{title:"Terms of Use",page:"terms",cat:"Legal"},{title:"Business Case (For Leadership)",page:"leadership",cat:"Leadership"},
   ];
-  const filtered=q.length>1?allItems.filter(i=>`${i.title} ${i.kw||""}`.toLowerCase().includes(q.toLowerCase())):[];
+  // Rank by how the query matched, not by index order: typing "mortgage" used
+  // to put "Mortgage Protection" (an insurance page) above "Mortgages".
+  const score=(i,ql)=>{
+    const t=i.title.toLowerCase();
+    if(t===ql)return 0;
+    if(t.startsWith(ql))return 1;
+    if(t.includes(ql))return 2;
+    return 3;
+  };
+  const filtered=q.length>1?(()=>{
+    const ql=q.toLowerCase();
+    return allItems
+      .filter(i=>`${i.title} ${i.kw||""}`.toLowerCase().includes(ql))
+      .map((i,n)=>({i,n,s:score(i,ql)}))
+      .sort((a,b)=>a.s-b.s||a.i.title.length-b.i.title.length||a.n-b.n)
+      .map(x=>x.i);
+  })():[];
+  const go=(item)=>{setPage(item.page);onClose();setQ("")};
+  // Enter and the arrow keys did nothing here: a search box that shows results
+  // and then makes you reach for the mouse is not finished. Focus rolls through
+  // the result buttons, which are already real buttons, so Tab still works too.
+  const opts=()=>Array.from(listRef.current?.querySelectorAll("button[data-result]")||[]);
+  const focusAt=(i)=>{const o=opts();if(!o.length)return;const n=(i+o.length)%o.length;o[n].focus();o[n].scrollIntoView({block:"nearest"})};
+  const onInputKey=(e)=>{
+    if(e.key==="Enter"&&filtered.length){e.preventDefault();go(filtered[0])}
+    else if(e.key==="ArrowDown"){e.preventDefault();focusAt(0)}
+    else if(e.key==="ArrowUp"){e.preventDefault();focusAt(-1)}
+  };
+  const onResultKey=(e,i)=>{
+    if(e.key==="ArrowDown"){e.preventDefault();focusAt(i+1)}
+    else if(e.key==="ArrowUp"){e.preventDefault();if(i===0)trapRef.current?.querySelector("input")?.focus();else focusAt(i-1)}
+  };
   if(!open)return null;
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",backdropFilter:"blur(8px)",zIndex:2000,display:"flex",alignItems:"flex-start",justifyContent:"center",paddingTop:120}}>
       <div ref={trapRef} role="dialog" aria-modal="true" aria-label="Search Northern Birch" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:"100%",maxWidth:typeof window!=="undefined"&&window.innerWidth<=768?"calc(100vw - 32px)":640,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
         <div style={{padding:"24px 28px",borderBottom:"1px solid #eee",display:"flex",gap:12,alignItems:"center"}}>
           <span style={{fontSize:20,color:"#707070"}}>&#128269;</span>
-          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search products, services, tools..." autoFocus style={{flex:1,border:"none",outline:"none",fontFamily:fs,fontSize:17,color:C.navy}}/>
+          <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={onInputKey} aria-label="Search products, services and tools" placeholder="Search products, services, tools..." autoFocus style={{flex:1,border:"none",outline:"none",fontFamily:fs,fontSize:17,color:C.navy}}/>
           <span style={{fontFamily:fs,fontSize:11,color:"#707070",background:"#f0f0f0",padding:"3px 8px",borderRadius:6,fontWeight:600}}>esc</span>
           <button onClick={onClose} style={{background:"#f5f5f5",border:"none",borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>ESC</button>
         </div>
-        {q.length>1&&<div style={{maxHeight:400,overflow:"auto",padding:"8px 0"}}>
+        {q.length>1&&<div ref={listRef} style={{maxHeight:400,overflow:"auto",padding:"8px 0"}}>
           {filtered.length===0?<p style={{padding:"24px 28px",fontFamily:fs,fontSize:14,color:"#6B6B6B",textAlign:"center"}}>No results found for "{q}"</p>:
           filtered.map((item,i)=>(
-            <Clickable key={i} onClick={()=>{setPage(item.page);onClose();setQ("")}} style={{padding:"14px 28px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #f8f8f8"}}>
+            <Clickable key={i} data-result="" onClick={()=>go(item)} onKeyDown={e=>onResultKey(e,i)} style={{padding:"14px 28px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #f8f8f8"}}>
               <span style={{fontFamily:fs,fontSize:15,color:C.navy,fontWeight:500}}>{item.title}</span>
               <span style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",background:"#f5f5f5",padding:"3px 10px",borderRadius:6}}>{item.cat}</span>
             </Clickable>
           ))}
         </div>}
-        {q.length<=1&&<div style={{padding:"24px 28px"}}><p style={{fontFamily:fs,fontSize:13,color:"#707070",margin:0}}>Try searching for "insurance", "mortgage", "travel", "claims", or "quote"</p></div>}
+        {q.length<=1&&<div style={{padding:"24px 28px"}}><p style={{fontFamily:fs,fontSize:13,color:"#707070",margin:0}}>Try searching for "insurance", "mortgage", "travel", "claims", or "quote". Press Enter to open the first result.</p></div>}
+        <p aria-live="polite" style={{position:"absolute",width:1,height:1,overflow:"hidden",clip:"rect(0 0 0 0)",whiteSpace:"nowrap"}}>{q.length>1?`${filtered.length} result${filtered.length===1?"":"s"} for ${q}`:""}</p>
       </div>
     </div>
   );
@@ -792,7 +845,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
             </button>
             {langMenu&&<div style={{position:"absolute",top:"100%",right:0,marginTop:4,background:"#fff",borderRadius:12,boxShadow:"0 4px 20px rgba(0,0,0,0.12)",overflow:"hidden",minWidth:140,border:"1px solid #eee"}}>
               {Object.entries(langFull).map(([code,name])=>(
-                <button key={code} onClick={()=>{setLang(code);setLangMenu(false)}} style={{display:"block",width:"100%",textAlign:"left",background:lang===code?`${C.accentText}08`:"#fff",border:"none",padding:"10px 16px",cursor:"pointer",fontFamily:fs,fontSize:13,color:lang===code?C.accent:C.navy,fontWeight:lang===code?700:400,borderBottom:"1px solid #f5f5f5"}}>
+                <button key={code} onClick={()=>{setLang(code);setLangMenu(false)}} style={{display:"block",width:"100%",textAlign:"left",background:lang===code?`${C.accentText}08`:"#fff",border:"none",padding:"10px 16px",cursor:"pointer",fontFamily:fs,fontSize:13,color:lang===code?C.accentText:C.navy,fontWeight:lang===code?700:400,borderBottom:"1px solid #f5f5f5"}}>
                   <span style={{fontWeight:700,marginRight:8}}>{langLabels[code]}</span>{name}
                 </button>
               ))}
@@ -809,7 +862,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
             </button>
             {langMenu&&<div style={{position:"absolute",top:"100%",right:0,marginTop:4,background:"#fff",borderRadius:10,boxShadow:"0 4px 16px rgba(0,0,0,0.12)",overflow:"hidden",minWidth:120,zIndex:100,border:"1px solid #eee"}}>
               {Object.entries(langFull).map(([code,name])=>(
-                <button key={code} onClick={()=>{setLang(code);setLangMenu(false)}} style={{display:"block",width:"100%",textAlign:"left",background:lang===code?`${C.accentText}08`:"#fff",border:"none",padding:"8px 14px",cursor:"pointer",fontFamily:fs,fontSize:12,color:lang===code?C.accent:C.navy,fontWeight:lang===code?700:400}}>
+                <button key={code} onClick={()=>{setLang(code);setLangMenu(false)}} style={{display:"block",width:"100%",textAlign:"left",background:lang===code?`${C.accentText}08`:"#fff",border:"none",padding:"8px 14px",cursor:"pointer",fontFamily:fs,fontSize:12,color:lang===code?C.accentText:C.navy,fontWeight:lang===code?700:400}}>
                   {langLabels[code]} {name}
                 </button>
               ))}
@@ -1105,20 +1158,43 @@ function ClaimsPage(){
 // ============ CALCULATORS ============
 function CalculatorsPage(){
   const[calc,setCalc]=useState("mortgage");
+  const[calcErr,setCalcErr]=useState("");
   // Mortgage
   const[mAmt,setMAmt]=useState(500000);const[mRate,setMRate]=useState(4.39);const[mYrs,setMYrs]=useState(25);const[mResult,setMResult]=useState(null);
   // Insurance needs
   const[income,setIncome]=useState(100000);const[deps,setDeps]=useState(2);const[mortgage,setMortgage]=useState(400000);const[insResult,setInsResult]=useState(null);
   // Retirement
   const[rAge,setRAge]=useState(35);const[rRetire,setRRetire]=useState(65);const[rIncome,setRIncome]=useState(80000);const[rSaved,setRSaved]=useState(50000);const[rMonthly,setRMonthly]=useState(500);const[rReturn,setRReturn]=useState(6);const[rResult,setRResult]=useState(null);
-  const calcMortgage=()=>{const r=mRate/100/12;const n=mYrs*12;const pmt=mAmt*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);setMResult(Math.round(pmt*100)/100)};
-  const calcInsurance=()=>{const incomeNeed=income*10;const debtCover=mortgage;const education=deps*80000;const total=incomeNeed+debtCover+education;setInsResult({total,income:incomeNeed,debt:debtCover,edu:education})};
+  // Canadian fixed-rate mortgages compound semi-annually, not in advance
+  // (Interest Act), so the monthly rate is not simply annual/12 -- that is the
+  // US convention and it overstated the payment on every calculation here.
+  const monthlyRateCA=(annualPct)=>annualPct===0?0:Math.pow(1+annualPct/100/2,1/6)-1;
+  const calcMortgage=()=>{
+    if(!(mAmt>0)){setMResult(null);setCalcErr("Enter a mortgage amount greater than zero.");return}
+    if(mRate<0||mRate>25){setMResult(null);setCalcErr("Enter an interest rate between 0% and 25%.");return}
+    setCalcErr("");
+    const r=monthlyRateCA(mRate);const n=mYrs*12;
+    const pmt=r===0?mAmt/n:mAmt*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+    setMResult(Math.round(pmt*100)/100);
+  };
+  const calcInsurance=()=>{
+    if(income<0||mortgage<0||deps<0){setInsResult(null);setCalcErr("Income, mortgage and dependants cannot be negative.");return}
+    if(!(income>0)){setInsResult(null);setCalcErr("Enter an annual household income greater than zero.");return}
+    setCalcErr("");
+    const incomeNeed=income*10;const debtCover=mortgage;const education=deps*80000;
+    setInsResult({total:incomeNeed+debtCover+education,income:incomeNeed,debt:debtCover,edu:education});
+  };
   const calcRetirement=()=>{
+    if(rRetire<=rAge){setRResult(null);setCalcErr("Your target retirement age has to be later than your current age.");return}
+    if(rRetire>=90){setRResult(null);setCalcErr("This projection runs to age 90, so pick a retirement age below that.");return}
+    if(rReturn<0||rReturn>15){setRResult(null);setCalcErr("Enter an expected annual return between 0% and 15%.");return}
+    if(rSaved<0||rMonthly<0||rIncome<0){setRResult(null);setCalcErr("Savings, contributions and income cannot be negative.");return}
+    setCalcErr("");
     const years=rRetire-rAge;const retYears=90-rRetire;const monthlyR=rReturn/100/12;const months=years*12;
     // Future value of current savings
     const fvSaved=rSaved*Math.pow(1+monthlyR,months);
     // Future value of monthly contributions
-    const fvContrib=rMonthly*((Math.pow(1+monthlyR,months)-1)/monthlyR);
+    const fvContrib=monthlyR===0?rMonthly*months:rMonthly*((Math.pow(1+monthlyR,months)-1)/monthlyR);
     const totalAtRetire=Math.round(fvSaved+fvContrib);
     // How much they need (4% rule)
     const annualNeed=rIncome*0.7;const totalNeed=Math.round(annualNeed*retYears);
@@ -1140,28 +1216,29 @@ function CalculatorsPage(){
       <div style={{maxWidth:900,margin:"0 auto"}}>
         <SH tag="Financial Calculators" tagColor={C.greenText} title="Plan with confidence" desc="Mortgage payments, insurance needs, and retirement projections -- all the numbers you need to make informed decisions."/>
         <div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>
-          {[{l:"Mortgage",v:"mortgage"},{l:"Insurance Needs",v:"insurance"},{l:"Retirement",v:"retirement"}].map(tab=><button key={tab.v} onClick={()=>setCalc(tab.v)} style={{flex:1,minWidth:isMob?0:150,background:calc===tab.v?C.navy:"#fff",border:calc===tab.v?"none":"1px solid #ddd",borderRadius:12,padding:"14px 16px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:calc===tab.v?"#fff":C.navy}}>{tab.l}</button>)}
+          {[{l:"Mortgage",v:"mortgage"},{l:"Insurance Needs",v:"insurance"},{l:"Retirement",v:"retirement"}].map(tab=><button key={tab.v} onClick={()=>{setCalc(tab.v);setCalcErr("")}} style={{flex:1,minWidth:isMob?0:150,background:calc===tab.v?C.navy:"#fff",border:calc===tab.v?"none":"1px solid #ddd",borderRadius:12,padding:"14px 16px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:calc===tab.v?"#fff":C.navy}}>{tab.l}</button>)}
         </div>
         <div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
+          {calcErr&&<div role="alert" style={{background:`${C.redText}0D`,border:`1px solid ${C.redText}33`,borderRadius:12,padding:"12px 16px",marginBottom:20,fontFamily:fs,fontSize:14,color:C.redText}}>{calcErr}</div>}
           {calc==="mortgage"&&<>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
-              <div><label htmlFor="calc-0" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Mortgage Amount</label><input type="number" id="calc-0" value={mAmt} onChange={e=>setMAmt(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label htmlFor="calc-1" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Interest Rate (%)</label><input type="number" id="calc-1" step="0.01" value={mRate} onChange={e=>setMRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-0" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Mortgage Amount</label><input type="number" id="calc-0" min="0" step="1000" value={mAmt} onChange={e=>setMAmt(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-1" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Interest Rate (%)</label><input type="number" id="calc-1" min="0" max="25" step="0.01" value={mRate} onChange={e=>setMRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
               <div><label htmlFor="sel-0" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Amortization (Years)</label><select id="sel-0" value={mYrs} onChange={e=>setMYrs(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box",background:"#fff"}}>{[15,20,25,30].map(y=><option key={y} value={y}>{y} years</option>)}</select></div>
             </div>
             <button onClick={calcMortgage} style={{width:"100%",background:C.greenFill,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Payment</button>
             {mResult&&<div id="mortgage-result" style={{marginTop:24,background:`${C.greenFill}08`,borderRadius:16,padding:"28px 32px",textAlign:"center"}}>
               <div style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>Estimated Monthly Payment</div>
               <div style={{fontFamily:ff,fontSize:48,color:C.greenText,fontWeight:700,margin:"8px 0"}}>C${mResult.toLocaleString()}</div>
-              <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:"8px 0 12px"}}>Based on {mRate}% rate, {mYrs}-year amortization. Current NBCU rates: 3-year closed 4.39%, 5-year high ratio 3.89%.</p>
+              <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:"8px 0 12px"}}>Based on {mRate}% rate, {mYrs}-year amortization. Current NBCU rates: 3-year closed {RATE.m3}, 5-year high ratio {RATE.m5hr}.</p>
               <button onClick={()=>exportToPDF("mortgage-result","Mortgage Calculation")} style={{background:C.greenFill,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download PDF</button>
             </div>}
           </>}
           {calc==="insurance"&&<>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
-              <div><label htmlFor="calc-2" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Household Income</label><input type="number" id="calc-2" value={income} onChange={e=>setIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label htmlFor="calc-3" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Number of Dependents</label><input type="number" id="calc-3" value={deps} onChange={e=>setDeps(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label htmlFor="calc-4" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Outstanding Mortgage</label><input type="number" id="calc-4" value={mortgage} onChange={e=>setMortgage(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-2" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Household Income</label><input type="number" id="calc-2" min="0" step="1000" value={income} onChange={e=>setIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-3" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Number of Dependents</label><input type="number" id="calc-3" min="0" max="20" step="1" value={deps} onChange={e=>setDeps(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-4" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Outstanding Mortgage</label><input type="number" id="calc-4" min="0" step="1000" value={mortgage} onChange={e=>setMortgage(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
             </div>
             <button onClick={calcInsurance} style={{width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Insurance Need</button>
             {insResult&&<div id="insurance-needs-result" style={{marginTop:24,background:`${C.accentText}08`,borderRadius:16,padding:"28px 32px"}}>
@@ -1174,12 +1251,12 @@ function CalculatorsPage(){
           </>}
           {calc==="retirement"&&<>
             <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:20}}>
-              <div><label htmlFor="calc-5" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Current Age</label><input type="number" id="calc-5" value={rAge} onChange={e=>setRAge(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label htmlFor="calc-6" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Target Retirement Age</label><input type="number" id="calc-6" value={rRetire} onChange={e=>setRRetire(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label htmlFor="calc-7" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Annual Income</label><input type="number" id="calc-7" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label htmlFor="calc-8" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Retirement Savings</label><input type="number" id="calc-8" value={rSaved} onChange={e=>setRSaved(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label htmlFor="calc-9" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Monthly Contribution</label><input type="number" id="calc-9" value={rMonthly} onChange={e=>setRMonthly(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
-              <div><label htmlFor="calc-10" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Expected Annual Return (%)</label><input type="number" id="calc-10" step="0.5" value={rReturn} onChange={e=>setRReturn(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-5" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Current Age</label><input type="number" id="calc-5" min="16" max="89" step="1" value={rAge} onChange={e=>setRAge(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-6" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Target Retirement Age</label><input type="number" id="calc-6" min="17" max="89" step="1" value={rRetire} onChange={e=>setRRetire(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-7" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Annual Income</label><input type="number" id="calc-7" min="0" step="1000" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-8" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Retirement Savings</label><input type="number" id="calc-8" min="0" step="1000" value={rSaved} onChange={e=>setRSaved(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-9" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Monthly Contribution</label><input type="number" id="calc-9" min="0" step="50" value={rMonthly} onChange={e=>setRMonthly(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
+              <div><label htmlFor="calc-10" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Expected Annual Return (%)</label><input type="number" id="calc-10" min="0" max="15" step="0.5" value={rReturn} onChange={e=>setRReturn(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
             </div>
             <button onClick={calcRetirement} style={{width:"100%",background:C.purple,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Retirement Plan</button>
             {rResult&&<div id="retirement-result" style={{marginTop:24}}>
@@ -3117,7 +3194,9 @@ export default function App(){
   const[search,setSearch]=useState(false);
   const[login,setLogin]=useState(false);
   const[notifs,setNotifs]=useState(false);
-  const[lang,setLang]=useState("en");
+  const[lang,setLangState]=useState(()=>typeof window!=="undefined"?readLang():"en");
+  const setLang=useCallback((v)=>{writeLang(v);setLangState(v)},[]);
+  useEffect(()=>{document.documentElement.lang=LANG_TAG[lang]||"en"},[lang]);
   // Cmd+K opens search
   useEffect(()=>{
     const h=(e)=>{
@@ -3144,7 +3223,15 @@ export default function App(){
       <div style={{background:C.cream,minHeight:"100vh"}}>
         <a href="#main" className="skip-link">Skip to main content</a>
         <Nav page={page} setPage={setPage} onSearch={()=>setSearch(true)} onLogin={()=>setLogin(true)} onNotifications={()=>setNotifs(true)} lang={lang} setLang={setLang}/>
-        <main id="main" tabIndex={-1}>{pages[page]||pages.home}</main>
+        {/* The nav is position:fixed and 57-60px tall at every breakpoint, so this
+            band has to clear it itself the way each page's paddingTop does. */}
+        {lang!=="en"&&<div style={{background:C.birchLight,borderBottom:`1px solid ${C.birch}`,padding:"72px 24px 12px"}}>
+          <p style={{maxWidth:1320,margin:"0 auto",fontFamily:fs,fontSize:13,color:C.navy,lineHeight:1.6}}>
+            {t("Parts of this site are still only in English. Call us and we will serve you in your language.",lang)}{" "}
+            <a href="tel:+14164654659" style={{color:C.accentText,fontWeight:600,whiteSpace:"nowrap"}}>416-465-4659</a>
+          </p>
+        </div>}
+        <main id="main" tabIndex={-1} lang={lang==="en"||TRANSLATED_PAGES.has(page)?undefined:"en"}>{pages[page]||pages.home}</main>
         <Footer setPage={setPage}/>
         <ChatWidget/>
         <SearchOverlay open={search} onClose={()=>setSearch(false)} setPage={setPage}/>
