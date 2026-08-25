@@ -405,19 +405,39 @@ function useInView(t=0.1){const r=useRef(null);const[v,s]=useState(false);useEff
 // Keeps Tab inside an open dialog and restores focus to whatever opened it.
 // aria-modal already told assistive tech the page behind was inert; without
 // this, keyboard focus wandered out of the dialog anyway.
+// Remembers the last thing focused while no dialog was on screen -- i.e. the
+// control that opened one. Reading document.activeElement from inside the trap
+// is too late: the search overlay's input carries autoFocus, which React runs
+// during commit, so the overlay recorded its own input as the thing to restore
+// and then focused a node that was already unmounted, dropping focus onto
+// <body> every time it closed. Checking for a live dialog is what makes this
+// immune to that ordering: by the time autoFocus fires, the dialog is in the
+// DOM, so its focusin is ignored.
+let lastTrigger=null;
+if(typeof document!=="undefined"){
+  document.addEventListener("focusin",(e)=>{
+    if(document.querySelector('[role="dialog"]'))return;
+    const t=e.target;
+    if(t&&t!==document.body)lastTrigger=t;
+  },true);
+}
+
 function useFocusTrap(open,onClose){
   const ref=useRef(null);
+  const restoreRef=useRef(null);
+  const closeRef=useRef(onClose);
+  useEffect(()=>{closeRef.current=onClose});
   useEffect(()=>{
     if(!open)return;
     const root=ref.current;
     if(!root)return;
-    const restoreTo=document.activeElement;
+    restoreRef.current=lastTrigger;
     const sel='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
     const items=()=>[...root.querySelectorAll(sel)].filter(e=>e.offsetParent!==null);
     const first=items()[0];
     if(first)first.focus();
     const onKey=(e)=>{
-      if(e.key==="Escape"){onClose&&onClose();return}
+      if(e.key==="Escape"){closeRef.current&&closeRef.current();return}
       if(e.key!=="Tab")return;
       const f=items();
       if(!f.length)return;
@@ -426,8 +446,12 @@ function useFocusTrap(open,onClose){
       else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}
     };
     document.addEventListener("keydown",onKey);
-    return()=>{document.removeEventListener("keydown",onKey);if(restoreTo&&restoreTo.focus)restoreTo.focus()};
-  },[open,onClose]);
+    return()=>{
+      document.removeEventListener("keydown",onKey);
+      const t=restoreRef.current;
+      if(t&&t.isConnected&&t.focus)t.focus();
+    };
+  },[open]);
   return ref;
 }
 
@@ -788,7 +812,7 @@ function MessagesPage({setPage:_setPage}){
           </div>}
         </div>
         <div style={{padding:"12px 16px",borderTop:"1px solid #eee",background:"#fff",display:"flex",gap:8}}>
-          <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Type a message..." style={{flex:1,border:"1px solid #eee",borderRadius:20,padding:"10px 18px",fontFamily:fs,fontSize:13,outline:"none",background:"#f8f8f8"}} disabled={loading}/>
+          <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} aria-label="Type a message" placeholder="Type a message..." style={{flex:1,border:"1px solid #eee",borderRadius:20,padding:"10px 18px",fontFamily:fs,fontSize:13,outline:"none",background:"#f8f8f8"}} disabled={loading}/>
           <button onClick={send} disabled={loading||!input.trim()} style={{background:loading||!input.trim()?"#ddd":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:20,padding:"10px 20px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Send</button>
         </div>
         <p style={{fontFamily:fs,fontSize:10,color:"#707070",margin:0,padding:"0 16px 12px",textAlign:"center"}}>Messages are encrypted end-to-end. AI may assist advisors with replies during off-hours.</p>
@@ -1034,7 +1058,7 @@ function QuotePage({setPage}){
 }
 
 // ============ COVERAGE COMPARISON ============
-function ComparePage(){
+function ComparePage({setPage}){
   const[cat,setCat]=useState(0);
   const tables=[
     {name:"Term Life Insurance",plans:[
@@ -1074,7 +1098,7 @@ function ComparePage(){
                 <span style={{fontFamily:fs,fontSize:13,color:v==="No"?"#707070":C.navy,fontWeight:v==="No"?400:600}}>{v}</span>
               </div>)}
             </div>
-            <div style={{padding:"16px 24px 24px"}}><button style={{width:"100%",background:i===1?C.accentText:C.navy,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Get a Quote</button></div>
+            <div style={{padding:"16px 24px 24px"}}><button onClick={()=>setPage("quote")} style={{width:"100%",background:i===1?C.accentText:C.navy,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Get a Quote</button></div>
           </div>)}
         </div>
       </div>
@@ -1361,10 +1385,10 @@ function BookingPage(){
             <div><label htmlFor="booking-date" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Preferred Date</label><input type="date" id="booking-date" value={date} onChange={e=>setDate(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
             <div><label htmlFor="sel-3" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Preferred Time</label><select id="sel-3" value={time} onChange={e=>setTime(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">Select time...</option>{["10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","12:30 PM","1:00 PM","1:30 PM","2:00 PM","2:30 PM"].map(t=><option key={t}>{t}</option>)}</select></div>
           </div>
-          <div style={{marginBottom:20}}><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Name</label><input value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+          <div style={{marginBottom:20}}><label htmlFor="appt-name" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Name</label><input id="appt-name" autoComplete="name" value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:16,marginBottom:24}}>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-            <div><label style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Phone</label><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="appt-email" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Email</label><input id="appt-email" autoComplete="email" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
+            <div><label htmlFor="appt-phone" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Phone</label><input id="appt-phone" autoComplete="tel" type="tel" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
           </div>
           <ConsentNotice id="booking-consent" checked={consent} onChange={setConsent} purpose="so a branch representative can contact me about this appointment"/>
           {error&&<div style={errBox}>{error}</div>}
@@ -1516,7 +1540,7 @@ function GlossaryPage(){
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
         <SH tag="Insurance Glossary" tagColor={C.purple} title="Insurance terms explained" desc="Understanding insurance terminology helps you make better decisions. Search or browse our glossary of common insurance terms."/>
-        <div style={{marginBottom:24}}><input value={filter} onChange={e=>setFilter(e.target.value)} placeholder="Search terms..." style={{width:"100%",border:"1px solid #ddd",borderRadius:12,padding:"14px 20px",fontFamily:fs,fontSize:15,outline:"none",boxSizing:"border-box",background:"#fff"}}/></div>
+        <div style={{marginBottom:24}}><input value={filter} onChange={e=>setFilter(e.target.value)} aria-label="Search glossary terms" placeholder="Search terms..." style={{width:"100%",border:"1px solid #ddd",borderRadius:12,padding:"14px 20px",fontFamily:fs,fontSize:15,outline:"none",boxSizing:"border-box",background:"#fff"}}/></div>
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
           {filtered.map((t,i)=><div key={i} style={{background:"#fff",borderRadius:14,padding:"20px 24px",border:"1px solid #eee"}}>
             <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{t.term}</h4>
@@ -2010,7 +2034,7 @@ function AIAdvisorPage({setPage}){
         </Fade>
         <Fade delay={0.3}>
           <div style={{display:"flex",gap:8,maxWidth:600,margin:"0 auto"}}>
-            <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&startConversation(input)} placeholder="Or describe your situation in your own words..." style={{flex:1,border:"1px solid rgba(255,255,255,0.15)",borderRadius:12,padding:"14px 20px",fontFamily:fs,fontSize:15,outline:"none",background:"rgba(255,255,255,0.05)",color:"#fff"}}/>
+            <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&startConversation(input)} aria-label="Describe your situation" placeholder="Or describe your situation in your own words..." style={{flex:1,border:"1px solid rgba(255,255,255,0.15)",borderRadius:12,padding:"14px 20px",fontFamily:fs,fontSize:15,outline:"none",background:"rgba(255,255,255,0.05)",color:"#fff"}}/>
             <button onClick={()=>startConversation(input)} style={{background:`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:12,padding:"14px 24px",cursor:"pointer",fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>Start</button>
           </div>
         </Fade>
@@ -2080,7 +2104,7 @@ function PolicyAnalyzerPage({setPage}){
             <div style={{width:40,height:40,borderRadius:12,background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:"#fff"}}>&#9889;</span></div>
             <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>Tell us about your current coverage</div><div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>Powered by Claude Opus 4.6</div></div>
           </div>
-          <textarea value={input} onChange={e=>setInput(e.target.value)} rows={8} placeholder={"Describe your current insurance situation. For example:\n\n\"I'm 35, married with 2 kids. I have a $500K mortgage with Northern Birch. My employer gives me basic life insurance (1x salary = $85K) and health/dental. I have home insurance with TD ($180/month) and auto with Intact ($165/month). No disability, no critical illness, no travel insurance. We visit my parents in Tallinn every summer.\"\n\nThe more detail you provide, the better our analysis."} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
+          <textarea aria-label="Describe your current insurance situation" value={input} onChange={e=>setInput(e.target.value)} rows={8} placeholder={"Describe your current insurance situation. For example:\n\n\"I'm 35, married with 2 kids. I have a $500K mortgage with Northern Birch. My employer gives me basic life insurance (1x salary = $85K) and health/dental. I have home insurance with TD ($180/month) and auto with Intact ($165/month). No disability, no critical illness, no travel insurance. We visit my parents in Tallinn every summer.\"\n\nThe more detail you provide, the better our analysis."} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
           <div style={{display:"flex",gap:12,marginTop:16}}>
             <button onClick={analyze} disabled={loading||!input.trim()} style={{flex:1,background:loading?"#ccc":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:12,padding:"16px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{loading?"Analyzing your coverage...":"Analyze My Coverage"}</button>
           </div>
@@ -2288,7 +2312,7 @@ function LifeSimPage({setPage}){
         </div>
         <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:"24px 28px"}}>
           <label style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",display:"block",marginBottom:8}}>Add context for a more personalized analysis (optional):</label>
-          <input value={details} onChange={e=>setDetails(e.target.value)} placeholder="e.g. I'm 34, married, $450K mortgage with NBCU, no life insurance..." style={{width:"100%",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:"14px 20px",fontFamily:fs,fontSize:14,outline:"none",background:"rgba(255,255,255,0.04)",color:"#fff",boxSizing:"border-box"}}/>
+          <input value={details} onChange={e=>setDetails(e.target.value)} aria-label="Describe your situation" placeholder="e.g. I'm 34, married, $450K mortgage with NBCU, no life insurance..." style={{width:"100%",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:"14px 20px",fontFamily:fs,fontSize:14,outline:"none",background:"rgba(255,255,255,0.04)",color:"#fff",boxSizing:"border-box"}}/>
         </div>
       </div>
     </section>
@@ -2314,7 +2338,7 @@ function DocReaderPage({setPage}){
       <div style={{maxWidth:900,margin:"0 auto"}}>
         <SH tag="AI Document Reader" tagColor={C.accentText} title="Understand your existing coverage" desc="Paste text from any insurance policy, renewal notice, or coverage summary. Our AI will extract the key details, compare with Northern Birch rates, and flag any gaps."/>
         {!result?<div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>
-          <textarea value={input} onChange={e=>setInput(e.target.value)} rows={12} placeholder={"Paste your policy text, renewal notice, or coverage details here. For example:\n\n\"TD Insurance Home Policy #HO-2024-887721\nDwelling: $650,000 replacement cost\nContents: $325,000\nDeductible: $1,000\nPersonal Liability: $1,000,000\nAdditional Living Expenses: $130,000\nWater damage: Sewer backup included\nPremium: $2,340/year ($195/month)\nRenewal: April 15, 2026\"\n\nYou can also paste a description in your own words, or copy text from a PDF renewal notice."} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
+          <textarea aria-label="Paste your policy text or coverage details" value={input} onChange={e=>setInput(e.target.value)} rows={12} placeholder={"Paste your policy text, renewal notice, or coverage details here. For example:\n\n\"TD Insurance Home Policy #HO-2024-887721\nDwelling: $650,000 replacement cost\nContents: $325,000\nDeductible: $1,000\nPersonal Liability: $1,000,000\nAdditional Living Expenses: $130,000\nWater damage: Sewer backup included\nPremium: $2,340/year ($195/month)\nRenewal: April 15, 2026\"\n\nYou can also paste a description in your own words, or copy text from a PDF renewal notice."} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
           <button onClick={analyze} disabled={loading||!input.trim()} style={{width:"100%",marginTop:16,background:loading?"#ccc":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:12,padding:"16px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{loading?"Reading and analyzing your document...":"Analyze My Policy"}</button>
           <div style={{marginTop:16,display:"flex",gap:8,flexWrap:"wrap"}}>
             <span style={{fontFamily:fs,fontSize:12,color:"#707070"}}>Try with:</span>
@@ -2377,7 +2401,7 @@ function TaxPage({setPage}){
             <div style={{width:40,height:40,borderRadius:12,background:`linear-gradient(135deg,${C.green},${C.accent})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:"#fff"}}>&#9889;</span></div>
             <div><div style={{fontFamily:fs,fontSize:16,color:C.navy,fontWeight:700}}>AI Tax Advisor</div><div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>Powered by Claude Opus 4.6 -- Canadian tax expertise</div></div>
           </div>
-          <textarea value={input} onChange={e=>setInput(e.target.value)} rows={6} placeholder={"Describe your tax situation. For example:\n\n\"I'm 42, married, household income $180K (I earn $120K, spouse $60K). We have 2 kids (ages 5 and 8). $90K in RRSPs, $25K in TFSAs, $400K mortgage with NBCU. No RESP for the kids yet. No FHSA. My employer doesn't offer a pension. I'm paying $2,400/year in home insurance to TD. Looking to reduce our tax bill and save smarter.\""} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
+          <textarea aria-label="Describe your tax situation" value={input} onChange={e=>setInput(e.target.value)} rows={6} placeholder={"Describe your tax situation. For example:\n\n\"I'm 42, married, household income $180K (I earn $120K, spouse $60K). We have 2 kids (ages 5 and 8). $90K in RRSPs, $25K in TFSAs, $400K mortgage with NBCU. No RESP for the kids yet. No FHSA. My employer doesn't offer a pension. I'm paying $2,400/year in home insurance to TD. Looking to reduce our tax bill and save smarter.\""} style={{width:"100%",border:"1px solid #ddd",borderRadius:14,padding:"16px 20px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7}}/>
           <button onClick={analyze} disabled={loading||!input.trim()} style={{width:"100%",marginTop:16,background:loading?"#ccc":`linear-gradient(135deg,${C.green},${C.accent})`,border:"none",borderRadius:12,padding:"16px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{loading?"Analyzing your tax situation...":"Optimize My Taxes"}</button>
           <div style={{marginTop:16,display:"flex",gap:8,flexWrap:"wrap"}}>
             {["Maximize RRSP deductions","Best TFSA vs RRSP strategy","Tax-efficient estate planning","Small business tax optimization","Retirement income splitting"].map((s,i)=><button key={i} onClick={()=>setInput(s+" -- please advise based on typical Ontario resident situation")} style={{background:`${C.greenFill}06`,border:`1px solid ${C.green}15`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.greenText}}>{s}</button>)}
@@ -2477,6 +2501,9 @@ function DashboardPage({setPage}){
   const[transferAmt,setTransferAmt]=useState("200");
   // The field accepted anything: "abc" produced "Recipient Gets EUR NaN" beside a
   // live "Send C$abc" button. Parse strictly and gate the send on the result.
+  const scrollTo=(id)=>{const el=document.getElementById(id);if(!el)return;el.scrollIntoView({behavior:prefersReducedMotion()?"auto":"smooth",block:"center"});const f=el.querySelector("input,button");if(f)f.focus({preventScroll:true})};
+  const scrollToTransfer=()=>scrollTo("dash-transfer");
+  const scrollToDocs=()=>scrollTo("dash-documents");
   const transferNum=/^\d{1,7}(\.\d{1,2})?$/.test(transferAmt.trim())?parseFloat(transferAmt.trim()):NaN;
   const transferOk=Number.isFinite(transferNum)&&transferNum>=1&&transferNum<=25000;
   const[transferTo,setTransferTo]=useState("Grandmother Maija - Riga, Latvia");
@@ -2498,9 +2525,9 @@ function DashboardPage({setPage}){
           </div>
           <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
             <Btn small color={C.accentText} onClick={()=>setPage&&setPage("quote")}>Get a Quote</Btn>
-            <Btn small color={C.greenFill}>Send Transfer</Btn>
+            <Btn small color={C.greenFill} onClick={scrollToTransfer}>Send Transfer</Btn>
             <Btn small color={C.purple} onClick={()=>setPage&&setPage("messages")}>Messages</Btn>
-            <Btn small outline color={C.navy}>Settings</Btn>
+            <Btn small outline color={C.navy} onClick={()=>setPage&&setPage("contact")}>Account Settings</Btn>
           </div>
         </div>
         {/* Notifications */}
@@ -2508,12 +2535,12 @@ function DashboardPage({setPage}){
           <div style={{background:`${C.amber}10`,border:`1px solid ${C.amber}30`,borderRadius:14,padding:"12px 20px",display:"flex",alignItems:"center",gap:12}}>
             <span style={{fontSize:16}}>&#128276;</span>
             <span style={{fontFamily:fs,fontSize:13,color:C.navy,flex:1}}>Your home insurance renewal is coming up on <strong>April 15, 2026</strong>. Review your coverage to ensure you're still adequately protected.</span>
-            <button style={{background:C.amberFill,border:"none",borderRadius:8,padding:"6px 14px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600,whiteSpace:"nowrap"}}>Review Now</button>
+            <button onClick={()=>setPage("compare")} style={{background:C.amberFill,border:"none",borderRadius:8,padding:"6px 14px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600,whiteSpace:"nowrap"}}>Review Now</button>
           </div>
           <div style={{background:`${C.accentText}08`,border:`1px solid ${C.accent}20`,borderRadius:14,padding:"12px 20px",display:"flex",alignItems:"center",gap:12}}>
             <span style={{fontSize:16}}>&#9997;</span>
             <span style={{fontFamily:fs,fontSize:13,color:C.navy,flex:1}}>2 documents pending your electronic signature. Sign now to complete your insurance application.</span>
-            <button style={{background:C.accentText,border:"none",borderRadius:8,padding:"6px 14px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600,whiteSpace:"nowrap"}}>Sign Now</button>
+            <button onClick={scrollToDocs} style={{background:C.accentText,border:"none",borderRadius:8,padding:"6px 14px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600,whiteSpace:"nowrap"}}>Sign Now</button>
           </div>
         </div>
 
@@ -2615,7 +2642,7 @@ function DashboardPage({setPage}){
             </div>
 
             {/* Document Signing */}
-            <div style={{background:"#fff",borderRadius:20,padding:28,marginBottom:24}}>
+            <div id="dash-documents" style={{background:"#fff",borderRadius:20,padding:28,marginBottom:24}}>
               <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
                 <h3 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:0,fontWeight:700}}>Documents & E-Signatures</h3>
                 <span style={{background:C.redText,color:"#fff",fontFamily:fs,fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:10}}>2 Pending</span>
@@ -2675,7 +2702,7 @@ function DashboardPage({setPage}){
           {/* ======= RIGHT COLUMN ======= */}
           <div>
             {/* Quick International Transfer */}
-            <div style={{background:`linear-gradient(135deg,${C.navy},#2a4a6a)`,borderRadius:20,padding:24,marginBottom:24}}>
+            <div id="dash-transfer" style={{background:`linear-gradient(135deg,${C.navy},#2a4a6a)`,borderRadius:20,padding:24,marginBottom:24}}>
               <h3 style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.7)",margin:"0 0 16px",fontWeight:700}}>&#127757; Quick Transfer to Baltics</h3>
               {!transferSent?<>
                 <div style={{marginBottom:12}}>
@@ -2711,17 +2738,30 @@ function DashboardPage({setPage}){
             {/* Quick Actions */}
             <div style={{background:"#fff",borderRadius:20,padding:24,marginBottom:24}}>
               <h3 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 16px",fontWeight:700}}>Quick Actions</h3>
+              {/* These were ten buttons with no onClick between them. The six
+                  that have somewhere real to go now go there; the rest are
+                  online-banking functions this site does not implement, so
+                  they are listed rather than dressed up as working buttons. */}
               {[
-                {l:"Get Insurance Quote",c:C.accent},{l:"Send International Transfer",c:C.green},{l:"File Insurance Claim",c:C.red},
-                {l:"Pay a Bill",c:C.navy},{l:"Send Interac e-Transfer",c:C.purple},{l:"Book Advisor Meeting",c:C.amber},
-                {l:"Download Tax Slips (T5, T3, RRSP)",c:C.navy},{l:"Update Beneficiaries",c:C.accent},
-                {l:"Order Foreign Currency Cash",c:C.green},{l:"Apply for Credit Card",c:C.purple},
-              ].map((a,i)=>(
-                <button key={i} style={{display:"flex",alignItems:"center",gap:10,width:"100%",background:"none",border:"none",padding:"9px 8px",cursor:"pointer",borderBottom:i<9?"1px solid #f8f8f8":"none",textAlign:"left"}}>
+                {l:"Get Insurance Quote",c:C.accent,go:"quote"},
+                {l:"Send International Transfer",c:C.green,go:"transfer"},
+                {l:"File Insurance Claim",c:C.red,go:"claims"},
+                {l:"Book Advisor Meeting",c:C.amber,go:"booking"},
+                {l:"Update Beneficiaries",c:C.accent,go:"booking"},
+                {l:"Apply for Credit Card",c:C.purple,go:"cards"},
+              ].map((a,i,arr)=>(
+                <button key={i} onClick={()=>a.go==="transfer"?scrollToTransfer():setPage(a.go)} style={{display:"flex",alignItems:"center",gap:10,width:"100%",background:"none",border:"none",padding:"9px 8px",cursor:"pointer",borderBottom:i<arr.length-1?"1px solid #f8f8f8":"none",textAlign:"left"}}>
                   <div style={{width:8,height:8,borderRadius:2,background:a.c,flexShrink:0}}/>
                   <span style={{fontFamily:fs,fontSize:12,color:C.navy,fontWeight:500}}>{a.l}</span>
+                  <span style={{marginLeft:"auto",fontFamily:fs,fontSize:12,color:C.accentText}} aria-hidden="true">&rarr;</span>
                 </button>
               ))}
+              <p style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",margin:"14px 0 6px",fontWeight:700,textTransform:"uppercase",letterSpacing:0.6}}>In online banking</p>
+              <ul style={{listStyle:"none",margin:0,padding:0}}>
+                {["Pay a bill","Send an Interac e-Transfer","Download tax slips (T5, T3, RRSP)","Order foreign currency cash"].map((l,i)=>
+                  <li key={i} style={{fontFamily:fs,fontSize:12,color:"#666",padding:"5px 8px"}}>{l}</li>)}
+              </ul>
+              <p style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",margin:"8px 0 0"}}>Need a hand with one of these? <button onClick={()=>setPage("contact")} style={{background:"none",border:"none",padding:"6px 2px",minHeight:24,fontFamily:fs,fontSize:11,color:C.accentText,fontWeight:600,cursor:"pointer",textDecoration:"underline"}}>Call your branch</button>.</p>
             </div>
 
             {/* Upcoming Payments */}
@@ -2779,7 +2819,7 @@ function DashboardPage({setPage}){
                   <span style={{fontFamily:fs,fontSize:11,color:c2.v?C.greenOnDark:C.redOnDark,fontWeight:600}}>{c2.v?"Covered":"Gap"}</span>
                 </div>
               ))}
-              <button style={{width:"100%",background:"rgba(255,255,255,0.1)",border:"none",borderRadius:10,padding:"10px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:500,marginTop:12}}>Close Coverage Gaps</button>
+              <button onClick={()=>setPage("analyzer")} style={{width:"100%",background:"rgba(255,255,255,0.1)",border:"none",borderRadius:10,padding:"10px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:500,marginTop:12}}>Close Coverage Gaps</button>
             </div>
 
             {/* Next Advisor Appointment */}
@@ -2789,8 +2829,8 @@ function DashboardPage({setPage}){
               <div style={{fontFamily:fs,fontSize:12,color:"#666",marginTop:4}}>March 25, 2026 at 10:30 AM</div>
               <div style={{fontFamily:fs,fontSize:12,color:"#666"}}>Latvian Centre Branch, North York</div>
               <div style={{display:"flex",gap:8,marginTop:12}}>
-                <button style={{flex:1,background:C.greenFill,border:"none",borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600}}>Join Video Call</button>
-                <button style={{flex:1,background:"#fff",border:`1px solid ${C.green}`,borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.greenText,fontWeight:600}}>Reschedule</button>
+                <button onClick={()=>setPage("messages")} style={{flex:1,background:C.greenFill,border:"none",borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600}}>Message Heili</button>
+                <button onClick={()=>setPage("booking")} style={{flex:1,background:"#fff",border:`1px solid ${C.greenText}`,borderRadius:8,padding:"8px",cursor:"pointer",fontFamily:fs,fontSize:11,color:C.greenText,fontWeight:600}}>Reschedule</button>
               </div>
             </div>
           </div>
@@ -3234,7 +3274,7 @@ export default function App(){
     home:<HomePage setPage={setPage} lang={lang}/>,insurance:<InsurancePage setPage={setPage} lang={lang}/>,travel:<TravelPage setPage={setPage} lang={lang}/>,business:<BusinessPage setPage={setPage} lang={lang}/>,digital:<DigitalPage setPage={setPage} lang={lang}/>,
     estate:<EstatePage lang={lang}/>,community:<CommunityPage setPage={setPage} lang={lang}/>,personal:<PersonalPage setPage={setPage} lang={lang}/>,contact:<ContactPage lang={lang}/>,
     mortgages:<MortgagesPage setPage={setPage} lang={lang}/>,cards:<CardsPage setPage={setPage} lang={lang}/>,accounts:<AccountsPage setPage={setPage} lang={lang}/>,
-    quote:<QuotePage setPage={setPage} lang={lang}/>,compare:<ComparePage lang={lang}/>,claims:<ClaimsPage lang={lang}/>,calculators:<CalculatorsPage lang={lang}/>,
+    quote:<QuotePage setPage={setPage} lang={lang}/>,compare:<ComparePage setPage={setPage} lang={lang}/>,claims:<ClaimsPage lang={lang}/>,calculators:<CalculatorsPage lang={lang}/>,
     booking:<BookingPage lang={lang}/>,rates:<RatesPage setPage={setPage} lang={lang}/>,referrals:<ReferralsPage lang={lang}/>,blog:<BlogPage setPage={setPage} lang={lang}/>,
     glossary:<GlossaryPage lang={lang}/>,mobileapp:<MobileAppPage setPage={setPage} lang={lang}/>,dashboard:<DashboardPage setPage={setPage} lang={lang}/>,aiadvisor:<AIAdvisorPage setPage={setPage} lang={lang}/>,
     analyzer:<PolicyAnalyzerPage setPage={setPage}/>,healthcheck:<HealthAssessmentPage setPage={setPage}/>,
