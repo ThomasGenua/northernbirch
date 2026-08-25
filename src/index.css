@@ -17,3 +17,16 @@ input[type=range]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 
 .skip-link { position: absolute; left: -9999px; top: 0; z-index: 3000; }
 .skip-link:focus { left: 8px; top: 8px; background: #1B2A4A; color: #fff; padding: 12px 20px;
   border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; }
+
+/* Fade already honours this in JS, but three CSS animations did not: the chat
+   launcher and the AI loading badge both pulse forever, and the "typing..."
+   indicator blinks. Honour the setting globally so anything added later is
+   covered too. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
