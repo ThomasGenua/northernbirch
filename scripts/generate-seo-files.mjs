@@ -84,6 +84,13 @@ function orgSchema(site) {
   };
 }
 
+// Kept out of the sitemap, and kept out of the index. /dashboard and
+// /messages are member views; /leadership is the internal business case,
+// addressed to the board and carrying five-year revenue projections, the cost
+// to NBCU and partnership terms. Someone already decided none of these should
+// be promoted -- that decision just stopped at the sitemap.
+const EXCLUDE = new Set(['/dashboard', '/messages', '/leadership']);
+
 const shell = readFileSync(join(DIST, 'index.html'), 'utf8');
 
 // The generator writes its output back over dist/index.html, which is also
@@ -96,7 +103,8 @@ const stripInjected = (html) => html
   .replace(/\s*<meta property="og:url"[^>]*>/g, '')
   .replace(/\s*<meta property="og:image(?::(?:width|height|alt))?"[^>]*>/g, '')
   .replace(/\s*<meta name="twitter:image"[^>]*>/g, '')
-  .replace(/\s*<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '');
+  .replace(/\s*<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '')
+  .replace(/\s*<meta name="robots"[^>]*>/g, '');
 
 function pageHtml(path, title, desc) {
   const url = SITE + (path === '/' ? '/' : path);
@@ -116,6 +124,7 @@ function pageHtml(path, title, desc) {
       `    <meta property="og:image:alt" content="Northern Birch Credit Union" />`,
       `    <meta name="twitter:image" content="${SITE}/og-image.png" />`,
       `    <script type="application/ld+json">${JSON.stringify(orgSchema(SITE))}</script>`,
+      ...(EXCLUDE.has(path) ? ['    <meta name="robots" content="noindex, nofollow" />'] : []),
       '  </head>',
     ].join('\n'));
 }
@@ -134,7 +143,6 @@ for (const { key, path } of routes) {
 }
 
 // --- robots.txt and sitemap.xml ---
-const EXCLUDE = new Set(['/dashboard', '/messages', '/leadership']);
 const urls = routes.map((r) => r.path).filter((p) => !EXCLUDE.has(p));
 const priority = (p) => (p === '/' ? '1.0' : ['/mortgages', '/accounts', '/cards', '/rates'].includes(p) ? '0.9' : '0.6');
 writeFileSync(join(DIST, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
@@ -142,6 +150,10 @@ writeFileSync(join(DIST, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 ${urls.map((p) => `  <url><loc>${SITE}${p === '/' ? '/' : p}</loc><priority>${priority(p)}</priority></url>`).join('\n')}
 </urlset>
 `);
-writeFileSync(join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /messages\n\nSitemap: ${SITE}/sitemap.xml\n`);
+// No Disallow here on purpose: a disallowed URL is never fetched, so the
+// crawler never reads its noindex and the URL can still be indexed from an
+// inbound link. Letting these pages be crawled is what makes their noindex
+// effective.
+writeFileSync(join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 
 console.log(`SEO files written for ${SITE} (${written} route pages, ${urls.length} sitemap urls)`);

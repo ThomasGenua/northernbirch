@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /dashboard
-Disallow: /messages
 
 Sitemap: https://www.northernbirchcu.com/sitemap.xml
