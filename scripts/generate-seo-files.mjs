@@ -34,6 +34,56 @@ if (Object.keys(META).length < 10) throw new Error('META table not parsed — di
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// Structured data for the credit union and its open branches. Every value here
+// is already published on the site (the contact page and the privacy policy);
+// nothing is invented. KESKUS is left out on purpose: it has no street number,
+// no phone and no hours yet, and asserting any of those to a search engine
+// would be a claim the site itself does not make.
+function orgSchema(site) {
+  const branch = (name, street, locality, postalCode, phone, hours) => ({
+    '@type': 'BankOrCreditUnion',
+    name: `Northern Birch Credit Union \u2014 ${name}`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: street,
+      addressLocality: locality,
+      addressRegion: 'ON',
+      addressCountry: 'CA',
+      ...(postalCode ? { postalCode } : {}),
+    },
+    telephone: phone,
+    openingHours: hours,
+  });
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BankOrCreditUnion',
+    name: 'Northern Birch Credit Union',
+    legalName: 'Northern Birch Credit Union Limited',
+    url: site + '/',
+    logo: site + '/og-image.png',
+    image: site + '/og-image.png',
+    telephone: '+1-416-465-4659',
+    email: 'FinancialCheckup@northernbirchcu.com',
+    areaServed: 'Ontario, Canada',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '4 Credit Union Drive',
+      addressLocality: 'North York',
+      addressRegion: 'ON',
+      postalCode: 'M4A 2N8',
+      addressCountry: 'CA',
+    },
+    department: [
+      branch('Latvian Centre', '4 Credit Union Drive', 'North York', 'M4A 2N8', '+1-416-465-4659',
+        ['Mo-We 10:00-15:00', 'Th 10:00-19:00', 'Fr 10:00-15:00', 'Sa 09:00-13:00']),
+      branch('Tartu College', '310 Bloor Street West', 'Toronto', '', '+1-416-922-2551',
+        ['Mo-Fr 10:00-15:00']),
+      branch('Hamilton', '16 Queen Street North', 'Hamilton', '', '+1-905-527-4344',
+        ['Tu-We 10:00-15:00', 'Th 10:00-19:00', 'Fr 10:00-15:00']),
+    ],
+  };
+}
+
 const shell = readFileSync(join(DIST, 'index.html'), 'utf8');
 
 function pageHtml(path, title, desc) {
@@ -43,7 +93,19 @@ function pageHtml(path, title, desc) {
     .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${esc(desc)}" />`)
     .replace(/<meta property="og:title" content="[^"]*"\s*\/>/, `<meta property="og:title" content="${esc(title)}" />`)
     .replace(/<meta property="og:description" content="[^"]*"\s*\/>/, `<meta property="og:description" content="${esc(desc)}" />`)
-    .replace('</head>', `  <link rel="canonical" href="${url}" />\n    <meta property="og:url" content="${url}" />\n  </head>`);
+    // og:image and the JSON-LD both need absolute URLs, and social crawlers do
+    // not run JS, so they have to be written into every prerendered page here.
+    .replace('</head>', [
+      `  <link rel="canonical" href="${url}" />`,
+      `    <meta property="og:url" content="${url}" />`,
+      `    <meta property="og:image" content="${SITE}/og-image.png" />`,
+      `    <meta property="og:image:width" content="1200" />`,
+      `    <meta property="og:image:height" content="630" />`,
+      `    <meta property="og:image:alt" content="Northern Birch Credit Union" />`,
+      `    <meta name="twitter:image" content="${SITE}/og-image.png" />`,
+      `    <script type="application/ld+json">${JSON.stringify(orgSchema(SITE))}</script>`,
+      '  </head>',
+    ].join('\n'));
 }
 
 let written = 0;
