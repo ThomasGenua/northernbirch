@@ -32,7 +32,7 @@ if (!EXECUTABLE) {
 // Every route the app serves. The suites walk this rather than each keeping
 // their own copy, which drifted.
 export const ROUTES = [
-  '/', '/personal', '/accounts', '/mortgages', '/cards', '/insurance', '/travel',
+  '/', '/personal', '/accounts', '/mortgages', '/cards', '/insurance', '/advice', '/travel',
   '/business', '/digital', '/estate', '/community', '/contact', '/rates', '/quote',
   '/compare', '/claims', '/calculators', '/booking', '/referrals', '/blog', '/glossary',
   '/mobile-app', '/dashboard', '/ai-advisor', '/coverage-analyzer', '/financial-health-check',

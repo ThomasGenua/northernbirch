@@ -164,7 +164,7 @@ export function writeLang(v){
 // into a history entry, which is why the existing call sites are unchanged.
 export const ROUTES={
   home:"/",personal:"/personal",accounts:"/accounts",mortgages:"/mortgages",cards:"/cards",
-  insurance:"/insurance",travel:"/travel",business:"/business",digital:"/digital",estate:"/estate",
+  insurance:"/insurance",advice:"/advice",travel:"/travel",business:"/business",digital:"/digital",estate:"/estate",
   community:"/community",contact:"/contact",rates:"/rates",quote:"/quote",compare:"/compare",
   claims:"/claims",calculators:"/calculators",booking:"/booking",referrals:"/referrals",
   blog:"/blog",glossary:"/glossary",mobileapp:"/mobile-app",dashboard:"/dashboard",
@@ -186,6 +186,7 @@ export const META={
   cards:["Credit Cards | Northern Birch Credit Union","Collabria Mastercard cards for members: cash back, low rate and travel rewards, with no-annual-fee options."],
   personal:["Personal Banking | Northern Birch Credit Union","Everyday accounts, borrowing and investing for Northern Birch members."],
   rates:["Current Rates | Northern Birch Credit Union","Today's posted mortgage, GIC, savings and lending rates at Northern Birch Credit Union."],
+  advice:["Financial Advice & Planning | Northern Birch","Retirement, investment, estate and tax advice from Northern Birch's wealth team, starting with a Financial Check-Up that costs members nothing."],
   insurance:["Insurance | Northern Birch Credit Union","Life, home, auto, travel and co-op insurance distributed through The Personal, CUMIS and Manulife."],
   travel:["Travel & International Transfers | Northern Birch","Baltic travel insurance, international transfers to Estonia and Latvia, and competitive foreign exchange."],
   business:["Business Solutions | Northern Birch Credit Union","Group benefits, commercial insurance, payroll and commercial lending for Ontario businesses."],
