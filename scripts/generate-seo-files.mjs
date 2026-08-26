@@ -86,9 +86,21 @@ function orgSchema(site) {
 
 const shell = readFileSync(join(DIST, 'index.html'), 'utf8');
 
+// The generator writes its output back over dist/index.html, which is also
+// where it reads the shell from. A normal `npm run build` is safe because vite
+// regenerates dist first, but running this script on its own appended a second
+// canonical, og:image and ld+json block every time. Two canonicals is worse
+// than none, so strip anything a previous run injected before injecting again.
+const stripInjected = (html) => html
+  .replace(/\s*<link rel="canonical"[^>]*>/g, '')
+  .replace(/\s*<meta property="og:url"[^>]*>/g, '')
+  .replace(/\s*<meta property="og:image(?::(?:width|height|alt))?"[^>]*>/g, '')
+  .replace(/\s*<meta name="twitter:image"[^>]*>/g, '')
+  .replace(/\s*<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '');
+
 function pageHtml(path, title, desc) {
   const url = SITE + (path === '/' ? '/' : path);
-  return shell
+  return stripInjected(shell)
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${esc(desc)}" />`)
     .replace(/<meta property="og:title" content="[^"]*"\s*\/>/, `<meta property="og:title" content="${esc(title)}" />`)
