@@ -15,7 +15,12 @@ import { join } from 'node:path';
 
 const SITE = (process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://www.northernbirchcu.com').replace(/\/+$/, '');
 const DIST = join(process.cwd(), 'dist');
-const app = readFileSync(join(process.cwd(), 'src/App.jsx'), 'utf8');
+// ROUTES and META moved to src/ui.jsx when the shared layer was split out of
+// App.jsx, and this script threw rather than silently emitting default meta on
+// every page. Read both, so it keeps working wherever the tables end up.
+const app = ['src/ui.jsx', 'src/App.jsx']
+  .map((f) => { try { return readFileSync(join(process.cwd(), f), 'utf8'); } catch { return ''; } })
+  .join('\n');
 
 // --- routes, from the app's own ROUTES table ---
 const routeBlock = app.slice(app.indexOf('const ROUTES={'), app.indexOf('const PATH_TO_PAGE'));

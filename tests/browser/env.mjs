@@ -3,7 +3,7 @@
 // Everything here used to be hardcoded to one container: an absolute Chromium
 // path, port 3118, /home/user/northernbirch. Resolve it instead so the suites
 // run on any machine that has a Chromium and a built dist/.
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -43,3 +43,20 @@ export const ROUTES = [
 // Google Fonts is unreachable behind some proxies and adds ~30s per page to a
 // networkidle wait. The suites do not test the fonts.
 export const blockFonts = (ctx) => ctx.route('**fonts.g**', (r) => r.abort());
+
+// Several suites assert against the app's own source -- that a rate in the
+// schema is one the site publishes, that ROUTES and the test's route list
+// agree. App.jsx was one file when they were written and is now a tree, so
+// read all of it rather than naming a file that keeps moving.
+export function appSource() {
+  const out = [];
+  const walk = (dir) => {
+    for (const name of readdirSync(dir)) {
+      const p = join(dir, name);
+      if (statSync(p).isDirectory()) walk(p);
+      else if (/\.(jsx?|mjs)$/.test(name)) out.push(readFileSync(p, 'utf8'));
+    }
+  };
+  walk(join(ROOT, 'src'));
+  return out.join('\n');
+}

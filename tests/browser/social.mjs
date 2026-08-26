@@ -1,8 +1,8 @@
-import { DIST, ROOT } from './env.mjs';
-import { join } from 'node:path';
+import { DIST, appSource } from './env.mjs';
+
 import { readFileSync, existsSync, statSync } from 'node:fs';
 let pass=0,fail=0; const check=(c,m)=>{c?pass++:fail++;console.log((c?'PASS ':'FAIL ')+m)};
-const src=readFileSync(join(ROOT,'src','App.jsx'),'utf8');
+const src=appSource();
 const paths=[...src.match(/const ROUTES=\{([\s\S]*?)\n\};/)[1].matchAll(/"?[a-zA-Z-]+"?\s*:\s*"([^"]+)"/g)].map(m=>m[1]);
 
 // the image itself
