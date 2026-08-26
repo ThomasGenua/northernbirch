@@ -362,6 +362,33 @@ function Linkify({text,color=C.accentText}){
   return <>{out}</>;
 }
 
+// Layout is decided by reading window.innerWidth during render in ~70 places,
+// which is only correct at the instant a component happens to render. Nothing
+// re-rendered on resize, so rotating a phone left three desktop columns
+// squeezed into 390px, and a desktop resize did the same, until you navigated
+// or reloaded. Calling this once in App re-renders the tree when a breakpoint
+// is crossed, so every one of those reads is re-evaluated.
+//
+// Bucketed rather than raw width on purpose: dragging a window edge costs a
+// couple of renders instead of one per pixel, because React bails out when the
+// state it is given is unchanged.
+const readBreakpoint=()=>{
+  if(typeof window==="undefined")return "d";
+  const w=window.innerWidth;
+  return w<=768?"m":w<=900?"t":w<=1024?"l":"d";
+};
+function useBreakpoint(){
+  const[bp,setBp]=useState(readBreakpoint);
+  useEffect(()=>{
+    const h=()=>setBp(readBreakpoint());
+    window.addEventListener("resize",h);
+    window.addEventListener("orientationchange",h);
+    h();
+    return()=>{window.removeEventListener("resize",h);window.removeEventListener("orientationchange",h)};
+  },[]);
+  return bp;
+}
+
 function useW(){const[w,setW]=useState(typeof window!=='undefined'?window.innerWidth:1200);useEffect(()=>{const h=()=>setW(window.innerWidth);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h)},[]);return w}
 const g=(w,d,t,m)=>w>1024?d:w>768?t:m; // grid helper: desktop, tablet, mobile
 // ============ CULTURAL BRANDING ELEMENTS ============
@@ -3309,6 +3336,7 @@ export default function App(){
   const setLang=useCallback((v)=>{writeLang(v);setLangState(v)},[]);
   useEffect(()=>{document.documentElement.lang=LANG_TAG[lang]||"en"},[lang]);
   const[cookieH,setCookieH]=useState(0);   // how far the cookie banner pushes the chat launcher up
+  useBreakpoint();                         // re-render the tree when a layout breakpoint is crossed
   // Cmd+K opens search
   useEffect(()=>{
     const h=(e)=>{
