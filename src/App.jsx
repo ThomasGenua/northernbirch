@@ -422,6 +422,33 @@ function FlagStripe({style={}}){
   </div>;
 }
 
+export class ErrorBoundary extends React.Component{
+  constructor(props){super(props);this.state={failed:false}}
+  static getDerivedStateFromError(){return{failed:true}}
+  componentDidCatch(error,info){console.error("Northern Birch: render error",error,info)}
+  render(){
+    if(!this.state.failed)return this.props.children;
+    // Deliberately plain: this has to render when something else could not, so
+    // it depends on nothing but literals. Whatever broke, calling the branch
+    // still works, so say so.
+    return(
+      <div role="alert" style={{background:"#FDFBF7",padding:"48px 24px",minHeight:this.props.full?"100vh":320,display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <div style={{maxWidth:560,textAlign:"center"}}>
+          <h2 style={{fontFamily:"Georgia,serif",fontSize:26,color:"#1B2A4A",margin:"0 0 12px"}}>This part of the page didn&rsquo;t load</h2>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,color:"#555",lineHeight:1.7,margin:"0 0 24px"}}>
+            Something went wrong on our side. Your accounts and any request you already submitted are unaffected.
+            Reload to try again, or call us and we will help you directly.
+          </p>
+          <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
+            <button onClick={()=>window.location.reload()} style={{background:"#1F6FA5",border:"none",borderRadius:12,padding:"12px 28px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:14,color:"#fff",fontWeight:600}}>Reload the page</button>
+            <a href="tel:+14164654659" style={{background:"transparent",border:"2px solid #1B2A4A",borderRadius:12,padding:"10px 26px",fontFamily:"'DM Sans',sans-serif",fontSize:14,color:"#1B2A4A",fontWeight:600,textDecoration:"none",display:"inline-flex",alignItems:"center"}}>Call 416-465-4659</a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
 function useInView(t=0.1){const r=useRef(null);const[v,s]=useState(false);useEffect(()=>{const el=r.current;if(!el)return;const o=new IntersectionObserver(([e])=>{if(e.isIntersecting)s(true)},{threshold:t});o.observe(el);return()=>o.disconnect()},[t]);return[r,v]}
 // Keeps Tab inside an open dialog and restores focus to whatever opened it.
 // aria-modal already told assistive tech the page behind was inert; without
@@ -3316,7 +3343,7 @@ export default function App(){
             <a href="tel:+14164654659" style={{color:C.accentText,fontWeight:600,whiteSpace:"nowrap"}}>416-465-4659</a>
           </p>
         </div>}
-        <main id="main" tabIndex={-1} lang={lang==="en"||TRANSLATED_PAGES.has(page)?undefined:"en"}>{pages[page]||pages.home}</main>
+        <main id="main" tabIndex={-1} lang={lang==="en"||TRANSLATED_PAGES.has(page)?undefined:"en"}><ErrorBoundary key={page}>{pages[page]||pages.home}</ErrorBoundary></main>
         <Footer setPage={setPage}/>
         <ChatWidget bottomInset={cookieH}/>
         <SearchOverlay open={search} onClose={()=>setSearch(false)} setPage={setPage}/>
