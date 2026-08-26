@@ -176,7 +176,7 @@ function pageFromPath(path){return PATH_TO_PAGE[path.replace(/\/+$/,"")||"/"]||"
 // <title> in index.html, so nothing was distinguishable in search or when
 // pasted into a chat.
 const META={
-  home:["Northern Birch Credit Union | Banking, Mortgages & Insurance in Toronto","Chequing, savings, mortgages, credit cards, GICs and registered plans from a full-service Toronto credit union serving the Estonian and Latvian communities since 1954."],
+  home:["Northern Birch Credit Union | Banking & Insurance in Toronto","Chequing, savings, mortgages, credit cards, GICs and registered plans from a full-service Toronto credit union serving the Estonian and Latvian communities since 1954."],
   accounts:["Chequing, Savings & Registered Accounts | Northern Birch","Compare no-fee chequing, high-interest savings, GIC terms and TFSA, RRSP, FHSA, RESP and RRIF plans at Northern Birch Credit Union."],
   mortgages:["Mortgages | Northern Birch Credit Union","Fixed, variable and high-ratio mortgages, plus co-op apartment financing most lenders decline. Free pre-approval from a Toronto credit union."],
   cards:["Credit Cards | Northern Birch Credit Union","Collabria Mastercard cards for members: cash back, low rate and travel rewards, with no-annual-fee options."],
@@ -185,11 +185,32 @@ const META={
   insurance:["Insurance | Northern Birch Credit Union","Life, home, auto, travel and co-op insurance distributed through The Personal, CUMIS and Manulife."],
   travel:["Travel & International Transfers | Northern Birch","Baltic travel insurance, international transfers to Estonia and Latvia, and competitive foreign exchange."],
   business:["Business Solutions | Northern Birch Credit Union","Group benefits, commercial insurance, payroll and commercial lending for Ontario businesses."],
-  booking:["Book an Appointment | Northern Birch Credit Union","Request a meeting with a Northern Birch advisor at any branch."],
+  booking:["Book an Appointment | Northern Birch Credit Union","Request a meeting with a Northern Birch advisor at any branch, for banking, mortgages, investments or insurance."],
   claims:["Claims Centre | Northern Birch Credit Union","Start an insurance claim online, or reach your insurer's claims line directly."],
   calculators:["Financial Calculators | Northern Birch","Mortgage, retirement and insurance-needs calculators for Northern Birch members."],
   contact:["Contact & Branches | Northern Birch Credit Union","Branch addresses, hours and phone numbers, including the KESKUS location."],
-  community:["Our Community | Northern Birch Credit Union","70+ years serving Toronto's Estonian and Latvian communities."],
+  community:["Our Community | Northern Birch Credit Union","70+ years serving Toronto's Estonian and Latvian communities, with scholarships and cultural sponsorship."],
+  digital:["Digital Banking Tools | Northern Birch","Your insurance dashboard, quote engine, planning calculators and mobile banking, all in one place."],
+  estate:["Estate Planning | Northern Birch Credit Union","Wills, trusts, beneficiary designations and insurance strategies for every stage, from young family to senior."],
+  quote:["Insurance Quote Calculator | Northern Birch","Estimate a term life, home, auto or travel premium in under two minutes. No personal information required."],
+  compare:["Compare Coverage Options | Northern Birch","Compare insurance plans side by side on coverage, limits and price before you request a quote."],
+  referrals:["Member Referral Program | Northern Birch","Refer a friend to Northern Birch and you each earn $50 once they join and transact."],
+  blog:["Blog & News | Northern Birch Credit Union","Financial insights, product updates and community news from Northern Birch Credit Union."],
+  glossary:["Insurance Glossary | Northern Birch","Plain-language definitions of deductibles, riders, creditor insurance and other terms you will meet."],
+  mobileapp:["Mobile Banking App | Northern Birch","Deposit cheques, send Interac e-Transfers, manage policies and transfer to the Baltics from your phone."],
+  dashboard:["Member Dashboard | Northern Birch Credit Union","Balances, transactions, policies, documents and international transfers for Northern Birch members."],
+  aiadvisor:["AI Insurance Advisor | Northern Birch","Ask about coverage and get a plain-language answer, then book a real advisor to confirm it."],
+  analyzer:["Coverage Gap Analyzer | Northern Birch","Describe your current cover and see where the gaps are before you speak to an advisor."],
+  healthcheck:["Financial Health Check | Northern Birch","A ten-question review of your savings, debt and protection, with what to do about each gap."],
+  lifesim:["Life Event Simulator | Northern Birch","See how a new home, a baby or a career change reshapes your banking and insurance needs."],
+  docreader:["Policy Document Reader | Northern Birch","Paste a policy or renewal notice and get a plain-language summary of what it actually covers."],
+  tax:["Tax & Savings Optimizer | Northern Birch","Find the RRSP, TFSA, FHSA and RESP moves that reduce your Canadian tax bill this year."],
+  messages:["Secure Messages | Northern Birch Credit Union","A direct line to your Northern Birch advisor for account, mortgage and insurance questions."],
+  privacy:["Privacy Policy | Northern Birch Credit Union","How Northern Birch collects, uses, discloses and protects your personal information under PIPEDA."],
+  accessibility:["Accessibility | Northern Birch Credit Union","Our AODA commitment: accessible service, alternative formats, branch access and how to give feedback."],
+  complaints:["Complaint Resolution | Northern Birch","How to raise a concern, escalate it, and reach OBSI, FSRA or the FCAC if it stays unresolved."],
+  terms:["Terms of Use | Northern Birch Credit Union","Website terms, deposit insurance, rate disclaimers and investment risk disclosure for Northern Birch."],
+  leadership:["Insurance Business Case | Northern Birch","The revenue model, cost structure and five-year projections behind the Northern Birch insurance program."],
 };
 const META_DEFAULT=["Northern Birch Credit Union","A full-service Toronto credit union: everyday banking, mortgages, credit cards, investments and insurance."];
 
@@ -677,7 +698,7 @@ function NotificationsPanel({open,onClose,setPage}){
     {id:3,type:"life-event",icon:"\uD83C\uDF89",title:"Life Event Reminder: Mortgage Anniversary",desc:"It's been one year since your mortgage with Northern Birch. Time for a coverage review -- your equity has likely increased.",time:"Yesterday",unread:true,action:"healthcheck",actionLabel:"Run Health Check",color:C.purple},
     {id:4,type:"advisor",icon:"\uD83D\uDCAC",title:"New Message from Heili Orav",desc:"Heili replied to your question about TFSA contribution room. \"You have C$22,500 of unused TFSA room from prior years...\"",time:"Yesterday",unread:false,action:"messages",actionLabel:"Read Message",color:C.greenText},
     {id:5,type:"transfer",icon:"\u2705",title:"International Transfer Delivered",desc:"Your C$200 transfer to Maija in Riga has been received. Tracking ID: NB-TXN-487291.",time:"2 days ago",unread:false,action:"dashboard",actionLabel:"View Transfer",color:C.greenText},
-    {id:6,type:"rate-alert",icon:"\uD83D\uDCC8",title:"GIC Rate Increase",desc:"Northern Birch is offering a special 5-year GIC rate of 3.45% -- up from 3.20%. Limited time, members only.",time:"3 days ago",unread:false,action:"rates",actionLabel:"View Rates",color:C.accentText},
+    {id:6,type:"rate-alert",icon:"\uD83D\uDCC8",title:"GIC Rates Updated",desc:`Our posted 5-year GIC rate is now ${RATE.gic5} and the 1-year is ${RATE.gic1}. See the full rate table for every term.`,time:"3 days ago",unread:false,action:"rates",actionLabel:"View Rates",color:C.accentText},
     {id:7,type:"claim",icon:"\u2611\uFE0F",title:"Claim #CL-2024-3387 Approved",desc:"Your auto insurance claim for windshield damage has been approved. C$847 will be deposited within 3 business days.",time:"1 week ago",unread:false,action:"claims",actionLabel:"View Details",color:C.greenText},
     {id:8,type:"appointment",icon:"\uD83D\uDCC5",title:"Upcoming: Insurance Review",desc:"Your insurance review with Heili Orav is scheduled for March 25 at 10:30 AM at the Latvian Centre Branch.",time:"1 week ago",unread:false,action:"booking",actionLabel:"View Appointment",color:C.amberText},
   ]);
@@ -729,7 +750,7 @@ function MessagesPage({setPage:_setPage}){
     heili:[
       {from:"advisor",author:"Heili Orav",role:"Wealth & Estate Advisor",text:"Hi Maria! I just reviewed your TFSA situation. You have C$22,500 of unused contribution room from prior years -- that's a great opportunity for tax-free growth. Want to set up a transfer?",time:"Yesterday, 2:14 PM"},
       {from:"member",text:"That sounds great! Can we do C$15,000 from my chequing into the TFSA?",time:"Yesterday, 3:42 PM"},
-      {from:"advisor",author:"Heili Orav",role:"Wealth & Estate Advisor",text:"Absolutely. I'll set up the transfer for you. Question: would you like to invest it in our high-interest savings (currently 2.0%) or our 1-year GIC at 2.7%? The GIC ladder strategy might also be worth discussing if you don't need access to the funds.",time:"Yesterday, 3:55 PM"},
+      {from:"advisor",author:"Heili Orav",role:"Wealth & Estate Advisor",text:`Absolutely. I'll set up the transfer for you. Question: would you like to invest it in our high-interest savings (currently ${RATE.hisa}) or our 1-year GIC at ${RATE.gic1}? The GIC ladder strategy might also be worth discussing if you don't need access to the funds.`,time:"Yesterday, 3:55 PM"},
       {from:"member",text:"Let's do the GIC. Should we book a call to talk about the ladder strategy?",time:"Today, 9:12 AM"},
       {from:"advisor",author:"Heili Orav",role:"Wealth & Estate Advisor",text:"Perfect. I have time Tuesday at 10:30 AM at the Latvian Centre branch, or we can do video. Either works for you?",time:"Today, 9:38 AM"},
     ],
