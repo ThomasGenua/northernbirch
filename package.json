@@ -8,7 +8,9 @@
     "build": "vite build && node scripts/generate-seo-files.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node netlify/functions/chat.test.mjs"
+    "test": "node netlify/functions/chat.test.mjs",
+    "test:browser": "node tests/browser/run.mjs",
+    "test:all": "npm run test && npm run test:browser"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -19,11 +21,13 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "axe-core": "^4.12.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "playwright-core": "^1.56.0",
     "vite": "^7.3.1"
   }
 }
