@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Btn, C, CONSENT_VERSION, ConsentNotice, SH, errBox, exportToPDF, ff, fs, submitForm } from '../ui.jsx';
 
-export default function BookingPage(){
+export default function BookingPage({setPage}){
   const[branch,setBranch]=useState("");const[service,setService]=useState("");const[date,setDate]=useState("");const[time,setTime]=useState("");const[submitted,setSubmitted]=useState(false);
   const[name,setName]=useState("");const[email,setEmail]=useState("");const[phone,setPhone]=useState("");
   const[sending,setSending]=useState(false);const[error,setError]=useState("");
@@ -31,6 +31,9 @@ export default function BookingPage(){
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:700,margin:"0 auto"}}>
         <SH tag="Book an Appointment" tagColor={C.greenText} title="Meet with an advisor" desc="Schedule a meeting at any branch for personalized insurance, investment, or financial planning advice."/>
+        <div style={{textAlign:"center",marginTop:-28,marginBottom:28}}>
+          <Btn small outline color={C.greenFill} onClick={()=>setPage("advice")}>What a Financial Check-Up covers &rarr;</Btn>
+        </div>
         <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>
           <div style={{marginBottom:20}}><label htmlFor="sel-1" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Select Branch</label><select id="sel-1" value={branch} onChange={e=>setBranch(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">Choose a branch...</option><option>Latvian Centre Branch - North York</option><option>Tartu College Branch - Bloor St</option><option>Hamilton Branch</option><option>KESKUS Branch (Coming Soon)</option></select></div>
           <div style={{marginBottom:20}}><label htmlFor="sel-2" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Service Needed</label><select id="sel-2" value={service} onChange={e=>setService(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value="">What do you need help with?</option><option>Insurance Quote & Advisory</option><option>Mortgage Consultation</option><option>Investment & Wealth Review</option><option>Estate Planning</option><option>Business Insurance & Benefits</option><option>International Transfers Setup</option><option>Financial Check-Up (General)</option><option>New Member Onboarding</option></select></div>

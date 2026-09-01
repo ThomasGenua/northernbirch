@@ -53,7 +53,9 @@ const newPage=async(route)=>{
 // ---------- 3. Estate stage tabs ----------
 {
   const p=await newPage('/estate');
-  const tabs=p.locator('main button');
+  // scoped to the stage tabs themselves -- the page also carries CTAs into
+  // /advice and /booking, which navigate rather than switching the panel
+  const tabs=p.locator('main button').filter({hasText:/^(Young Family|Mid-Career|Pre-Retirement|Senior)$/});
   const n=await tabs.count();
   const seen=new Set();
   for(let i=0;i<n;i++){ await tabs.nth(i).click(); await p.waitForTimeout(250); seen.add((await p.locator('main h3').first().innerText())); }

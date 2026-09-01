@@ -1,0 +1,53 @@
+{
+  "_comment": "Every posted rate on the site. Edit this file to change what Northern Birch advertises -- see docs/updating-rates.md. Values appear verbatim; the build refuses to run if one is missing, malformed, or contradicts another.",
+  "effective": "2026-09-01",
+
+  "_rates": "Named rates the site quotes outside the table: product cards, member notifications, calculators.",
+  "rates": {
+    "m3": "4.39%",
+    "m5": "4.34%",
+    "m5hr": "3.89%",
+    "mvar": "Prime - 0.50%",
+    "heloc": "Prime + 0.50%",
+    "hisa": "2.00%",
+    "gic1": "2.70%",
+    "gic5": "2.50%",
+    "mc": "19.99%",
+    "mcLow": "12.99%",
+    "chq": "$0"
+  },
+
+  "_tables": "The posted rate table, exactly as it appears on /rates. Rows are [term, rate].",
+  "tables": {
+    "mortgage": [
+      ["1-Year Fixed", "5.54%"],
+      ["2-Year Fixed", "4.69%"],
+      ["3-Year Fixed", "4.39%"],
+      ["4-Year Fixed", "4.29%"],
+      ["5-Year Fixed", "4.34%"],
+      ["5-Year High Ratio", "3.89%"],
+      ["Variable Rate", "Prime - 0.50%"],
+      ["HELOC", "Prime + 0.50%"]
+    ],
+    "deposit": [
+      ["High-Interest Savings", "2.00%"],
+      ["90-Day GIC", "2.25%"],
+      ["6-Month GIC", "2.50%"],
+      ["1-Year GIC", "2.70%"],
+      ["2-Year GIC", "2.60%"],
+      ["3-Year GIC", "2.55%"],
+      ["4-Year GIC", "2.50%"],
+      ["5-Year GIC", "2.50%"]
+    ],
+    "lending": [
+      ["Personal Loan", "From 7.45%"],
+      ["Personal Line of Credit", "From Prime + 2%"],
+      ["Collabria Mastercard", "19.99%"],
+      ["Collabria Low Rate", "12.99%"],
+      ["Commercial Mortgage", "Contact us"],
+      ["Commercial LOC", "Contact us"],
+      ["Equipment Financing", "Contact us"],
+      ["CEBA Loan", "0% (govt program)"]
+    ]
+  }
+}

@@ -4,12 +4,26 @@
 // and be loaded on demand -- nothing here changed in the move.
 import React, { useState, useEffect, useRef } from "react";
 import './index.css';
+import ratesData from './data/rates.json';
 
 export const C={navy:"#1B2A4A",accent:"#2E86C1",dark:"#0C1829",green:"#27AE60",amber:"#D4A547",amberText:"#8A6410",red:"#E74C3C",redText:"#B3271A",birch:"#C8B88A",birchLight:"#F5F0E6",cream:"#FDFBF7",purple:"#8E44AD",accentText:"#1F6FA5",accentOnDark:"#7FB8E0",greenOnDark:"#6FD79B",amberOnDark:"#E8C46A",purpleOnDark:"#C89BDB",redOnDark:"#F5A99F",amberFill:"#8A6410",birchText:"#7D6C3E",greenText:"#197A41",greenFill:"#177A41",lightBlue:"#EBF5FB"};
 export const ff="'Playfair Display',Georgia,serif",fs="'DM Sans',sans-serif";
 
 // ============ POSTED RATES (single source: RatesPage + homepage banking cards read this) ============
-export const RATE={m3:"4.39%",m5:"4.34%",m5hr:"3.89%",mvar:"Prime - 0.50%",heloc:"Prime + 0.50%",hisa:"2.00%",gic1:"2.70%",gic5:"2.50%",mc:"19.99%",mcLow:"12.99%",chq:"$0"};
+// Posted rates come from src/data/rates.json so that changing what the site
+// advertises is a one-line edit to a data file, not a code change. The build
+// validates that file first (scripts/check-rates.mjs) and refuses to run if a
+// rate is missing or malformed.
+export const RATE=ratesData.rates;
+export const RATES_EFFECTIVE=ratesData.effective;
+// The posted table on /rates, as [term, rate] rows.
+export const RATE_TABLES=ratesData.tables;
+// "1 September 2026" -- the date members see beside the rates.
+export function ratesEffectiveLabel(){
+  const d=new Date(`${RATES_EFFECTIVE}T00:00:00`);
+  if(Number.isNaN(d.getTime()))return RATES_EFFECTIVE;
+  return d.toLocaleDateString("en-CA",{year:"numeric",month:"long",day:"numeric"});
+}
 
 // ============ CORE BANKING PRODUCTS (homepage cards, nav, search) ============
 export const BANKING=[
@@ -45,6 +59,14 @@ export const TX={
   "Registered accounts":{est:"Registreeritud kontod",lat:"Reģistrētie konti"},
   "Compare accounts side by side":{est:"Võrdle kontosid kõrvuti",lat:"Salīdziniet kontus līdzās"},
   "Insurance":{est:"Kindlustus",lat:"Apdrošināšana"},
+  "Advice":{est:"Nõustamine",lat:"Konsultācijas"},
+  "Financial Advice":{est:"Finantsnõustamine",lat:"Finanšu konsultācijas"},
+  "Advice from people you can meet":{est:"Nõu inimestelt, keda saate kohata",lat:"Padoms no cilvēkiem, kurus varat satikt"},
+  "Planning, retirement, investments, estate and tax advice from Northern Birch's wealth team -- starting with a Financial Check-Up that costs members nothing.":{est:"Planeerimine, pension, investeeringud, pärand ja maksunõustamine Northern Birchi varahaldusmeeskonnalt -- alustades finantsülevaatusest, mis on liikmetele tasuta.",lat:"Plānošana, pensija, investīcijas, mantojums un nodokļu konsultācijas no Northern Birch bagātības pārvaldības komandas -- sākot ar finanšu pārbaudi, kas biedriem ir bez maksas."},
+  "Financial Check-Up":{est:"Finantsülevaatus",lat:"Finanšu pārbaude"},
+  "Retirement & Investments":{est:"Pension ja investeeringud",lat:"Pensija un investīcijas"},
+  "Estate & Tax Planning":{est:"Pärandi- ja maksuplaneerimine",lat:"Mantojuma un nodokļu plānošana"},
+  "Explore Financial Advice":{est:"Tutvu finantsnõustamisega",lat:"Iepazīt finanšu konsultācijas"},
   "Travel":{est:"Reisimine",lat:"Ceļošana"},
   "Business":{est:"Ettevõtlus",lat:"Bizness"},
   "Digital":{est:"Digitaalne",lat:"Digitālā"},
@@ -252,8 +274,10 @@ export async function submitForm(formName,fields){
   const body=new URLSearchParams({"form-name":formName,"bot-field":"",...fields});
   try{
     const res=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:body.toString()});
+    // which form, and whether it went through -- never any of the fields
+    track("form_submit",{form:formName,result:res.ok?"ok":"failed"});
     return res.ok;
-  }catch(e){return false}
+  }catch(e){track("form_submit",{form:formName,result:"failed"});return false}
 }
 
 // Consent at the point of collection. Until the forms actually submitted,
@@ -560,3 +584,48 @@ export function writeCookiePref(v){
 // Nothing reads this yet: it is the gate any future measurement should hang
 // off, so the consent exists before the tracker does.
 export function analyticsAllowed(){return readCookiePref()==="all"}
+
+// ============ MEASUREMENT ============
+// Consent-gated and off by default. Nothing is loaded, requested or recorded
+// unless BOTH are true: the visitor chose "Allow measurement", and a domain is
+// configured at build time (VITE_PLAUSIBLE_DOMAIN). With no domain set the
+// site measures nothing at all and this is dead weight, which is the state it
+// ships in.
+//
+// Plausible is cookieless and stores no personal data, which is what makes it
+// defensible under PIPEDA for a credit union. Keep it that way: event
+// properties below are literals this codebase chooses, never anything a member
+// typed. No names, no amounts, no search terms, no form contents.
+export const MEASUREMENT_DOMAIN=(typeof import.meta!=="undefined"&&import.meta.env&&import.meta.env.VITE_PLAUSIBLE_DOMAIN)||"";
+let scriptRequested=false;
+
+/** Loads the tracker once, and only with consent. Safe to call repeatedly. */
+export function initMeasurement(){
+  if(scriptRequested||!MEASUREMENT_DOMAIN||!analyticsAllowed())return false;
+  if(typeof document==="undefined")return false;
+  scriptRequested=true;
+  // queue events fired before the script finishes loading
+  window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)};
+  const el=document.createElement("script");
+  el.defer=true;
+  el.dataset.domain=MEASUREMENT_DOMAIN;
+  el.src="https://plausible.io/js/script.js";
+  document.head.appendChild(el);
+  return true;
+}
+
+/** One named event. Silently does nothing without consent or a configured domain. */
+export function track(event,props){
+  if(!MEASUREMENT_DOMAIN||!analyticsAllowed())return false;
+  initMeasurement();
+  try{window.plausible&&window.plausible(event,props?{props}:undefined);return true}
+  catch(e){return false}
+}
+
+/** Route changes, so a single-page app reports more than one pageview. */
+export function trackPageview(route){
+  if(!MEASUREMENT_DOMAIN||!analyticsAllowed())return false;
+  initMeasurement();
+  try{window.plausible&&window.plausible("pageview",{u:window.location.origin+(ROUTES[route]||"/")});return true}
+  catch(e){return false}
+}
