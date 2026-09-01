@@ -22,10 +22,12 @@ const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage.jsx'));
 const ComplaintsPage = lazy(() => import('./pages/ComplaintsPage.jsx'));
 const QuotePage = lazy(() => import('./pages/QuotePage.jsx'));
 const ComparePage = lazy(() => import('./pages/ComparePage.jsx'));
-import { BANKING, BirchTrees, Btn, C, Clickable, Cornflower, Daisy, ErrorBoundary, FAQ, Fade, FlagStripe, FolkBorder, LANG_TAG, RATE, ROUTES, SH, TRANSLATED_PAGES, applyMeta, callAI, ff, fs, g, pageFromPath, readCookiePref, readLang, t, useBreakpoint, useFocusTrap, useW, writeCookiePref, writeLang } from './ui.jsx';
+import { BANKING, BirchTrees, MEASUREMENT_DOMAIN, RATE_TABLES, initMeasurement, ratesEffectiveLabel, track, trackPageview, Btn, C, Clickable, Cornflower, Daisy, ErrorBoundary, FAQ, Fade, FlagStripe, FolkBorder, LANG_TAG, RATE, ROUTES, SH, TRANSLATED_PAGES, applyMeta, callAI, ff, fs, g, pageFromPath, readCookiePref, readLang, t, useBreakpoint, useFocusTrap, useW, writeCookiePref, writeLang } from './ui.jsx';
 
 // ============ SEARCH OVERLAY ============
 function SearchOverlay({open,onClose,setPage}){
+  // Measurement note: the query itself is never recorded. A member searching
+  // "am I underinsured" is telling us something private; the count is enough.
   const trapRef=useFocusTrap(open,onClose);
   const listRef=useRef(null);
   const[q,setQ]=useState("");
@@ -71,7 +73,7 @@ function SearchOverlay({open,onClose,setPage}){
       .sort((a,b)=>a.s-b.s||a.i.title.length-b.i.title.length||a.n-b.n)
       .map(x=>x.i);
   })():[];
-  const go=(item)=>{setPage(item.page);onClose();setQ("")};
+  const go=(item)=>{track("search_result",{to:item.page});setPage(item.page);onClose();setQ("")};
   // Enter and the arrow keys did nothing here: a search box that shows results
   // and then makes you reach for the mouse is not finished. Focus rolls through
   // the result buttons, which are already real buttons, so Tab still works too.
@@ -383,17 +385,18 @@ function RatesPage({setPage}){
     <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
         <SH tag="Current Rates" tagColor={C.greenText} title="Competitive rates for members" desc="All rates are subject to change. Contact your branch for the most current rates and special offers."/>
+        <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:"-32px 0 24px"}}>Rates effective {ratesEffectiveLabel()}.</p>
         {[
-          {title:"Mortgage Rates",color:C.accentText,go:["mortgages","Explore mortgages"],rates:[{term:"1-Year Fixed",rate:"5.54%"},{term:"2-Year Fixed",rate:"4.69%"},{term:"3-Year Fixed",rate:RATE.m3},{term:"4-Year Fixed",rate:"4.29%"},{term:"5-Year Fixed",rate:RATE.m5},{term:"5-Year High Ratio",rate:RATE.m5hr},{term:"Variable Rate",rate:RATE.mvar},{term:"HELOC",rate:RATE.heloc}]},
-          {title:"Deposit & Savings Rates",color:C.greenText,go:["accounts","Compare accounts"],rates:[{term:"High-Interest Savings",rate:RATE.hisa},{term:"90-Day GIC",rate:"2.25%"},{term:"6-Month GIC",rate:"2.50%"},{term:"1-Year GIC",rate:RATE.gic1},{term:"2-Year GIC",rate:"2.60%"},{term:"3-Year GIC",rate:"2.55%"},{term:"4-Year GIC",rate:"2.50%"},{term:"5-Year GIC",rate:RATE.gic5}]},
-          {title:"Lending Rates",color:C.amberText,go:["cards","Compare credit cards"],rates:[{term:"Personal Loan",rate:"From 7.45%"},{term:"Personal Line of Credit",rate:"From Prime + 2%"},{term:"Collabria Mastercard",rate:RATE.mc},{term:"Collabria Low Rate",rate:RATE.mcLow},{term:"Commercial Mortgage",rate:"Contact us"},{term:"Commercial LOC",rate:"Contact us"},{term:"Equipment Financing",rate:"Contact us"},{term:"CEBA Loan",rate:"0% (govt program)"}]},
+          {title:"Mortgage Rates",color:C.accentText,go:["mortgages","Explore mortgages"],rates:RATE_TABLES.mortgage},
+          {title:"Deposit & Savings Rates",color:C.greenText,go:["accounts","Compare accounts"],rates:RATE_TABLES.deposit},
+          {title:"Lending Rates",color:C.amberText,go:["cards","Compare credit cards"],rates:RATE_TABLES.lending},
         ].map((section,si)=>(
           <Fade key={si} delay={si*0.1}><div style={{marginBottom:32}}>
             <h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>{section.title}</h3>
             <div style={{background:"#fff",borderRadius:16,overflow:"hidden",border:"1px solid #eee"}}>
-              {section.rates.map((r,ri)=><div key={ri} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 24px",borderBottom:ri<section.rates.length-1?"1px solid #f5f5f5":"none",background:ri%2===0?"#fff":"#fafafa"}}>
-                <span style={{fontFamily:fs,fontSize:14,color:C.navy}}>{r.term}</span>
-                <span style={{fontFamily:fs,fontSize:16,color:section.color,fontWeight:700}}>{r.rate}</span>
+              {section.rates.map(([term,rate],ri)=><div key={term} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 24px",borderBottom:ri<section.rates.length-1?"1px solid #f5f5f5":"none",background:ri%2===0?"#fff":"#fafafa"}}>
+                <span style={{fontFamily:fs,fontSize:14,color:C.navy}}>{term}</span>
+                <span style={{fontFamily:fs,fontSize:16,color:section.color,fontWeight:700}}>{rate}</span>
               </div>)}
             </div>
             <div style={{marginTop:12}}><Btn small color={section.color} outline onClick={()=>setPage(section.go[0])}>{section.go[1]} &rarr;</Btn></div>
@@ -755,7 +758,7 @@ function BankingProducts({setPage,lang}){
       <SH tag={T("Banking Products")} tagColor={C.greenText} title={T("Everyday banking, start to finish")} desc={T("Northern Birch is a full-service credit union. Open a chequing account, finance a home, carry a card, save in a GIC or TFSA, and invest -- all in one membership.")}/>
       <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(5,1fr)","repeat(2,1fr)","1fr"),gap:12}}>
         {BANKING.map((b,i)=><Fade key={b.k} delay={i*0.06}>
-          <Clickable onClick={()=>setPage(b.p)} style={{background:"#fff",borderRadius:20,padding:24,border:"1px solid #EDE7D8",borderTop:`3px solid ${b.c}`,cursor:"pointer",height:"100%",display:"flex",flexDirection:"column"}}>
+          <Clickable onClick={()=>{track("product_card",{product:b.k,from:"home"});setPage(b.p)}} style={{background:"#fff",borderRadius:20,padding:24,border:"1px solid #EDE7D8",borderTop:`3px solid ${b.c}`,cursor:"pointer",height:"100%",display:"flex",flexDirection:"column"}}>
             <h3 style={{fontFamily:ff,fontSize:21,color:C.navy,margin:"0 0 8px"}}>{T(b.t)}</h3>
             <p style={{fontFamily:fs,fontSize:13,color:"#666",lineHeight:1.65,margin:"0 0 16px"}}>{b.d}</p>
             <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:16}}>
@@ -776,6 +779,8 @@ function BankingProducts({setPage,lang}){
         <Btn color={C.navy} onClick={()=>setPage("rates")}>{T("See All Rates")}</Btn>
         <Btn outline color={C.navy} onClick={()=>setPage("booking")}>{T("Book an Appointment")}</Btn>
       </div></Fade>
+      {/* #666 not #707070: this sits on the birch background, where the lighter grey is 4.36:1 */}
+      <p style={{fontFamily:fs,fontSize:12,color:"#666",margin:"16px 0 0"}}>Rates effective {ratesEffectiveLabel()} and subject to change.</p>
     </div>
   </section>;
 }
@@ -797,7 +802,7 @@ function AdviceBand({setPage,lang}){
       <SH dark tag={T("Financial Advice")} tagColor={C.birch} title={T("Advice from people you can meet")} desc={T("Planning, retirement, investments, estate and tax advice from Northern Birch's wealth team -- starting with a Financial Check-Up that costs members nothing.")}/>
       <div style={{display:"grid",gridTemplateColumns:g(w,"repeat(3,1fr)","repeat(2,1fr)","1fr"),gap:16}}>
         {ADVICE_HOME.map((a,i)=><Fade key={a.t} delay={i*0.08}>
-          <Clickable onClick={()=>setPage(a.go[0])} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:28,borderTop:`3px solid ${a.c}`,cursor:"pointer",height:"100%",display:"flex",flexDirection:"column"}}>
+          <Clickable onClick={()=>{track("advice_card",{service:a.t});setPage(a.go[0])}} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:28,borderTop:`3px solid ${a.c}`,cursor:"pointer",height:"100%",display:"flex",flexDirection:"column"}}>
             <h3 style={{fontFamily:ff,fontSize:21,color:"#fff",margin:"0 0 10px"}}>{T(a.t)}</h3>
             <p style={{fontFamily:fs,fontSize:13.5,color:"rgba(255,255,255,0.6)",lineHeight:1.7,margin:"0 0 18px"}}>{a.d}</p>
             <span style={{marginTop:"auto",fontFamily:fs,fontSize:13,color:a.c,fontWeight:700}}>{a.go[1]} &rarr;</span>
@@ -833,10 +838,10 @@ function HomePage({setPage,lang}){
         <Fade delay={0.08}><h1 style={{fontFamily:ff,fontSize:"clamp(36px,5vw,64px)",color:"#fff",lineHeight:1.07,maxWidth:780,margin:"0 0 24px"}}>{T("Your whole financial life.")}<br/><span style={{color:C.birch}}>{T("Under one Birch.")}</span></h1></Fade>
         <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.6)",maxWidth:560,lineHeight:1.75,margin:"0 0 40px"}}>{T("Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus financial advice, investments, insurance and international transfers, all from one Toronto credit union.")}</p></Fade>
         <Fade delay={0.24}><div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-          <Btn color={C.accentText} onClick={()=>setPage("accounts")}>{T("Compare Accounts")}</Btn>
-          <Btn color={C.greenFill} onClick={()=>setPage("mortgages")}>{T("Explore Mortgages")}</Btn>
-          <Btn color={C.purple} onClick={()=>setPage("cards")}>{T("Apply for a Credit Card")}</Btn>
-          <Btn outline onClick={()=>setPage("quote")}>{T("Get an Insurance Quote")}</Btn>
+          {[["accounts","Compare Accounts",C.accentText,false],["mortgages","Explore Mortgages",C.greenFill,false],
+            ["cards","Apply for a Credit Card",C.purple,false],["quote","Get an Insurance Quote",undefined,true]]
+            .map(([route,label,color,outline])=>
+              <Btn key={route} color={color} outline={outline} onClick={()=>{track("hero_cta",{to:route});setPage(route)}}>{T(label)}</Btn>)}
         </div></Fade>
       </div>
     </section>
@@ -937,12 +942,14 @@ function CookieBanner({onHeight}){
     return()=>{ro.disconnect();onHeight&&onHeight(0)};
   },[show,onHeight]);
   if(!show)return null;
-  const choose=(v)=>{writeCookiePref(v);setShow(false)};
+  const choose=(v)=>{writeCookiePref(v);setShow(false);if(v==="all")initMeasurement()};
   return(
     <div ref={boxRef} role="region" aria-label="Cookie preferences" style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(15,24,41,0.97)",backdropFilter:"blur(10px)",padding:typeof window!=="undefined"&&window.innerWidth<=768?"16px":"16px 24px",zIndex:1600,borderTop:"1px solid rgba(200,184,138,0.2)"}}>
       <div style={{maxWidth:1320,margin:"0 auto",display:"flex",alignItems:typeof window!=="undefined"&&window.innerWidth<=768?"flex-start":"center",gap:16,flexDirection:typeof window!=="undefined"&&window.innerWidth<=768?"column":"row"}}>
         <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.75)",margin:0,flex:1,lineHeight:1.6}}>
-          This site uses only the storage it needs to work, and does not measure your visit today. If we add measurement later, we will use the choice you make here. Your preference is remembered on this device.
+          {MEASUREMENT_DOMAIN
+            ?"This site uses only the storage it needs to work. With your permission we also count visits and which products get opened, using a service that sets no cookies and collects nothing personal -- never what you type or search for. Your preference is remembered on this device."
+            :"This site uses only the storage it needs to work, and does not measure your visit today. If we add measurement later, we will use the choice you make here. Your preference is remembered on this device."}
         </p>
         <div style={{display:"flex",gap:8,flexShrink:0}}>
           <button ref={ref} onClick={()=>choose("all")} style={{background:C.accentText,border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Allow measurement</button>
@@ -967,7 +974,7 @@ export default function App(){
     window.addEventListener("popstate",onPop);
     return()=>window.removeEventListener("popstate",onPop);
   },[]);
-  useEffect(()=>{applyMeta(page)},[page]);
+  useEffect(()=>{applyMeta(page);trackPageview(page)},[page]);
   const[search,setSearch]=useState(false);
   const[login,setLogin]=useState(false);
   const[notifs,setNotifs]=useState(false);

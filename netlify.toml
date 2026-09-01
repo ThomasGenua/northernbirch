@@ -32,7 +32,12 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    # plausible.io is listed so that consent-gated measurement can work when a
+    # domain is configured (VITE_PLAUSIBLE_DOMAIN). With no domain set the site
+    # never loads the script and never contacts the host, so allowing it here
+    # changes nothing until someone turns measurement on -- and without it,
+    # turning measurement on would fail silently, blocked by this header.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://plausible.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://plausible.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
 
 # Vite content-hashes every filename in /assets, so a given URL's bytes never
 # change. Caching them forever is safe and makes a repeat visit cost nothing;
