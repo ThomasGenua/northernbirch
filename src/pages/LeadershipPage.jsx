@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Btn, C, SH, ff, fs } from '../ui.jsx';
+import { Btn, C, ff, fs, SH, useMob } from '../ui.jsx';
 
 export default function LeadershipPage({setPage}){
+  const mob=useMob();
   const[tab,setTab]=useState("overview");
-  const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
+  const isMob=mob;
   const tabs=[{l:"Overview",v:"overview"},{l:"Costs",v:"costs"},{l:"Legal & Regulatory",v:"legal"},{l:"Value & ROI",v:"roi"},{l:"Competitive Edge",v:"competitive"},{l:"Implementation",v:"implementation"}];
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>

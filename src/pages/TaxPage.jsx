@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Btn, C, FAQ, SH, callAI, exportToPDF, ff, fs } from '../ui.jsx';
+import { Btn, C, callAI, exportToPDF, FAQ, ff, fs, SH, useMob } from '../ui.jsx';
 
 export default function TaxPage({setPage}){
+  const mob=useMob();
   const[mode,setMode]=useState("optimizer");
   const[input,setInput]=useState("");
   const[loading,setLoading]=useState(false);
@@ -21,7 +22,7 @@ export default function TaxPage({setPage}){
     }catch(e){setResult("Having trouble connecting. Please call 416-465-4659.");}
     setLoading(false);
   };
-  const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
+  const isMob=mob;
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>

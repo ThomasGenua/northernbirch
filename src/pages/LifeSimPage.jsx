@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Btn, C, SH, callAI, exportToPDF, ff, fs } from '../ui.jsx';
+import { Btn, C, callAI, exportToPDF, ff, fs, SH, useMob } from '../ui.jsx';
 
 export default function LifeSimPage({setPage}){
+  const mob=useMob();
   const[event,setEvent]=useState(null);
   const[details,setDetails]=useState("");
   const[loading,setLoading]=useState(false);
@@ -39,7 +40,7 @@ export default function LifeSimPage({setPage}){
   );
 
   if(result)return(
-    <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
+    <section style={{background:C.cream,padding:mob?"60px 16px":"80px 24px",paddingTop:mob?80:100}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
         <div id="life-event-result"><div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
           <span style={{fontSize:32}} dangerouslySetInnerHTML={{__html:event?.icon}}/>
@@ -60,10 +61,10 @@ export default function LifeSimPage({setPage}){
   );
 
   return(
-    <section style={{background:`linear-gradient(170deg,${C.dark},${C.navy})`,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100,minHeight:"100vh"}}>
+    <section style={{background:`linear-gradient(170deg,${C.dark},${C.navy})`,padding:mob?"60px 16px":"80px 24px",paddingTop:mob?80:100,minHeight:"100vh"}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
         <SH dark tag="AI Life Event Simulator" tagColor={C.amberText} title="Life is changing. Are you protected?" desc="Select a life event and our AI will show you exactly how your insurance and financial needs change -- and what to do about it."/>
-        <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr 1fr":"repeat(5,1fr)",gap:12,marginBottom:32}}>
+        <div style={{display:"grid",gridTemplateColumns:mob?"1fr 1fr":"repeat(5,1fr)",gap:12,marginBottom:32}}>
           {events.map(ev=>(
             <button key={ev.id} onClick={()=>run(ev)} style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,padding:"20px 12px",cursor:"pointer",textAlign:"center",transition:"all 0.3s"}}>
               <span style={{fontSize:28,display:"block",marginBottom:8}} dangerouslySetInnerHTML={{__html:ev.icon}}/>

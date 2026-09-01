@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { C, SH, fs } from '../ui.jsx';
+import { C, fs, SH, useMob } from '../ui.jsx';
 
 export default function GlossaryPage(){
+  const mob=useMob();
   const[filter,setFilter]=useState("");
   const terms=[
     {term:"Beneficiary",def:"The person or entity designated to receive the proceeds of an insurance policy or investment account upon the policyholder's death."},
@@ -27,7 +28,7 @@ export default function GlossaryPage(){
   ];
   const filtered=filter?terms.filter(t=>t.term.toLowerCase().includes(filter.toLowerCase())||t.def.toLowerCase().includes(filter.toLowerCase())):terms;
   return(
-    <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
+    <section style={{background:C.cream,padding:mob?"60px 16px":"80px 24px",paddingTop:mob?80:100}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
         <SH tag="Insurance Glossary" tagColor={C.purple} title="Insurance terms explained" desc="Understanding insurance terminology helps you make better decisions. Search or browse our glossary of common insurance terms."/>
         <div style={{marginBottom:24}}><input value={filter} onChange={e=>setFilter(e.target.value)} aria-label="Search glossary terms" placeholder="Search terms..." style={{width:"100%",border:"1px solid #ddd",borderRadius:12,padding:"14px 20px",fontFamily:fs,fontSize:15,outline:"none",boxSizing:"border-box",background:"#fff"}}/></div>

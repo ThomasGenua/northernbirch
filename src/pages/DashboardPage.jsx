@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Btn, C, ff, fs, money, prefersReducedMotion } from '../ui.jsx';
+import { Btn, C, ff, fs, money, prefersReducedMotion, useMob } from '../ui.jsx';
 
 export default function DashboardPage({setPage}){
+  const mob=useMob();
   const[transferAmt,setTransferAmt]=useState("200");
   // The field accepted anything: "abc" produced "Recipient Gets EUR NaN" beside a
   // live "Send C$abc" button. Parse strictly and gate the send on the result.
@@ -14,7 +15,7 @@ export default function DashboardPage({setPage}){
   const[transferRef]=useState(()=>"NB-TXN-"+Math.floor(Math.random()*900000+100000));
   const[transferSent,setTransferSent]=useState(false);
   const[signedDocs,setSignedDocs]=useState({});
-  const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
+  const isMob=mob;
   // Spending data
   const spending=[{cat:"Housing",amt:2132,pct:42,c:C.navy},{cat:"Food & Grocery",amt:847,pct:17,c:C.green},{cat:"Transportation",amt:435,pct:9,c:C.amber},{cat:"Insurance",amt:343,pct:7,c:C.accent},{cat:"Int'l Transfers",amt:275,pct:5,c:C.purple},{cat:"Entertainment",amt:234,pct:5,c:"#E91E63"},{cat:"Shopping",amt:198,pct:4,c:"#FF9800"},{cat:"Utilities",amt:187,pct:4,c:"#607D8B"},{cat:"Other",amt:389,pct:7,c:"#9E9E9E"}];
   const totalSpend=spending.reduce((s,x)=>s+x.amt,0);

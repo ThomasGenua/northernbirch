@@ -1,5 +1,5 @@
 import React from "react";
-import { Btn, C, Fade, SH, ff, fs } from '../ui.jsx';
+import { Btn, C, Fade, ff, fs, SH, useMob } from '../ui.jsx';
 
 // Financial advisory was the one product area with no destination. The
 // capability was described in half a dozen places -- the wealth team on the
@@ -41,7 +41,7 @@ const TOOLS = [
 ];
 
 export default function AdvicePage({ setPage }) {
-  const mob = typeof window !== "undefined" && window.innerWidth <= 768;
+  const mob = useMob();
   return (
     <section style={{ background: C.cream, padding: mob ? "60px 16px" : "80px 24px", paddingTop: mob ? 80 : 100 }}>
       <div style={{ maxWidth: 1320, margin: "0 auto" }}>

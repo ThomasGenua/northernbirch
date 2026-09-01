@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Btn, C, CONSENT_VERSION, ConsentNotice, SH, errBox, exportToPDF, ff, fs, readApplyIntent, submitForm } from '../ui.jsx';
+import { Btn, C, CONSENT_VERSION, ConsentNotice, errBox, exportToPDF, ff, fs, readApplyIntent, SH, submitForm, useMob } from '../ui.jsx';
 
 // Until now every "Open an Account", "Apply for a Credit Card" and "Get
 // Pre-Approved" button on the site led to the same generic appointment form.
@@ -25,7 +25,7 @@ const label = { fontFamily: fs, fontSize: 12, color: "#6B6B6B", display: "block"
 const field = { width: "100%", border: "1px solid #ddd", borderRadius: 10, padding: "12px 16px", fontFamily: fs, fontSize: 14, outline: "none", boxSizing: "border-box", background: "#fff" };
 
 export default function ApplyPage({ setPage }) {
-  const mob = typeof window !== "undefined" && window.innerWidth <= 768;
+  const mob = useMob();
   // set by whichever product page sent you here, so the form arrives filled in
   const [product, setProduct] = useState(() => readApplyIntent() || "");
   const [member, setMember] = useState("");

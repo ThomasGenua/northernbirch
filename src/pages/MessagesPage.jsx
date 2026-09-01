@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { C, Clickable, RATE, callAI, ff, fs } from '../ui.jsx';
+import { C, callAI, Clickable, ff, fs, RATE, useMob } from '../ui.jsx';
 
 export default function MessagesPage({setPage:_setPage}){
+  const mob=useMob();
   const[thread,setThread]=useState("heili");
   const[mobileView,setMobileView]=useState("threads");// threads | chat
   const[input,setInput]=useState("");
@@ -41,7 +42,7 @@ export default function MessagesPage({setPage:_setPage}){
     }
     setLoading(false);
   };
-  const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
+  const isMob=mob;
   const threads=[
     {id:"heili",name:"Heili Orav",role:"Wealth & Estate",unread:0,last:"Perfect. I have time Tuesday at 10:30 AM..."},
     {id:"insurance",name:"Andres Tamm",role:"Insurance Advisor",unread:0,last:"CUMIS offers a 25-condition policy..."},

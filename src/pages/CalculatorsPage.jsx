@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Btn, C, RATE, SH, exportToPDF, ff, fs } from '../ui.jsx';
+import { Btn, C, exportToPDF, ff, fs, RATE, SH, useMob } from '../ui.jsx';
 
 export default function CalculatorsPage({setPage}){
+  const mob=useMob();
   const[calc,setCalc]=useState("mortgage");
   const[calcErr,setCalcErr]=useState("");
   // Mortgage
@@ -55,7 +56,7 @@ export default function CalculatorsPage({setPage}){
     const insGap=Math.max(0,totalNeed-totalAtRetire-govTotal);
     setRResult({totalAtRetire,totalNeed,govTotal,monthlyFromSavings,monthlyGov,monthlyTotal,monthlyTarget,gap,annualNeed,insGap,years,retYears});
   };
-  const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
+  const isMob=mob;
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>

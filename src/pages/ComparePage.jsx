@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { C, SH, ff, fs } from '../ui.jsx';
+import { C, ff, fs, SH, useMob } from '../ui.jsx';
 
 export default function ComparePage({setPage}){
+  const mob=useMob();
   const[cat,setCat]=useState(0);
   const tables=[
     {name:"Term Life Insurance",plans:[
@@ -22,7 +23,7 @@ export default function ComparePage({setPage}){
   ];
   const t=tables[cat];
   return(
-    <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
+    <section style={{background:C.cream,padding:mob?"60px 16px":"80px 24px",paddingTop:mob?80:100}}>
       <div style={{maxWidth:1100,margin:"0 auto"}}>
         <SH tag="Compare Plans" tagColor={C.accentText} title="Coverage comparison" desc="Compare plan tiers side-by-side to find the right level of protection for your needs."/>
         <div style={{display:"flex",gap:8,marginBottom:32}}>
