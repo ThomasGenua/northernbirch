@@ -186,7 +186,7 @@ export function writeLang(v){
 // into a history entry, which is why the existing call sites are unchanged.
 export const ROUTES={
   home:"/",personal:"/personal",accounts:"/accounts",mortgages:"/mortgages",cards:"/cards",
-  insurance:"/insurance",advice:"/advice",travel:"/travel",business:"/business",digital:"/digital",estate:"/estate",
+  insurance:"/insurance",advice:"/advice",apply:"/apply",travel:"/travel",business:"/business",digital:"/digital",estate:"/estate",
   community:"/community",contact:"/contact",rates:"/rates",quote:"/quote",compare:"/compare",
   claims:"/claims",calculators:"/calculators",booking:"/booking",referrals:"/referrals",
   blog:"/blog",glossary:"/glossary",mobileapp:"/mobile-app",dashboard:"/dashboard",
@@ -208,6 +208,7 @@ export const META={
   cards:["Credit Cards | Northern Birch Credit Union","Collabria Mastercard cards for members: cash back, low rate and travel rewards, with no-annual-fee options."],
   personal:["Personal Banking | Northern Birch Credit Union","Everyday accounts, borrowing and investing for Northern Birch members."],
   rates:["Current Rates | Northern Birch Credit Union","Today's posted mortgage, GIC, savings and lending rates at Northern Birch Credit Union."],
+  apply:["Apply | Open an Account or Start a Mortgage | Northern Birch","Start an application for a chequing account, savings, GIC, mortgage pre-approval or credit card. An advisor calls you back within one business day."],
   advice:["Financial Advice & Planning | Northern Birch","Retirement, investment, estate and tax advice from Northern Birch's wealth team, starting with a Financial Check-Up that costs members nothing."],
   insurance:["Insurance | Northern Birch Credit Union","Life, home, auto, travel and co-op insurance distributed through The Personal, CUMIS and Manulife."],
   travel:["Travel & International Transfers | Northern Birch","Baltic travel insurance, international transfers to Estonia and Latvia, and competitive foreign exchange."],
@@ -584,6 +585,14 @@ export function writeCookiePref(v){
 // Nothing reads this yet: it is the gate any future measurement should hang
 // off, so the consent exists before the tracker does.
 export function analyticsAllowed(){return readCookiePref()==="all"}
+
+// Which product the visitor pressed "Apply" on, handed to /apply so the form
+// arrives filled in. Module scope rather than a query parameter: the route is
+// shared, and an application URL should not carry state a member might paste
+// somewhere. Read once and cleared, so a later direct visit starts blank.
+let applyIntent=null;
+export function setApplyIntent(v){applyIntent=v||null}
+export function readApplyIntent(){const v=applyIntent;applyIntent=null;return v}
 
 // ============ MEASUREMENT ============
 // Consent-gated and off by default. Nothing is loaded, requested or recorded

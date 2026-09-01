@@ -28,6 +28,13 @@
       Field names here must match the keys sent from src/App.jsx.
       bot-field is the honeypot: real people never fill it in.
     -->
+    <form name="application" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="consent" /><input type="text" name="consentVersion" />
+      <input type="text" name="bot-field" />
+      <input type="text" name="product" /><input type="text" name="member" /><input type="text" name="branch" />
+      <input type="text" name="name" /><input type="email" name="email" /><input type="text" name="phone" />
+      <input type="text" name="reach" /><textarea name="notes"></textarea>
+    </form>
     <form name="booking" data-netlify="true" netlify-honeypot="bot-field" hidden>
       <input type="text" name="consent" /><input type="text" name="consentVersion" />
       <input type="text" name="bot-field" />
