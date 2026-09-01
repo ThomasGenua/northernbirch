@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 
 import AdvicePage from './pages/AdvicePage.jsx';
 
 // Loaded on demand. Someone landing on a product page pays for none of this.
+const ApplyPage = lazy(() => import('./pages/ApplyPage.jsx'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage.jsx'));
 const LeadershipPage = lazy(() => import('./pages/LeadershipPage.jsx'));
 const CalculatorsPage = lazy(() => import('./pages/CalculatorsPage.jsx'));
@@ -22,7 +23,7 @@ const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage.jsx'));
 const ComplaintsPage = lazy(() => import('./pages/ComplaintsPage.jsx'));
 const QuotePage = lazy(() => import('./pages/QuotePage.jsx'));
 const ComparePage = lazy(() => import('./pages/ComparePage.jsx'));
-import { BANKING, BirchTrees, MEASUREMENT_DOMAIN, RATE_TABLES, initMeasurement, ratesEffectiveLabel, track, trackPageview, Btn, C, Clickable, Cornflower, Daisy, ErrorBoundary, FAQ, Fade, FlagStripe, FolkBorder, LANG_TAG, RATE, ROUTES, SH, TRANSLATED_PAGES, applyMeta, callAI, ff, fs, g, pageFromPath, readCookiePref, readLang, t, useBreakpoint, useFocusTrap, useW, writeCookiePref, writeLang } from './ui.jsx';
+import { BANKING, BirchTrees, MEASUREMENT_DOMAIN, setApplyIntent, RATE_TABLES, initMeasurement, ratesEffectiveLabel, track, trackPageview, Btn, C, Clickable, Cornflower, Daisy, ErrorBoundary, FAQ, Fade, FlagStripe, FolkBorder, LANG_TAG, RATE, ROUTES, SH, TRANSLATED_PAGES, applyMeta, callAI, ff, fs, g, pageFromPath, readCookiePref, readLang, t, useBreakpoint, useFocusTrap, useW, writeCookiePref, writeLang } from './ui.jsx';
 
 // ============ SEARCH OVERLAY ============
 function SearchOverlay({open,onClose,setPage}){
@@ -39,7 +40,7 @@ function SearchOverlay({open,onClose,setPage}){
     {title:"Group Health & Dental Benefits",page:"business",cat:"Business"},{title:"Commercial Insurance",page:"business",cat:"Business"},{title:"Key Person Insurance",page:"business",cat:"Business"},
     {title:"Business Succession Planning",page:"business",cat:"Business"},{title:"Payroll & HR",page:"business",cat:"Business"},
     {title:"Insurance Dashboard",page:"dashboard",cat:"Digital"},{title:"Smart Quote Engine",page:"quote",cat:"Digital"},{title:"Financial Planning Tools",page:"calculators",cat:"Digital"},{title:"Digital Banking",page:"digital",cat:"Digital",kw:"digital online tools hub"},
-    {title:"Mobile Banking App",page:"mobileapp",cat:"Digital"},{title:"Estate Planning",page:"estate",cat:"Planning"},{title:"Financial Advice",page:"advice",cat:"Planning",kw:"advice advisory adviser advisor financial planning wealth management retirement planning investment advice check-up"},{title:"Financial Planning",page:"advice",cat:"Planning",kw:"plan planning retirement wealth advisor"},{title:"Retirement Planning",page:"advice",cat:"Planning",kw:"retirement rrsp rrif pension retire income"},{title:"Wealth Management",page:"advice",cat:"Planning",kw:"wealth invest portfolio aviso qtrade virtualwealth mutual funds managed"},{title:"Financial Check-Up",page:"advice",cat:"Planning",kw:"check up checkup review free advisor heili"},{title:"KESKUS Branch",page:"community",cat:"Community"},
+    {title:"Mobile Banking App",page:"mobileapp",cat:"Digital"},{title:"Estate Planning",page:"estate",cat:"Planning"},{title:"Apply Online",page:"apply",cat:"Apply",kw:"apply application open an account join membership become a member sign up start pre-approval preapproval new account"},{title:"Open an Account",page:"apply",cat:"Apply",kw:"open account new chequing savings join membership"},{title:"Financial Advice",page:"advice",cat:"Planning",kw:"advice advisory adviser advisor financial planning wealth management retirement planning investment advice check-up"},{title:"Financial Planning",page:"advice",cat:"Planning",kw:"plan planning retirement wealth advisor"},{title:"Retirement Planning",page:"advice",cat:"Planning",kw:"retirement rrsp rrif pension retire income"},{title:"Wealth Management",page:"advice",cat:"Planning",kw:"wealth invest portfolio aviso qtrade virtualwealth mutual funds managed"},{title:"Financial Check-Up",page:"advice",cat:"Planning",kw:"check up checkup review free advisor heili"},{title:"KESKUS Branch",page:"community",cat:"Community"},
     {title:"Scholarships",page:"community",cat:"Community"},
     {title:"Chequing Accounts",page:"accounts",cat:"Banking",kw:"chequing checking everyday banking debit e-transfer no fee student senior us dollar"},
     {title:"Savings Accounts",page:"accounts",cat:"Banking",kw:"savings high interest hisa deposit compare accounts"},
@@ -295,7 +296,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
   if(page!==lastPage){setLastPage(page);setMobileMenu(false);setMenu(null)}
   const isDark=page==="home"&&!sc;
   // Banking leads: chequing, savings, mortgages and cards are what most visitors arrive looking for.
-  const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Advice",p:"advice"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"quote"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
+  const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Advice",p:"advice"},{l:"Apply",p:"apply"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"quote"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
   const langLabels={en:"EN",est:"EST",lat:"LAT"};
   const langFull={en:"English",est:"Eesti",lat:"Latviesu"};
   return(<>
@@ -613,7 +614,7 @@ function MortgagesPage({setPage,lang}){
           <span style={{fontFamily:fs,fontSize:16,color:C.greenText,fontWeight:700}}>{r.rate}</span>
         </div>)}
         <div style={{display:"flex",gap:12,marginTop:24,flexWrap:"wrap"}}>
-          <Btn color={C.greenFill} onClick={()=>setPage("booking")}>{T("Get Pre-Approved")}</Btn>
+          <Btn color={C.greenFill} onClick={()=>{setApplyIntent("Mortgage pre-approval");track("apply_start",{from:"mortgages"});setPage("apply")}}>{T("Get Pre-Approved")}</Btn>
           <Btn outline color={C.navy} onClick={()=>setPage("calculators")}>{T("Payment Calculator")}</Btn>
         </div>
       </div></Fade>
@@ -670,7 +671,7 @@ function CardsPage({setPage,lang}){
                 <span style={{fontFamily:fs,fontSize:13.5,color:"#666",lineHeight:1.5}}>{pk}</span>
               </div>)}
             </div>
-            <Btn color={cd.c} onClick={()=>setPage("booking")}>{T("Apply for this card")}</Btn>
+            <Btn color={cd.c} onClick={()=>{setApplyIntent("Credit card");track("apply_start",{from:"cards"});setPage("apply")}}>{T("Apply for this card")}</Btn>
           </div>
         </div></Fade>)}
       </div>
@@ -739,7 +740,7 @@ function AccountsPage({setPage,lang}){
         </div></Fade>)}
       </div>
       <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:24}}>
-        <Btn color={C.accentText} onClick={()=>setPage("booking")}>{T("Open an Account")}</Btn>
+        <Btn color={C.accentText} onClick={()=>{setApplyIntent("Chequing account");track("apply_start",{from:"accounts"});setPage("apply")}}>{T("Open an Account")}</Btn>
         <Btn outline color={C.navy} onClick={()=>setPage("rates")}>{T("See All Rates")}</Btn>
       </div>
       <div style={{background:`${C.accentText}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.accent}`}}>
@@ -888,7 +889,7 @@ function Footer({setPage}){
         {[
           {t:"Insurance",items:[["Life Insurance","insurance"],["Home Insurance","insurance"],["Auto Insurance","insurance"],["Travel Insurance","travel"],["Claims Centre","claims"],["Quote Calculator","quote"]]},
           {t:"Tools",items:[["Compare Plans","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["Refer a Friend","referrals"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
-          {t:"Banking",items:[["Chequing & Savings","accounts"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
+          {t:"Banking",items:[["Apply Online","apply"],["Chequing & Savings","accounts"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
           {t:"Advice",items:[["Financial Advice","advice"],["Financial Check-Up","advice"],["Retirement Planning","advice"],["Estate Planning","estate"],["Tax Planning","tax"],["Book an Advisor","booking"]]},
           {t:"About",items:[["Community","community"],["Blog & News","blog"],["Glossary","glossary"],["Contact & Branches","contact"],["Careers","contact"],["KESKUS Branch","community"]]},
         ].map((col,i)=><div key={i}><h4 style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:"0 0 10px",textTransform:"uppercase",letterSpacing:1}}>{col.t}</h4>{col.items.map(([l,p],ii)=><div key={ii}><button onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.6)",fontFamily:fs,fontSize:12,padding:"2px 0",cursor:"pointer",display:"block"}}>{l}</button></div>)}</div>)}
@@ -993,7 +994,7 @@ export default function App(){
     return()=>window.removeEventListener("keydown",h);
   },[]);
   const pages={
-    home:<HomePage setPage={setPage} lang={lang}/>,insurance:<InsurancePage setPage={setPage} lang={lang}/>,advice:<AdvicePage setPage={setPage}/>,travel:<TravelPage setPage={setPage} lang={lang}/>,business:<BusinessPage setPage={setPage} lang={lang}/>,digital:<DigitalPage setPage={setPage} lang={lang}/>,
+    home:<HomePage setPage={setPage} lang={lang}/>,insurance:<InsurancePage setPage={setPage} lang={lang}/>,advice:<AdvicePage setPage={setPage}/>,apply:<ApplyPage setPage={setPage} lang={lang}/>,travel:<TravelPage setPage={setPage} lang={lang}/>,business:<BusinessPage setPage={setPage} lang={lang}/>,digital:<DigitalPage setPage={setPage} lang={lang}/>,
     estate:<EstatePage setPage={setPage} lang={lang}/>,community:<CommunityPage setPage={setPage} lang={lang}/>,personal:<PersonalPage setPage={setPage} lang={lang}/>,contact:<ContactPage lang={lang}/>,
     mortgages:<MortgagesPage setPage={setPage} lang={lang}/>,cards:<CardsPage setPage={setPage} lang={lang}/>,accounts:<AccountsPage setPage={setPage} lang={lang}/>,
     quote:<QuotePage setPage={setPage} lang={lang}/>,compare:<ComparePage setPage={setPage} lang={lang}/>,claims:<ClaimsPage lang={lang}/>,calculators:<CalculatorsPage setPage={setPage} lang={lang}/>,

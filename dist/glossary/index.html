@@ -19,7 +19,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <style>*{margin:0;padding:0;box-sizing:border-box}body{-webkit-font-smoothing:antialiased}input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;outline:none;cursor:pointer}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#2E86C1;cursor:pointer;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2)}input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#2E86C1;cursor:pointer;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2)}</style>
-    <script type="module" crossorigin src="/assets/index-Du0z67oA.js"></script>
+    <script type="module" crossorigin src="/assets/index-BgiOzXm8.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-lnNlWMYP.css">
     <link rel="canonical" href="https://www.northernbirchcu.com/glossary" />
     <meta property="og:url" content="https://www.northernbirchcu.com/glossary" />
@@ -38,6 +38,13 @@
       Field names here must match the keys sent from src/App.jsx.
       bot-field is the honeypot: real people never fill it in.
     -->
+    <form name="application" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="consent" /><input type="text" name="consentVersion" />
+      <input type="text" name="bot-field" />
+      <input type="text" name="product" /><input type="text" name="member" /><input type="text" name="branch" />
+      <input type="text" name="name" /><input type="email" name="email" /><input type="text" name="phone" />
+      <input type="text" name="reach" /><textarea name="notes"></textarea>
+    </form>
     <form name="booking" data-netlify="true" netlify-honeypot="bot-field" hidden>
       <input type="text" name="consent" /><input type="text" name="consentVersion" />
       <input type="text" name="bot-field" />
