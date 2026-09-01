@@ -95,6 +95,49 @@ const go = async (r) => {
   await p.close();
 }
 
+// advisory has to read as a product area, not a page only the nav knows about
+{
+  const p = await go('/');
+  const txt = await p.locator('main').innerText();
+  check(/Advice from people you can meet/.test(txt), 'the home page carries an advice section');
+  check(/Financial Check-Up/.test(txt), 'and names the Check-Up on the home page');
+  check(/financial advice/i.test(txt), 'the hero copy counts advice among the products');
+  check(!/NaN|undefined|\$\{/.test(txt), 'home page has no un-interpolated placeholders');
+  await p.close();
+}
+
+// every new way in actually arrives at /advice
+{
+  const entries = [
+    ['/', 'Explore Financial Advice'],
+    ['/', 'Financial Advice'],          // the product-area grid lower down
+    ['/personal', 'Financial advice'],
+    ['/estate', 'See our advice services'],
+    ['/tax-optimizer', 'Financial advice'],
+    ['/calculators', 'Take this to an advisor'],
+    ['/booking', 'What a Financial Check-Up covers'],
+  ];
+  for (const [from, label] of entries) {
+    const p = await go(from);
+    const b = p.locator('main button', { hasText: label }).first();
+    if (await b.count() === 0) { check(false, `"${label}" not found on ${from}`); await p.close(); continue; }
+    await b.scrollIntoViewIfNeeded();
+    await b.click(); await p.waitForTimeout(700);
+    check(new URL(p.url()).pathname === '/advice', `${from} "${label}" -> ${new URL(p.url()).pathname}`);
+    await p.close();
+  }
+}
+
+// and the footer lists it wherever you are
+{
+  const p = await go('/rates');
+  const f = p.locator('footer button', { hasText: 'Financial Advice' }).first();
+  check(await f.count() === 1, 'the footer has an Advice column');
+  await f.click(); await p.waitForTimeout(700);
+  check(new URL(p.url()).pathname === '/advice', `footer Financial Advice -> ${new URL(p.url()).pathname}`);
+  await p.close();
+}
+
 check(errs.length === 0, `no page errors${errs.length ? ': ' + errs[0] : ''}`);
 console.log(`\n${pass} passed, ${fail} failed`);
 await br.close();

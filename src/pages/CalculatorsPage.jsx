@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { C, RATE, SH, exportToPDF, ff, fs } from '../ui.jsx';
+import { Btn, C, RATE, SH, exportToPDF, ff, fs } from '../ui.jsx';
 
-export default function CalculatorsPage(){
+export default function CalculatorsPage({setPage}){
   const[calc,setCalc]=useState("mortgage");
   const[calcErr,setCalcErr]=useState("");
   // Mortgage
@@ -158,6 +158,10 @@ export default function CalculatorsPage(){
               <div style={{textAlign:"center",marginTop:16}}><button onClick={()=>exportToPDF("retirement-result","Retirement Plan Projection")} style={{background:C.purple,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download Retirement Plan (PDF)</button></div>
             </div>}
           </>}
+        </div>
+        <div style={{textAlign:"center",marginTop:28,display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
+          <Btn small color={C.greenFill} onClick={()=>setPage("advice")}>Take this to an advisor &rarr;</Btn>
+          <Btn small outline color={C.navy} onClick={()=>setPage("booking")}>Book a Financial Check-Up &rarr;</Btn>
         </div>
       </div>
     </section>

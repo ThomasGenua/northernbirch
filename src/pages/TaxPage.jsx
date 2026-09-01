@@ -125,6 +125,16 @@ export default function TaxPage({setPage}){
             {q:"Are insurance premiums tax-deductible?",a:"Generally no -- personal insurance premiums (life, home, auto, health) are not tax-deductible. However, if you're self-employed, health and dental insurance premiums may be deductible. If your corporation owns a life insurance policy, the death benefit flows into the Capital Dividend Account for tax-free distribution. The real tax benefit of insurance is that proceeds are tax-free to beneficiaries."},
           ]}/>
         </div>
+        <div style={{background:"#fff",borderRadius:20,padding:"24px 28px",border:"1px solid #eee",borderLeft:`4px solid ${C.greenFill}`,marginTop:24,display:"flex",gap:16,alignItems:"center",flexWrap:"wrap"}}>
+          <div style={{flex:1,minWidth:240}}>
+            <h3 style={{fontFamily:ff,fontSize:20,color:C.navy,margin:"0 0 4px"}}>Want this checked against your actual numbers?</h3>
+            <p style={{fontFamily:fs,fontSize:14,color:"#666",margin:0,lineHeight:1.7}}>Tax planning is part of a Financial Check-Up, which costs members nothing.</p>
+          </div>
+          <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+            <Btn small color={C.greenFill} onClick={()=>setPage("advice")}>Financial advice &rarr;</Btn>
+            <Btn small outline color={C.navy} onClick={()=>setPage("booking")}>Book a Check-Up &rarr;</Btn>
+          </div>
+        </div>
       </div>
     </section>
   );
