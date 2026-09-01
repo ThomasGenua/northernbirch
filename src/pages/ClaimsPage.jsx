@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Btn, C, Clickable, CONSENT_VERSION, ConsentNotice, errBox, exportToPDF, ff, fs, SH, submitForm, useMob } from '../ui.jsx';
+import { Btn, C, Clickable, CONSENT_VERSION, ConsentNotice, errBox, exportToPDF, ff, fs, SH, submitForm, useMaxW, useMob } from '../ui.jsx';
 
-export default function ClaimsPage(){
+export default function ClaimsPage(){const upToTablet=useMaxW(1024);
   const mob=useMob();
   const[step,setStep]=useState(0);
   const[claimType,setClaimType]=useState("");
@@ -69,7 +69,7 @@ export default function ClaimsPage(){
         <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>{steps[step].content}</div>
         <div style={{marginTop:32,background:`${C.amber}08`,borderRadius:16,padding:"24px 28px",borderLeft:`4px solid ${C.amber}`}}>
           <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 8px",fontWeight:700}}>Claim Contact Numbers</h4>
-          <div style={{display:"grid",gridTemplateColumns:mob?"1fr":typeof window!=="undefined"&&window.innerWidth<=1024?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>
+          <div style={{display:"grid",gridTemplateColumns:mob?"1fr":upToTablet?"repeat(2,1fr)":"repeat(3,1fr)",gap:16}}>
             {[{n:"The Personal (Home/Auto/Travel)",p:"1-888-476-8737"},{n:"CUMIS (Life/Creditor)",p:"1-800-263-9120"},{n:"Manulife (Group Benefits)",p:"1-800-268-6195"}].map((c2,i)=><div key={i}><div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{c2.n}</div><div style={{fontFamily:fs,fontSize:14,color:C.accentText,fontWeight:700}}>{c2.p}</div></div>)}
           </div>
         </div>

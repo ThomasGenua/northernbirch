@@ -427,7 +427,14 @@ export function useBreakpoint(){return useSyncExternalStore(subscribeViewport,re
 
 export function useW(){return useSyncExternalStore(subscribeViewport,()=>window.innerWidth,()=>1200)}
 // The one viewport question nearly every page asks.
-export function useMob(){return useBreakpoint()==="m"}
+export function useMob(){return useMaxW(768)}
+/** True when the viewport is at most `px` wide -- and false on the server and
+ *  in the render that hydrates it, like everything else here. Layout decisions
+ *  at any breakpoint go through this; reading window.innerWidth during render
+ *  disagrees with the prerendered HTML and costs the hydration. */
+export function useMaxW(px){
+  return useSyncExternalStore(subscribeViewport,()=>window.innerWidth<=px,()=>false);
+}
 export const g=(w,d,t,m)=>w>1024?d:w>768?t:m; // grid helper: desktop, tablet, mobile
 // ============ CULTURAL BRANDING ELEMENTS ============
 // Birch tree silhouettes for hero

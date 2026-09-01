@@ -54,7 +54,10 @@ const hydrationErrors = async (route, width) => {
   return bad;
 };
 
-for (const width of [1280, 390]) {
+// 1280 and 390 are not enough: the tablet band between them has its own
+// breakpoint, and reading it during render is the same bug in a place the
+// first version of this test could not see. 900 and 1024 sit either side of it.
+for (const width of [1280, 1024, 900, 390]) {
   const failures = [];
   for (const r of ROUTES) {
     const bad = await hydrationErrors(r, width);
