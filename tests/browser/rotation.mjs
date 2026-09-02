@@ -41,7 +41,7 @@ check(await p.locator('#mortgage-result').count()===1,`calculators: the result s
 
 // an open overlay must not be dismissed by a rotation
 await p.goto(`${BASE}/`,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(1200);
-await p.locator('button[aria-label="Search Northern Birch"]').first().click(); await p.waitForTimeout(500);
+await p.locator('button[aria-label="Search Northern Birch"]:visible').first().click(); await p.waitForTimeout(500);
 await p.locator('[role="dialog"] input').fill('mortgage'); await p.waitForTimeout(400);
 await rotate();
 check(await p.locator('[role="dialog"]').count()===1,'search: the overlay stays open through a rotation');

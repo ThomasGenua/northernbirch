@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Btn, C, ff, fs, money, prefersReducedMotion, useMob } from '../ui.jsx';
 
 export default function DashboardPage({setPage}){
-  const mob=useMob();
+  const isMob=useMob();
   const[transferAmt,setTransferAmt]=useState("200");
   // The field accepted anything: "abc" produced "Recipient Gets EUR NaN" beside a
   // live "Send C$abc" button. Parse strictly and gate the send on the result.
@@ -15,7 +15,6 @@ export default function DashboardPage({setPage}){
   const[transferRef]=useState(()=>"NB-TXN-"+Math.floor(Math.random()*900000+100000));
   const[transferSent,setTransferSent]=useState(false);
   const[signedDocs,setSignedDocs]=useState({});
-  const isMob=mob;
   // Spending data
   const spending=[{cat:"Housing",amt:2132,pct:42,c:C.navy},{cat:"Food & Grocery",amt:847,pct:17,c:C.green},{cat:"Transportation",amt:435,pct:9,c:C.amber},{cat:"Insurance",amt:343,pct:7,c:C.accent},{cat:"Int'l Transfers",amt:275,pct:5,c:C.purple},{cat:"Entertainment",amt:234,pct:5,c:"#E91E63"},{cat:"Shopping",amt:198,pct:4,c:"#FF9800"},{cat:"Utilities",amt:187,pct:4,c:"#607D8B"},{cat:"Other",amt:389,pct:7,c:"#9E9E9E"}];
   const totalSpend=spending.reduce((s,x)=>s+x.amt,0);
@@ -49,11 +48,11 @@ export default function DashboardPage({setPage}){
           </div>
         </div>
 
-        <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"2fr 1fr",gap:24}}>
+        <div className="grid-main-side-1" style={{gap:24}}>
           {/* ======= LEFT COLUMN ======= */}
           <div>
             {/* Account Summary */}
-            <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr 1fr",gap:12,marginBottom:24}}>
+            <div className="grid-4-1" style={{gap:12,marginBottom:24}}>
               {[{label:"Chequing",balance:"C$4,237.89",num:"****6742",c:C.navy},{label:"TFSA Savings",balance:"C$18,450.00",num:"****3891",c:C.green},{label:"RRSP",balance:"C$47,200.00",num:"****4510",c:C.purple},{label:"Mortgage",balance:"-C$387,200",num:"****1205",c:C.accent}].map((a,i)=>
                 <div key={i} style={{background:"#fff",borderRadius:16,padding:"20px",borderTop:`3px solid ${a.c}`}}>
                   <div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>{a.label}</div>

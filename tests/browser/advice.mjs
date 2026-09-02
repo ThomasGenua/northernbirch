@@ -21,7 +21,7 @@ const go = async (r) => {
 // the page exists and is reachable the way a member would find it
 {
   const p = await go('/');
-  const nav = p.locator('nav button', { hasText: /^Advice$/ }).first();
+  const nav = p.locator('nav button:visible', { hasText: /^Advice$/ }).first();
   check(await nav.count() === 1, 'Advice is in the primary navigation');
   await nav.click(); await p.waitForTimeout(700);
   check(new URL(p.url()).pathname === '/advice', `nav Advice -> ${new URL(p.url()).pathname}`);

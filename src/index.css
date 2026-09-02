@@ -30,3 +30,77 @@ input[type=range]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 
     scroll-behavior: auto !important;
   }
 }
+
+/* ============ RESPONSIVE GRIDS ============
+   Card grids used to choose their column count in JavaScript, so the
+   prerendered HTML always described the desktop count -- three 150px
+   columns crammed into a 390px phone until the bundle arrived and
+   rearranged them. One class per layout the site actually uses, named
+   desktop-tablet-mobile by column count, with the same breakpoints the
+   JavaScript used (1024px and 768px), so nothing moves. */
+.grid-2-1{display:grid;grid-template-columns:1fr 1fr}
+.grid-3-1{display:grid;grid-template-columns:1fr 1fr 1fr}
+.grid-3-2-1{display:grid;grid-template-columns:repeat(3,1fr)}
+.grid-4-1{display:grid;grid-template-columns:1fr 1fr 1fr 1fr}
+.grid-4-2{display:grid;grid-template-columns:repeat(4,1fr)}
+.grid-4-2-1{display:grid;grid-template-columns:repeat(4,1fr)}
+.grid-5-1{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr}
+.grid-5-2{display:grid;grid-template-columns:repeat(5,1fr)}
+.grid-5-2-1{display:grid;grid-template-columns:repeat(5,1fr)}
+.grid-6-3-2{display:grid;grid-template-columns:repeat(6,1fr)}
+.grid-auto320-1{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.grid-footer-2fr1fr1fr1fr-2{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr}
+.grid-main-panel-1{display:grid;grid-template-columns:1fr 340px}
+.grid-main-side-1{display:grid;grid-template-columns:2fr 1fr}
+.grid-panel-main-1{display:grid;grid-template-columns:320px 1fr}
+@media (max-width:1024px){
+  .grid-3-2-1{grid-template-columns:repeat(2,1fr)}
+  .grid-4-2-1{grid-template-columns:repeat(2,1fr)}
+  .grid-5-2-1{grid-template-columns:repeat(2,1fr)}
+  .grid-6-3-2{grid-template-columns:repeat(3,1fr)}
+  .grid-footer-2fr1fr1fr1fr-2{grid-template-columns:2fr 1fr 1fr 1fr}
+}
+@media (max-width:768px){
+  .grid-2-1{grid-template-columns:1fr}
+  .grid-3-1{grid-template-columns:1fr}
+  .grid-3-2-1{grid-template-columns:1fr}
+  .grid-4-1{grid-template-columns:1fr}
+  .grid-4-2{grid-template-columns:1fr 1fr}
+  .grid-4-2-1{grid-template-columns:1fr}
+  .grid-5-1{grid-template-columns:1fr}
+  .grid-5-2{grid-template-columns:1fr 1fr}
+  .grid-5-2-1{grid-template-columns:1fr}
+  .grid-6-3-2{grid-template-columns:repeat(2,1fr)}
+  .grid-auto320-1{grid-template-columns:1fr}
+  .grid-footer-2fr1fr1fr1fr-2{grid-template-columns:1fr 1fr}
+  .grid-main-panel-1{grid-template-columns:1fr}
+  .grid-main-side-1{grid-template-columns:1fr}
+  .grid-panel-main-1{grid-template-columns:1fr}
+}
+
+/* ============ RESPONSIVE NAV ============
+   The bar has two forms: a row of links on wide screens, a hamburger on narrow
+   ones. Choosing between them in JavaScript meant the prerendered HTML always
+   carried the wide one -- 827px of links inside a 390px phone, laid out before
+   any script runs and rearranged once it does. Both are rendered now, and the
+   viewport picks. */
+.nav-wide{display:flex;gap:1px;align-items:center}
+.nav-narrow{display:none;gap:6px;align-items:center}
+.nav-tagline{display:inline}
+@media (max-width:900px){
+  .nav-wide{display:none}
+  .nav-narrow{display:flex}
+  .nav-tagline{display:none}
+}
+
+/* ============ PAGE SECTION PADDING ============
+   31 sections asked the same question -- am I on a phone -- and gave the same
+   two answers. In CSS the answer arrives with the HTML rather than one script
+   execution later, so the page does not jump. */
+.sec{padding:80px 24px;padding-top:100px}
+@media (max-width:768px){.sec{padding:60px 16px;padding-top:80px}}
+
+/* A grid item refuses to shrink below its content by default, which is how one
+   wide card inside a single-column layout pushed the whole page sideways
+   before hydration. Track definitions above are unaffected. */
+[class^="grid-"]>*{min-width:0}

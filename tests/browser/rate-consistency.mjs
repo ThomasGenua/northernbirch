@@ -22,7 +22,7 @@ check(raw.length===0,`no un-interpolated template placeholders on any page${raw.
   const rates=await p.locator('main').innerText();
   const m5=rates.match(/5-Year GIC\s*\n?\s*([\d.]+%)/); const g1=rates.match(/1-Year GIC\s*\n?\s*([\d.]+%)/);
   check(!!m5&&!!g1,`rates page publishes 5-year=${m5?.[1]} 1-year=${g1?.[1]}`);
-  await p.locator('button[aria-label="Notifications"]').first().click(); await p.waitForTimeout(600);
+  await p.locator('button[aria-label="Notifications"]:visible').first().click(); await p.waitForTimeout(600);
   const n=await p.locator('[role="dialog"]').innerText();
   check(!/3\.45%|3\.20%/.test(n),'notification no longer advertises a rate the table contradicts');
   check(n.includes(m5[1])&&n.includes(g1[1]),`notification quotes the posted rates (${m5[1]}, ${g1[1]})`);

@@ -24,11 +24,15 @@ for(const route of ['/business','/contact','/personal','/travel','/insurance','/
 await p.setViewportSize({width:1280,height:900});
 await p.goto(`${BASE}/`,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(1000);
 await p.locator('button',{hasText:'Essential only'}).click().catch(()=>{});
-check(await p.locator('button[aria-label="Open menu"]').count()===0,'desktop: no hamburger');
+// Both nav forms are in the markup now -- CSS decides which one a viewport
+// gets, so what matters is which is *shown*, not which exists.
+const burger=p.locator('button[aria-label="Open menu"]');
+const links=p.locator('.nav-wide');
+check(!await burger.isVisible()&&await links.isVisible(),'desktop: the link row, no hamburger');
 await p.setViewportSize({width:390,height:844}); await p.waitForTimeout(700);
-check(await p.locator('button[aria-label="Open menu"]').count()===1,'shrinking to a phone reveals the hamburger without a reload');
+check(await burger.isVisible()&&!await links.isVisible(),'shrinking to a phone reveals the hamburger without a reload');
 await p.setViewportSize({width:1280,height:900}); await p.waitForTimeout(700);
-check(await p.locator('button[aria-label="Open menu"]').count()===0,'growing back hides it again');
+check(!await burger.isVisible()&&await links.isVisible(),'growing back hides it again');
 // a drag across the whole range must not throw
 const errs=[]; p.on('pageerror',e=>errs.push(String(e).slice(0,70)));
 for(let w=1400;w>=340;w-=40){ await p.setViewportSize({width:w,height:800}); await p.waitForTimeout(40); }

@@ -33,7 +33,7 @@ export default function AIAdvisorPage({setPage}){
   };
 
   if(!started) return (
-    <section style={{background:`linear-gradient(170deg,${C.dark} 0%,${C.navy} 50%,#1e4060 100%)`,padding:mob?"60px 16px":"80px 24px",paddingTop:mob?80:100,minHeight:"100vh"}}>
+    <section className="sec" style={{background:`linear-gradient(170deg,${C.dark} 0%,${C.navy} 50%,#1e4060 100%)`,minHeight:"100vh"}}>
       <div style={{maxWidth:800,margin:"0 auto",textAlign:"center"}}>
         <Fade>
           <div style={{width:80,height:80,borderRadius:24,background:`linear-gradient(135deg,${C.accent},${C.purple})`,margin:"0 auto 24px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:"#fff"}}>&#9889;</span></div>
@@ -42,7 +42,7 @@ export default function AIAdvisorPage({setPage}){
         </Fade>
         <Fade delay={0.15}>
           <p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",marginBottom:20}}>Choose a scenario or type your own question:</p>
-          <div style={{display:"grid",gridTemplateColumns:mob?"1fr":"1fr 1fr",gap:12,marginBottom:32}}>
+          <div className="grid-2-1" style={{gap:12,marginBottom:32}}>
             {[
               {label:"I just bought my first home",icon:"&#127968;",desc:"Mortgage protection, home insurance, life insurance review"},
               {label:"I'm planning a trip to Estonia this summer",icon:"&#9992;",desc:"Travel medical, trip cancellation, pre-existing conditions"},

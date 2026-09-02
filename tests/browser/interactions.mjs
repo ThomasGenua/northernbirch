@@ -77,7 +77,7 @@ const go=async(r)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(r+
 {
   const p=await go('/');
   // search: focus goes in, and comes back to where it started on close
-  await p.locator('button[aria-label="Search Northern Birch"]').first().focus();
+  await p.locator('button[aria-label="Search Northern Birch"]:visible').first().focus();
   await p.keyboard.press('Enter'); await p.waitForTimeout(500);
   const inside=await p.evaluate(()=>document.activeElement?.getAttribute('aria-label'));
   check(inside==='Search products, services and tools',`search: focus lands in the input (${inside})`);

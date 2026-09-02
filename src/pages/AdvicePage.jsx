@@ -43,7 +43,7 @@ const TOOLS = [
 export default function AdvicePage({ setPage }) {
   const mob = useMob();
   return (
-    <section style={{ background: C.cream, padding: mob ? "60px 16px" : "80px 24px", paddingTop: mob ? 80 : 100 }}>
+    <section className="sec" style={{ background: C.cream, }}>
       <div style={{ maxWidth: 1320, margin: "0 auto" }}>
         <SH tag="Financial Advice" tagColor={C.greenText} title="Advice from people you can meet"
             desc="Planning, retirement, investments, estate and tax advice from Northern Birch's wealth team — starting with a Financial Check-Up that costs you nothing." />
@@ -52,7 +52,7 @@ export default function AdvicePage({ setPage }) {
           <Btn color={C.greenFill} onClick={() => setPage("booking")}>Book a Financial Check-Up &rarr;</Btn>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(auto-fit,minmax(320px,1fr))", gap: 16, marginBottom: 40 }}>
+        <div className="grid-auto320-1" style={{  gap: 16, marginBottom: 40 }}>
           {SERVICES.map((s, i) => (
             <Fade key={i} delay={i * 0.05}>
               <div style={{ background: "#fff", borderRadius: 20, padding: 28, border: "1px solid #eee", borderTop: `3px solid ${s.c}`, height: "100%", display: "flex", flexDirection: "column" }}>
@@ -79,7 +79,7 @@ export default function AdvicePage({ setPage }) {
             <p style={{ fontFamily: fs, fontSize: 14, color: "rgba(255,255,255,0.65)", margin: "0 0 20px", lineHeight: 1.7 }}>
               Every one of these is free, needs no personal information, and gives you something to bring to the conversation.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3,1fr)", gap: 12 }}>
+            <div className="grid-3-1" style={{  gap: 12 }}>
               {TOOLS.map(([label, route, blurb], i) => (
                 <button key={i} onClick={() => setPage(route)}
                         style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "18px 20px", cursor: "pointer", textAlign: "left" }}>

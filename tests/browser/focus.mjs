@@ -12,9 +12,9 @@ const who=()=>p.evaluate(()=>{const a=document.activeElement;return a?(a.getAttr
 
 // each overlay: focus enters, is trapped, and returns to its trigger
 for(const [name,openIt,inside] of [
-  ['search',   async()=>p.locator('button[aria-label="Search Northern Birch"]').first().focus(), 'Search products, services and tools'],
+  ['search',   async()=>p.locator('button[aria-label="Search Northern Birch"]:visible').first().focus(), 'Search products, services and tools'],
   ['login',    async()=>p.locator('button',{hasText:/^Sign In$/}).first().focus(), null],
-  ['notifications', async()=>p.locator('button[aria-label="Notifications"]').first().focus(), null],
+  ['notifications', async()=>p.locator('button[aria-label="Notifications"]:visible').first().focus(), null],
 ]){
   await openIt(); await p.waitForTimeout(200);
   const trigger=await who();          // capture AFTER focusing the trigger
@@ -33,7 +33,7 @@ for(const [name,openIt,inside] of [
   check(back===trigger,`${name}: focus returns to its trigger (${back} vs ${trigger})`);
 }
 // typing in search must not yank focus back to the top
-await p.locator('button[aria-label="Search Northern Birch"]').first().click(); await p.waitForTimeout(500);
+await p.locator('button[aria-label="Search Northern Birch"]:visible').first().click(); await p.waitForTimeout(500);
 await p.keyboard.type('mortgage'); await p.waitForTimeout(500);
 check(await who()==='Search products, services and tools','search: focus stays in the input while typing');
 await p.keyboard.press('ArrowDown'); await p.waitForTimeout(300);

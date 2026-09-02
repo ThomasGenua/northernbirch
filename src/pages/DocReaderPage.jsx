@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Btn, C, callAI, exportToPDF, fs, SH, useMob } from '../ui.jsx';
+import { Btn, C, callAI, exportToPDF, fs, SH } from '../ui.jsx';
 
 export default function DocReaderPage({setPage}){
-  const mob=useMob();
+  
   const[input,setInput]=useState("");
   const[loading,setLoading]=useState(false);
   const[result,setResult]=useState(null);
@@ -16,7 +16,7 @@ export default function DocReaderPage({setPage}){
     setLoading(false);
   };
   return(
-    <section style={{background:C.cream,padding:mob?"60px 16px":"80px 24px",paddingTop:mob?80:100}}>
+    <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
         <SH tag="AI Document Reader" tagColor={C.accentText} title="Understand your existing coverage" desc="Paste text from any insurance policy, renewal notice, or coverage summary. Our AI will extract the key details, compare with Northern Birch rates, and flag any gaps."/>
         {!result?<div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>

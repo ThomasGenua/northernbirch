@@ -49,7 +49,7 @@ export default function MessagesPage({setPage:_setPage}){
     {id:"branch",name:"Northern Birch Support",role:"Branch Services",unread:0,last:"Debit card replacement processed..."},
   ];
   return <section style={{background:"#f0f2f5",padding:isMob?"60px 0 0":"80px 0 0",paddingTop:isMob?64:80,minHeight:"100vh"}}>
-    <div style={{maxWidth:1100,margin:"0 auto",height:"calc(100vh - 80px)",display:"grid",gridTemplateColumns:isMob?"1fr":"320px 1fr",gap:0,background:"#fff"}}>
+    <div className="grid-panel-main-1" style={{maxWidth:1100,margin:"0 auto",height:"calc(100vh - 80px)",gap:0,background:"#fff"}}>
       {/* Sidebar */}
       {(!isMob||mobileView==="threads")&&<div style={{borderRight:isMob?"none":"1px solid #eee",overflow:"auto",background:"#fafafa"}}>
         <div style={{padding:"16px 20px",borderBottom:"1px solid #eee"}}>

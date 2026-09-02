@@ -53,7 +53,7 @@ export default function ApplyPage({ setPage }) {
   };
 
   if (submitted) return (
-    <section style={{ background: C.cream, padding: mob ? "60px 16px" : "80px 24px", paddingTop: mob ? 80 : 100 }}>
+    <section className="sec" style={{ background: C.cream, }}>
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         <div id="application-confirmation">
           <div style={{ textAlign: "center" }}>
@@ -78,7 +78,7 @@ export default function ApplyPage({ setPage }) {
   );
 
   return (
-    <section style={{ background: C.cream, padding: mob ? "60px 16px" : "80px 24px", paddingTop: mob ? 80 : 100 }}>
+    <section className="sec" style={{ background: C.cream, }}>
       <div style={{ maxWidth: 720, margin: "0 auto" }}>
         <SH tag="Apply" tagColor={C.greenText} title="Start your application"
             desc="Tell us what you need and an advisor calls you back, normally within one business day. Takes about two minutes." />
@@ -125,7 +125,7 @@ export default function ApplyPage({ setPage }) {
             <input id="apply-name" autoComplete="name" value={name} onChange={e => setName(e.target.value)} placeholder="Full name" style={field} />
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 20 }}>
+          <div className="grid-2-1" style={{  gap: 16, marginBottom: 20 }}>
             <div>
               <label htmlFor="apply-email" style={label}>Email</label>
               <input id="apply-email" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" style={field} />

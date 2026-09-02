@@ -24,14 +24,14 @@ check(await p.locator('a[href="tel:+14164654659"]',{hasText:'416-465-4659'}).cou
 check(await p.locator('button',{hasText:'Reload the page'}).count()>=1,'the fallback offers a reload');
 
 // navigating away must clear the boundary, not strand you on the error screen
-await p.locator('nav button',{hasText:/^Rates$/}).first().click(); await p.waitForTimeout(900);
+await p.locator('nav button:visible',{hasText:/^Rates$/}).first().click(); await p.waitForTimeout(900);
 const recovered=(await p.locator('main').innerText()).trim();
 check(!/didn.t load/i.test(recovered)&&recovered.length>400,`navigating away recovers (${recovered.length} chars on /rates)`);
 check(new URL(p.url()).pathname==='/rates',`and the URL followed (${new URL(p.url()).pathname})`);
 
 // the fallback itself must be accessible
 await p.addScriptTag({url:'/axe.min.js'});
-await p.locator('nav button',{hasText:/^Digital$/}).first().click().catch(()=>{});
+await p.locator('nav button:visible',{hasText:/^Digital$/}).first().click().catch(()=>{});
 await p.waitForTimeout(600);
 console.log(`\n${pass} passed, ${fail} failed`);
 await br.close();

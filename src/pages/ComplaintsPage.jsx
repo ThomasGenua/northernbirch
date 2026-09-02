@@ -1,10 +1,10 @@
 import React from "react";
-import { C, fs, Linkify, SH, useMob } from '../ui.jsx';
+import { C, fs, Linkify, SH } from '../ui.jsx';
 
 export default function ComplaintsPage(){
-  const mob=useMob();
+  
   return(
-    <section style={{background:C.cream,padding:mob?"60px 16px":"80px 24px",paddingTop:mob?80:100}}>
+    <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
         <SH tag="Member Advocacy" tagColor={C.redText} title="Complaint Resolution" desc="Northern Birch is committed to resolving member concerns fairly and promptly. Here is our complaint resolution process."/>
         <div style={{display:"flex",flexDirection:"column",gap:16,marginBottom:32}}>
