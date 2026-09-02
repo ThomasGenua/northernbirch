@@ -17,7 +17,12 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # The browser suites took 24m30s on a 2-core runner -- about twice what they
+    # take on a developer machine -- and the first run of this workflow was
+    # cancelled by a 25-minute limit with the suites still going. Everything
+    # before them finishes in well under a minute, so this budget is almost
+    # entirely theirs, with room for a slower runner or a cold Chromium cache.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
