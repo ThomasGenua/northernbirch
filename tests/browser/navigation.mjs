@@ -33,7 +33,7 @@ let pass=0,fail=0; const check=(c,m)=>{c?pass++:fail++;console.log((c?'PASS ':'F
   await p.locator('button',{hasText:'Essential only'}).click().catch(()=>{}); await p.waitForTimeout(300);
   const trail=[];
   for(const [label,want] of [['Insurance','/insurance'],['Travel','/travel'],['Rates','/rates'],['Community','/community']]){
-    await p.locator('nav button',{hasText:new RegExp('^'+label+'$')}).first().click(); await p.waitForTimeout(600);
+    await p.locator('nav button:visible',{hasText:new RegExp('^'+label+'$')}).first().click(); await p.waitForTimeout(600);
     const got=new URL(p.url()).pathname;
     check(got===want,`nav ${label} -> ${got}`);
     trail.push(got);
@@ -58,7 +58,7 @@ let pass=0,fail=0; const check=(c,m)=>{c?pass++:fail++;console.log((c?'PASS ':'F
   // the document title tracks the route
   await p.goto(BASE+'/mortgages',{waitUntil:'domcontentloaded'}); await p.waitForTimeout(900);
   const t1=await p.title();
-  await p.locator('nav button',{hasText:/^Rates$/}).first().click(); await p.waitForTimeout(700);
+  await p.locator('nav button:visible',{hasText:/^Rates$/}).first().click(); await p.waitForTimeout(700);
   const t2=await p.title();
   check(t1!==t2&&/Rates|Northern Birch/i.test(t2),`title updates on client-side nav (${JSON.stringify(t1.slice(0,32))} -> ${JSON.stringify(t2.slice(0,32))})`);
   await ctx.close();

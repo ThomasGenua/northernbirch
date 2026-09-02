@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Btn, C, RATE, SH, exportToPDF, ff, fs } from '../ui.jsx';
+import { Btn, C, exportToPDF, ff, fs, RATE, SH, useMob } from '../ui.jsx';
 
 export default function CalculatorsPage({setPage}){
+  const mob=useMob();
   const[calc,setCalc]=useState("mortgage");
   const[calcErr,setCalcErr]=useState("");
   // Mortgage
@@ -55,7 +56,7 @@ export default function CalculatorsPage({setPage}){
     const insGap=Math.max(0,totalNeed-totalAtRetire-govTotal);
     setRResult({totalAtRetire,totalNeed,govTotal,monthlyFromSavings,monthlyGov,monthlyTotal,monthlyTarget,gap,annualNeed,insGap,years,retYears});
   };
-  const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
+  const isMob=mob;
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
@@ -66,7 +67,7 @@ export default function CalculatorsPage({setPage}){
         <div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
           {calcErr&&<div role="alert" style={{background:`${C.redText}0D`,border:`1px solid ${C.redText}33`,borderRadius:12,padding:"12px 16px",marginBottom:20,fontFamily:fs,fontSize:14,color:C.redText}}>{calcErr}</div>}
           {calc==="mortgage"&&<>
-            <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
+            <div className="grid-3-1" style={{gap:20,marginBottom:24}}>
               <div><label htmlFor="calc-0" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Mortgage Amount</label><input type="number" id="calc-0" min="0" step="1000" value={mAmt} onChange={e=>setMAmt(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
               <div><label htmlFor="calc-1" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Interest Rate (%)</label><input type="number" id="calc-1" min="0" max="25" step="0.01" value={mRate} onChange={e=>setMRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
               <div><label htmlFor="sel-0" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Amortization (Years)</label><select id="sel-0" value={mYrs} onChange={e=>setMYrs(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box",background:"#fff"}}>{[15,20,25,30].map(y=><option key={y} value={y}>{y} years</option>)}</select></div>
@@ -80,7 +81,7 @@ export default function CalculatorsPage({setPage}){
             </div>}
           </>}
           {calc==="insurance"&&<>
-            <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
+            <div className="grid-3-1" style={{gap:20,marginBottom:24}}>
               <div><label htmlFor="calc-2" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Household Income</label><input type="number" id="calc-2" min="0" step="1000" value={income} onChange={e=>setIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
               <div><label htmlFor="calc-3" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Number of Dependents</label><input type="number" id="calc-3" min="0" max="20" step="1" value={deps} onChange={e=>setDeps(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
               <div><label htmlFor="calc-4" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Outstanding Mortgage</label><input type="number" id="calc-4" min="0" step="1000" value={mortgage} onChange={e=>setMortgage(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
@@ -88,14 +89,14 @@ export default function CalculatorsPage({setPage}){
             <button onClick={calcInsurance} style={{width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"16px",cursor:"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>Calculate Insurance Need</button>
             {insResult&&<div id="insurance-needs-result" style={{marginTop:24,background:`${C.accentText}08`,borderRadius:16,padding:"28px 32px"}}>
               <div style={{textAlign:"center",marginBottom:20}}><div style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>Recommended Life Insurance Coverage</div><div style={{fontFamily:ff,fontSize:48,color:C.accentText,fontWeight:700,margin:"8px 0"}}>C${(insResult.total/1000).toFixed(0)}K</div></div>
-              <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:16}}>
+              <div className="grid-3-1" style={{gap:16}}>
                 {[{l:"Income Replacement (10x)",v:`C$${(insResult.income/1000).toFixed(0)}K`},{l:"Mortgage Payoff",v:`C$${(insResult.debt/1000).toFixed(0)}K`},{l:`Education (${deps} children)`,v:`C$${(insResult.edu/1000).toFixed(0)}K`}].map((m,i)=><div key={i} style={{textAlign:"center",background:"#fff",borderRadius:12,padding:16}}><div style={{fontFamily:ff,fontSize:22,color:C.navy,fontWeight:700}}>{m.v}</div><div style={{fontFamily:fs,fontSize:11,color:"#6B6B6B",marginTop:2}}>{m.l}</div></div>)}
               </div>
               <div style={{textAlign:"center",marginTop:20}}><button onClick={()=>exportToPDF("insurance-needs-result","Insurance Needs Analysis")} style={{background:C.accentText,border:"none",borderRadius:10,padding:"10px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>&#128190; Download PDF</button></div>
             </div>}
           </>}
           {calc==="retirement"&&<>
-            <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:20}}>
+            <div className="grid-3-1" style={{gap:20,marginBottom:20}}>
               <div><label htmlFor="calc-5" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Current Age</label><input type="number" id="calc-5" min="16" max="89" step="1" value={rAge} onChange={e=>setRAge(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
               <div><label htmlFor="calc-6" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Target Retirement Age</label><input type="number" id="calc-6" min="17" max="89" step="1" value={rRetire} onChange={e=>setRRetire(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
               <div><label htmlFor="calc-7" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Current Annual Income</label><input type="number" id="calc-7" min="0" step="1000" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
@@ -107,7 +108,7 @@ export default function CalculatorsPage({setPage}){
             {rResult&&<div id="retirement-result" style={{marginTop:24}}>
               {/* Projected Savings */}
               <div style={{background:`${C.purple}08`,borderRadius:16,padding:"28px 32px",marginBottom:16}}>
-                <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr",gap:20}}>
+                <div className="grid-2-1" style={{gap:20}}>
                   <div style={{textAlign:"center"}}>
                     <div style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1}}>Projected Savings at {rRetire}</div>
                     <div style={{fontFamily:ff,fontSize:42,color:C.purple,fontWeight:700,margin:"8px 0"}}>C${(rResult.totalAtRetire/1000).toFixed(0)}K</div>
@@ -123,7 +124,7 @@ export default function CalculatorsPage({setPage}){
               {/* Monthly Income Breakdown */}
               <div style={{background:"#fff",borderRadius:16,padding:"28px 32px",border:"1px solid #eee",marginBottom:16}}>
                 <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 16px",fontWeight:700}}>Projected Monthly Retirement Income</h4>
-                <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr 1fr",gap:12}}>
+                <div className="grid-4-1" style={{gap:12}}>
                   {[
                     {l:"From Savings (4% rule)",v:`C$${rResult.monthlyFromSavings.toLocaleString()}`,c:C.purple},
                     {l:"CPP + OAS (estimate)",v:`C$${rResult.monthlyGov.toLocaleString()}`,c:C.green},

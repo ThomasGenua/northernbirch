@@ -1,9 +1,10 @@
 import React from "react";
-import { C, Linkify, SH, fs } from '../ui.jsx';
+import { C, fs, Linkify, SH } from '../ui.jsx';
 
 export default function AccessibilityPage(){
+  
   return(
-    <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
+    <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
         <SH tag="Accessibility" tagColor={C.greenText} title="Accessibility Commitment" desc="Northern Birch is committed to providing accessible services to all members in accordance with the Accessibility for Ontarians with Disabilities Act (AODA)."/>
         {[

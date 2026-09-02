@@ -2,7 +2,7 @@
 // metadata, the small components every page builds on, and the hooks behind
 // them. Split out of App.jsx so page components can live in their own modules
 // and be loaded on demand -- nothing here changed in the move.
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import './index.css';
 import ratesData from './data/rates.json';
 
@@ -176,9 +176,15 @@ export const LANG_TAG={en:"en",est:"et",lat:"lv"};
 export function readLang(){
   try{const v=window.localStorage.getItem(LANG_KEY);return v==="est"||v==="lat"?v:"en"}catch(e){return "en"}
 }
+const langListeners=new Set();
+const subscribeLang=(cb)=>{langListeners.add(cb);return()=>langListeners.delete(cb)};
 export function writeLang(v){
   try{window.localStorage.setItem(LANG_KEY,v)}catch(e){}
+  langListeners.forEach(l=>l());
 }
+/** The chosen language. English while hydrating, because that is what the
+ *  prerendered HTML says; the stored choice takes over on the same tick. */
+export function useLang(){return useSyncExternalStore(subscribeLang,readLang,()=>"en")}
 
 // ============ ROUTES ============
 // Every page has a real URL, so it can be linked, shared, bookmarked and
@@ -407,19 +413,28 @@ export const readBreakpoint=()=>{
   const w=window.innerWidth;
   return w<=768?"m":w<=900?"t":w<=1024?"l":"d";
 };
-export function useBreakpoint(){
-  const[bp,setBp]=useState(readBreakpoint);
-  useEffect(()=>{
-    const h=()=>setBp(readBreakpoint());
-    window.addEventListener("resize",h);
-    window.addEventListener("orientationchange",h);
-    h();
-    return()=>{window.removeEventListener("resize",h);window.removeEventListener("orientationchange",h)};
-  },[]);
-  return bp;
-}
+// The pages are prerendered in Node, where there is no viewport, so every
+// hook below answers "desktop" for the server and for the hydrating render
+// that has to match it, then switches to the real measurement. That is what
+// useSyncExternalStore's third argument is for; doing it with an effect works
+// but tells React the first render was a guess it now has to reconcile.
+const subscribeViewport=(cb)=>{
+  window.addEventListener("resize",cb);
+  window.addEventListener("orientationchange",cb);
+  return()=>{window.removeEventListener("resize",cb);window.removeEventListener("orientationchange",cb)};
+};
+export function useBreakpoint(){return useSyncExternalStore(subscribeViewport,readBreakpoint,()=>"d")}
 
-export function useW(){const[w,setW]=useState(typeof window!=='undefined'?window.innerWidth:1200);useEffect(()=>{const h=()=>setW(window.innerWidth);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h)},[]);return w}
+export function useW(){return useSyncExternalStore(subscribeViewport,()=>window.innerWidth,()=>1200)}
+// The one viewport question nearly every page asks.
+export function useMob(){return useMaxW(768)}
+/** True when the viewport is at most `px` wide -- and false on the server and
+ *  in the render that hydrates it, like everything else here. Layout decisions
+ *  at any breakpoint go through this; reading window.innerWidth during render
+ *  disagrees with the prerendered HTML and costs the hydration. */
+export function useMaxW(px){
+  return useSyncExternalStore(subscribeViewport,()=>window.innerWidth<=px,()=>false);
+}
 export const g=(w,d,t,m)=>w>1024?d:w>768?t:m; // grid helper: desktop, tablet, mobile
 // ============ CULTURAL BRANDING ELEMENTS ============
 // Birch tree silhouettes for hero
@@ -579,9 +594,15 @@ export const COOKIE_PREF_KEY="nb-cookie-pref";
 export function readCookiePref(){
   try{return window.localStorage.getItem(COOKIE_PREF_KEY)}catch(e){return null}
 }
+const prefListeners=new Set();
+const subscribePref=(cb)=>{prefListeners.add(cb);return()=>prefListeners.delete(cb)};
 export function writeCookiePref(v){
   try{window.localStorage.setItem(COOKIE_PREF_KEY,v)}catch(e){}
+  prefListeners.forEach(l=>l());
 }
+/** The stored choice, or null if none. Answers "essential" for the server and
+ *  the hydrating render, so no banner is ever part of the prerendered markup. */
+export function useCookiePref(){return useSyncExternalStore(subscribePref,readCookiePref,()=>"essential")}
 // Nothing reads this yet: it is the gate any future measurement should hang
 // off, so the consent exists before the tracker does.
 export function analyticsAllowed(){return readCookiePref()==="all"}

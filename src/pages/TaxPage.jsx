@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Btn, C, FAQ, SH, callAI, exportToPDF, ff, fs } from '../ui.jsx';
+import { Btn, C, callAI, exportToPDF, FAQ, ff, fs, SH, useMob } from '../ui.jsx';
 
 export default function TaxPage({setPage}){
+  const mob=useMob();
   const[mode,setMode]=useState("optimizer");
   const[input,setInput]=useState("");
   const[loading,setLoading]=useState(false);
@@ -21,7 +22,7 @@ export default function TaxPage({setPage}){
     }catch(e){setResult("Having trouble connecting. Please call 416-465-4659.");}
     setLoading(false);
   };
-  const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
+  const isMob=mob;
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
@@ -56,12 +57,12 @@ export default function TaxPage({setPage}){
 
         {mode==="calculator"&&<div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
           <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 24px"}}>RRSP vs. TFSA Comparison</h3>
-          <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:24}}>
+          <div className="grid-3-1" style={{gap:20,marginBottom:24}}>
             <div><label htmlFor="calc-11" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Annual Income</label><input type="number" id="calc-11" value={rIncome} onChange={e=>setRIncome(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
             <div><label htmlFor="calc-12" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>RRSP Contribution</label><input type="number" id="calc-12" value={rContrib} onChange={e=>setRContrib(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box"}}/></div>
             <div><label htmlFor="sel-4" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Marginal Tax Rate (%)</label><select id="sel-4" value={rRate} onChange={e=>setRRate(+e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:16,outline:"none",boxSizing:"border-box",background:"#fff"}}><option value={20}>20.05% ($0-$51K)</option><option value={30}>29.65% ($51K-$102K)</option><option value={31}>31.48% ($102K-$150K)</option><option value={33}>33.89% ($150K-$220K)</option><option value={46}>46.41% ($220K+)</option></select></div>
           </div>
-          <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr",gap:16}}>
+          <div className="grid-2-1" style={{gap:16}}>
             <div style={{background:`${C.accentText}06`,borderRadius:16,padding:24,borderTop:`3px solid ${C.accent}`}}>
               <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 16px",fontWeight:700}}>RRSP</h4>
               {[

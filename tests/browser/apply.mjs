@@ -108,7 +108,7 @@ const go = async (r) => {
 // reachable the way people look for it, and usable on a phone
 {
   const p = await go('/');
-  check(await p.locator('nav button', { hasText: /^Apply$/ }).count() >= 1, 'Apply is in the primary navigation');
+  check(await p.locator('nav button:visible', { hasText: /^Apply$/ }).count() >= 1, 'Apply is in the primary navigation');
   await p.keyboard.press('Control+k'); await p.waitForTimeout(350);
   await p.locator('[role="dialog"] input').fill('open an account'); await p.waitForTimeout(400);
   const titles = await p.locator('[role="dialog"] button span:first-child').allTextContents();

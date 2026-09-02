@@ -38,7 +38,7 @@ let total=0;
  total+=await audit(p,'login modal');await p.close();}
 // notifications
 {const p=await ctx.newPage();await p.goto(`${BASE}/`,{waitUntil:'domcontentloaded'});await p.waitForTimeout(1200);
- await p.locator('button[aria-label="Notifications"]').first().click().catch(()=>{});await p.waitForTimeout(600);
+ await p.locator('button[aria-label="Notifications"]:visible').first().click().catch(()=>{});await p.waitForTimeout(600);
  total+=await audit(p,'notifications panel');await p.close();}
 // chat widget
 {const p=await ctx.newPage();await p.goto(`${BASE}/`,{waitUntil:'domcontentloaded'});await p.waitForTimeout(1200);
@@ -52,7 +52,7 @@ let total=0;
 // mobile menu
 {const c2=await br.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});await blockFonts(c2);
  const p=await c2.newPage();await p.goto(`${BASE}/`,{waitUntil:'domcontentloaded'});await p.waitForTimeout(1200);
- await p.locator('nav button').last().click().catch(()=>{});await p.waitForTimeout(600);
+ await p.locator('nav button:visible').last().click().catch(()=>{});await p.waitForTimeout(600);
  total+=await audit(p,'mobile menu (open)');await c2.close();}
 console.log(`\nissues in overlay states: ${total}`);
 await br.close();

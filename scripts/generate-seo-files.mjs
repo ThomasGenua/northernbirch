@@ -7,11 +7,13 @@
 // run JS at all, so every shared link previewed as the homepage.
 //
 // Writing one file per route gives each URL its own title, description,
-// canonical and Open Graph tags in the initial HTML. The body is still the
-// SPA — this fixes what a non-JS client reads about the page, not what it can
-// interact with.
-import { writeFileSync, readFileSync, mkdirSync } from 'node:fs';
+// canonical and Open Graph tags in the initial HTML -- and, since the
+// prerender step below, the page's actual content. Anything that does not run
+// JavaScript now reads the page rather than an empty div, and a member on a
+// slow connection sees it while the 340KB bundle is still arriving.
+import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const SITE = (process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://www.northernbirchcu.com').replace(/\/+$/, '');
 const DIST = join(process.cwd(), 'dist');
@@ -98,6 +100,28 @@ const EXCLUDE = new Set(['/dashboard', '/messages', '/leadership']);
 
 const shell = readFileSync(join(DIST, 'index.html'), 'utf8');
 
+// The server build (npm run build:ssr) writes dist-ssr/entry-server.js. If it
+// is missing -- someone ran vite build on its own -- every page still gets its
+// meta, just no body, which is exactly what this script did before.
+const SSR_ENTRY = join(process.cwd(), 'dist-ssr', 'entry-server.js');
+let renderRoute = null;
+if (existsSync(SSR_ENTRY)) {
+  ({ render: renderRoute } = await import(pathToFileURL(SSR_ENTRY).href));
+} else {
+  console.warn('dist-ssr/entry-server.js not found -- writing meta-only pages');
+}
+
+// A route that throws is a bug worth failing the build over: shipping an empty
+// div for one page while the other 36 carry content is the kind of thing that
+// goes unnoticed for months.
+const prerendered = new Map();
+if (renderRoute) {
+  for (const { path } of routes) {
+    try { prerendered.set(path, await renderRoute(path)); }
+    catch (e) { throw new Error(`prerendering ${path} failed: ${e && e.stack || e}`); }
+  }
+}
+
 // The generator writes its output back over dist/index.html, which is also
 // where it reads the shell from. A normal `npm run build` is safe because vite
 // regenerates dist first, but running this script on its own appended a second
@@ -113,7 +137,11 @@ const stripInjected = (html) => html
 
 function pageHtml(path, title, desc) {
   const url = SITE + (path === '/' ? '/' : path);
+  const body = prerendered.get(path);
   return stripInjected(shell)
+    // React hydrates this markup rather than replacing it, so the member keeps
+    // looking at the same pixels instead of watching the page blank and redraw.
+    .replace('<div id="root"></div>', body ? `<div id="root">${body}</div>` : '<div id="root"></div>')
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${esc(desc)}" />`)
     .replace(/<meta property="og:title" content="[^"]*"\s*\/>/, `<meta property="og:title" content="${esc(title)}" />`)
@@ -161,4 +189,4 @@ ${urls.map((p) => `  <url><loc>${SITE}${p === '/' ? '/' : p}</loc><priority>${pr
 // effective.
 writeFileSync(join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 
-console.log(`SEO files written for ${SITE} (${written} route pages, ${urls.length} sitemap urls)`);
+console.log(`SEO files written for ${SITE} (${prerendered.size} prerendered, ${written} route pages, ${urls.length} sitemap urls)`);

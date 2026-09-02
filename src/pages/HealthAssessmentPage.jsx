@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Btn, C, Fade, callAI, exportToPDF, ff, fs } from '../ui.jsx';
+import { Btn, C, callAI, exportToPDF, Fade, ff, fs, useMob } from '../ui.jsx';
 
 export default function HealthAssessmentPage({setPage}){
+  const mob=useMob();
   const[step,setStep]=useState(0);
   const[answers,setAnswers]=useState({});
   const[loading,setLoading]=useState(false);
@@ -53,7 +54,7 @@ export default function HealthAssessmentPage({setPage}){
   );
 
   if(result)return(
-    <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
+    <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
         {score&&<div id="health-assessment-result" style={{textAlign:"center",marginBottom:32}}>
           <div style={{width:120,height:120,borderRadius:"50%",border:`8px solid ${scoreColor}`,margin:"0 auto 16px",display:"flex",alignItems:"center",justifyContent:"center",background:"#fff",boxShadow:`0 4px 20px ${scoreColor}30`}}>
@@ -88,8 +89,8 @@ export default function HealthAssessmentPage({setPage}){
           <div style={{textAlign:"center",marginBottom:12}}>
             <span style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)"}}>Question {step+1} of {questions.length}</span>
           </div>
-          <h2 style={{fontFamily:ff,fontSize:typeof window!=="undefined"&&window.innerWidth<=768?24:32,color:"#fff",textAlign:"center",margin:"0 0 32px"}}>{q.q}</h2>
-          <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:12}}>
+          <h2 style={{fontFamily:ff,fontSize:mob?24:32,color:"#fff",textAlign:"center",margin:"0 0 32px"}}>{q.q}</h2>
+          <div className="grid-2-1" style={{gap:12}}>
             {q.options.map((opt,i)=>(
               <button key={i} onClick={()=>handleAnswer(q.id,opt)} style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:16,padding:"20px 24px",cursor:"pointer",textAlign:"left",transition:"all 0.3s",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:500}}>
                 {opt}

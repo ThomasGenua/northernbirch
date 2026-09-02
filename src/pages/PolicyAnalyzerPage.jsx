@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Btn, C, SH, callAI, exportToPDF, fs } from '../ui.jsx';
+import { Btn, C, callAI, exportToPDF, fs, SH } from '../ui.jsx';
 
 export default function PolicyAnalyzerPage({setPage}){
+  
   const[input,setInput]=useState("");
   const[loading,setLoading]=useState(false);
   const[result,setResult]=useState(null);
@@ -15,7 +16,7 @@ export default function PolicyAnalyzerPage({setPage}){
     setLoading(false);
   };
   return(
-    <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
+    <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
         <SH tag="AI-Powered Analysis" tagColor={C.purple} title="Coverage Gap Analyzer" desc="Describe your current insurance coverage and our AI will identify gaps and recommend Northern Birch products to fill them."/>
         {!result?<div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>

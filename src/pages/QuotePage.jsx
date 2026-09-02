@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { C, SH, SliderLabel, exportToPDF, ff, fs, money } from '../ui.jsx';
+import { C, exportToPDF, ff, fs, money, SH, SliderLabel, useMob } from '../ui.jsx';
 
 export default function QuotePage({setPage}){
+  const mob=useMob();
   const[type,setType]=useState("life");
   const[age,setAge]=useState(35);
   const[coverage,setCoverage]=useState(500000);
@@ -27,7 +28,7 @@ export default function QuotePage({setPage}){
   const types=[{l:"Term Life",v:"life",icon:"&#9829;",c:C.accentText},{l:"Home",v:"home",icon:"&#9750;",c:C.greenFill},{l:"Auto",v:"auto",icon:"&#9881;",c:C.amber},{l:"Travel",v:"travel",icon:"&#9992;",c:C.purple}];
   const activeType=types.find(t=>t.v===type);
   return(
-    <section style={{background:C.cream,padding:typeof window!=="undefined"&&window.innerWidth<=768?"60px 16px":"80px 24px",paddingTop:typeof window!=="undefined"&&window.innerWidth<=768?80:100}}>
+    <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
         <SH tag="Interactive Quote Calculator" tagColor={C.accentText} title="See your estimated premium instantly" desc="Drag the sliders to adjust coverage. Your estimated premium updates in real-time. No personal information required."/>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:8,marginBottom:32}}>
@@ -38,7 +39,7 @@ export default function QuotePage({setPage}){
             </button>
           ))}
         </div>
-        <div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 340px",gap:24}}>
+        <div className="grid-main-panel-1" style={{gap:24}}>
           {/* LEFT: Sliders */}
           <div style={{background:"#fff",borderRadius:24,padding:"36px 40px",border:"1px solid #eee"}}>
             <h3 style={{fontFamily:fs,fontSize:18,color:C.navy,margin:"0 0 28px",fontWeight:700}}>Customize your coverage</h3>
@@ -103,22 +104,22 @@ export default function QuotePage({setPage}){
           </div>
           {/* RIGHT: Live Result */}
           <div>
-            <div id="quote-result-panel" style={{background:C.navy,borderRadius:24,padding:"36px 32px",textAlign:"center",position:typeof window!=="undefined"&&window.innerWidth<=768?"relative":"sticky",top:80}}>
+            <div id="quote-result-panel" style={{background:C.navy,borderRadius:24,padding:"36px 32px",textAlign:"center",position:mob?"relative":"sticky",top:80}}>
               <div style={{width:56,height:56,borderRadius:16,background:`${activeType.c}25`,margin:"0 auto 16px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:24,color:activeType.c}} dangerouslySetInnerHTML={{__html:activeType.icon}}/></div>
               <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:2,marginBottom:4}}>Estimated Monthly Premium</div>
               <div style={{fontFamily:ff,fontSize:52,color:"#fff",fontWeight:700,margin:"0 0 4px",transition:"all 0.3s"}}>C${money(monthly)}</div>
               <div style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",marginBottom:20}}>C${money(annual)} / year</div>
               <div style={{background:"rgba(255,255,255,0.06)",borderRadius:14,padding:"16px",marginBottom:20}}>
-                {type==="life"&&<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8,textAlign:"left"}}>
+                {type==="life"&&<div className="grid-2-1" style={{gap:8,textAlign:"left"}}>
                   {[["Coverage",`C$${(coverage/1000)}K`],["Term",`${term} years`],["Age",age],["Tobacco",smoker?"Yes":"No"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>{v}</div></div>)}
                 </div>}
-                {type==="home"&&<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8,textAlign:"left"}}>
+                {type==="home"&&<div className="grid-2-1" style={{gap:8,textAlign:"left"}}>
                   {[["Home Value",`C$${(homeVal/1000)}K`],["Deductible",`C$${deductible}`],["Coverage","Replacement Cost"],["Liability","C$2M"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>{v}</div></div>)}
                 </div>}
-                {type==="auto"&&<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8,textAlign:"left"}}>
+                {type==="auto"&&<div className="grid-2-1" style={{gap:8,textAlign:"left"}}>
                   {[["Vehicle",carYear],["Record",drivingRecord],["Liability","C$1M"],["Collision","Included"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600,textTransform:"capitalize"}}>{v}</div></div>)}
                 </div>}
-                {type==="travel"&&<div style={{display:"grid",gridTemplateColumns:typeof window!=="undefined"&&window.innerWidth<=768?"1fr":"1fr 1fr",gap:8,textAlign:"left"}}>
+                {type==="travel"&&<div className="grid-2-1" style={{gap:8,textAlign:"left"}}>
                   {[["Age",age],["Duration",`${tripDays} days`],["Travellers",travellers],["Medical","C$5M"]].map(([k,v],i)=><div key={i}><div style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",textTransform:"uppercase"}}>{k}</div><div style={{fontFamily:fs,fontSize:14,color:"#fff",fontWeight:600}}>{v}</div></div>)}
                 </div>}
               </div>

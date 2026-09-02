@@ -32,7 +32,7 @@ const visit = async (consent) => {
   await p.locator('button', { hasText: consent }).click().catch(() => {});
   await p.waitForTimeout(600);
   // a route change, which is what fires a pageview in a single-page app
-  await p.locator('nav button', { hasText: /^Advice$/ }).first().click().catch(() => {});
+  await p.locator('nav button:visible', { hasText: /^Advice$/ }).first().click().catch(() => {});
   await p.waitForTimeout(900);
   const tags = await p.locator('script[src*="plausible"]').count();
   const banner = await p.evaluate(() => document.body.innerText.slice(0, 0) || '');

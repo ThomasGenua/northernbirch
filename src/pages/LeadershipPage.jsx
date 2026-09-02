@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Btn, C, SH, ff, fs } from '../ui.jsx';
+import { Btn, C, ff, fs, SH, useMob } from '../ui.jsx';
 
 export default function LeadershipPage({setPage}){
+  const mob=useMob();
   const[tab,setTab]=useState("overview");
-  const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
+  const isMob=mob;
   const tabs=[{l:"Overview",v:"overview"},{l:"Costs",v:"costs"},{l:"Legal & Regulatory",v:"legal"},{l:"Value & ROI",v:"roi"},{l:"Competitive Edge",v:"competitive"},{l:"Implementation",v:"implementation"}];
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>
@@ -18,7 +19,7 @@ export default function LeadershipPage({setPage}){
             <h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>The Opportunity</h3>
             <p style={{fontFamily:fs,fontSize:15,color:"#555",lineHeight:1.8,marginBottom:16}}>Northern Birch offers zero insurance products. Every competitor of meaningful size -- Desjardins, Meridian, DUCA, FirstOntario -- offers insurance. NBCU members who need life, home, auto, or travel insurance must leave the credit union entirely, creating an opening for competitors to cross-sell banking products.</p>
             <p style={{fontFamily:fs,fontSize:15,color:"#555",lineHeight:1.8,marginBottom:24}}>This platform adds insurance distribution, international transfers, AI-powered financial tools, estate planning, and business services to Northern Birch's offering -- turning a ~$200M credit union into a comprehensive financial services provider that competes with institutions 100x its size.</p>
-            <div style={{display:"grid",gridTemplateColumns:isMob?"1fr 1fr":"repeat(4,1fr)",gap:16}}>
+            <div className="grid-4-2" style={{gap:16}}>
               {[{v:"C$4.05M",l:"5-Year Net Revenue",c:C.greenText},{v:"C$56K",l:"3-Year Total Cost to NBCU",c:C.accentText},{v:"Day 1",l:"Profitable From",c:C.amberText},{v:"1%",l:"Year 5 Cost-to-Revenue",c:C.purple}].map((m,i)=>
                 <div key={i} style={{background:`${m.c}06`,borderRadius:16,padding:20,textAlign:"center",borderTop:`3px solid ${m.c}`}}>
                   <div style={{fontFamily:ff,fontSize:28,color:m.c,fontWeight:700}}>{m.v}</div>
@@ -30,7 +31,7 @@ export default function LeadershipPage({setPage}){
           <div style={{background:`${C.navy}06`,borderRadius:20,padding:isMob?24:32,border:`1px solid ${C.navy}12`}}>
             <h3 style={{fontFamily:ff,fontSize:20,color:C.navy,margin:"0 0 12px"}}>What This Website Demonstrates</h3>
             <p style={{fontFamily:fs,fontSize:14,color:"#666",lineHeight:1.7,marginBottom:16}}>This is not a mockup. Every feature on this site is functional:</p>
-            <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr",gap:10}}>
+            <div className="grid-2-1" style={{gap:10}}>
               {["7 AI features powered by Claude Opus 4.6 (real API calls, real conversations)","Real-time insurance quote calculator with actuarial math","Trilingual experience (English, Estonian, Latvian) -- 80+ translated strings","Credit score monitoring, budgeting, and spending categorization","International transfer widget with live EUR exchange rates","Digital document signing and identity verification","Claims filing wizard, appointment booking, coverage comparison","Canadian regulatory compliance (PIPEDA, AODA, FSRA, FINTRAC)","Estonian/Latvian cultural branding (birch trees, cornflowers, daisies, folk patterns)","Tax & savings optimizer with RRSP/TFSA calculators"].map((f,i)=>
                 <div key={i} style={{display:"flex",gap:8,alignItems:"flex-start"}}><span style={{color:C.greenText,fontSize:14,flexShrink:0}}>&#10003;</span><span style={{fontFamily:fs,fontSize:13,color:"#555",lineHeight:1.6}}>{f}</span></div>
               )}
@@ -67,7 +68,7 @@ export default function LeadershipPage({setPage}){
               ))}
             </div>
           </div>
-          <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr",gap:16,marginBottom:24}}>
+          <div className="grid-3-1" style={{gap:16,marginBottom:24}}>
             {[
               {title:"What Oodler Provides Free",color:C.greenText,items:["Insurance partner negotiation","KESKUS launch strategy","Regulatory navigation (FSRA/RIBO)","Website & digital UX audit","Cybersecurity assessment","Payments modernization advisory","Quarterly performance analytics","Ongoing technology advisory"],value:"C$75K-100K estimated value"},
               {title:"What Insurers Provide Free",color:C.accentText,items:["Insurance products & underwriting","Quoting tools & digital infrastructure","Staff training & certification","Marketing materials & co-branding","Policy administration","Claims processing","Dedicated partnership manager","Regulatory compliance support"],value:"They want NBCU's distribution"},
@@ -97,7 +98,7 @@ export default function LeadershipPage({setPage}){
             <div key={i} style={{background:"#fff",borderRadius:20,padding:isMob?24:32,border:"1px solid #eee",marginBottom:16,borderLeft:`4px solid ${section.color}`}}>
               <h3 style={{fontFamily:fs,fontSize:18,color:C.navy,margin:"0 0 10px",fontWeight:700}}>{section.title}</h3>
               <p style={{fontFamily:fs,fontSize:14,color:"#666",lineHeight:1.8,marginBottom:12}}>{section.content}</p>
-              <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr",gap:8}}>
+              <div className="grid-2-1" style={{gap:8}}>
                 {section.items.map((item,ii)=><div key={ii} style={{display:"flex",gap:8,alignItems:"center"}}><span style={{color:section.color,fontSize:12}}>&#10003;</span><span style={{fontFamily:fs,fontSize:13,color:"#555"}}>{item}</span></div>)}
               </div>
             </div>
@@ -125,7 +126,7 @@ export default function LeadershipPage({setPage}){
               ))}
             </div>
           </div>
-          <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr",gap:16,marginBottom:24}}>
+          <div className="grid-2-1" style={{gap:16,marginBottom:24}}>
             <div style={{background:"#fff",borderRadius:20,padding:28,border:"1px solid #eee"}}>
               <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 12px",fontWeight:700}}>Revenue Sources</h4>
               {[
@@ -179,7 +180,7 @@ export default function LeadershipPage({setPage}){
           </div>
           <div style={{background:C.navy,borderRadius:20,padding:isMob?24:32}}>
             <h4 style={{fontFamily:fs,fontSize:16,color:"#fff",margin:"0 0 16px",fontWeight:700}}>Competitor Comparison</h4>
-            <div style={{display:"grid",gridTemplateColumns:isMob?"1fr":"1fr 1fr 1fr 1fr 1fr",gap:12}}>
+            <div className="grid-5-1" style={{gap:12}}>
               {[
                 {name:"Northern Birch\n(with Oodler)",features:["AI advisor","Estonian/Latvian","Co-op insurance","Baltic transfers","Community trust"],score:"10/10",c:C.green},
                 {name:"Desjardins /\nMeridian",features:["Insurance products","Large scale","No AI advisor","No Baltic focus","No co-op specialty"],score:"6/10",c:C.amber},

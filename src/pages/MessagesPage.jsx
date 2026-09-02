@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { C, Clickable, RATE, callAI, ff, fs } from '../ui.jsx';
+import { C, callAI, Clickable, ff, fs, RATE, useMob } from '../ui.jsx';
 
 export default function MessagesPage({setPage:_setPage}){
+  const mob=useMob();
   const[thread,setThread]=useState("heili");
   const[mobileView,setMobileView]=useState("threads");// threads | chat
   const[input,setInput]=useState("");
@@ -41,14 +42,14 @@ export default function MessagesPage({setPage:_setPage}){
     }
     setLoading(false);
   };
-  const isMob=typeof window!=="undefined"&&window.innerWidth<=768;
+  const isMob=mob;
   const threads=[
     {id:"heili",name:"Heili Orav",role:"Wealth & Estate",unread:0,last:"Perfect. I have time Tuesday at 10:30 AM..."},
     {id:"insurance",name:"Andres Tamm",role:"Insurance Advisor",unread:0,last:"CUMIS offers a 25-condition policy..."},
     {id:"branch",name:"Northern Birch Support",role:"Branch Services",unread:0,last:"Debit card replacement processed..."},
   ];
   return <section style={{background:"#f0f2f5",padding:isMob?"60px 0 0":"80px 0 0",paddingTop:isMob?64:80,minHeight:"100vh"}}>
-    <div style={{maxWidth:1100,margin:"0 auto",height:"calc(100vh - 80px)",display:"grid",gridTemplateColumns:isMob?"1fr":"320px 1fr",gap:0,background:"#fff"}}>
+    <div className="grid-panel-main-1" style={{maxWidth:1100,margin:"0 auto",height:"calc(100vh - 80px)",gap:0,background:"#fff"}}>
       {/* Sidebar */}
       {(!isMob||mobileView==="threads")&&<div style={{borderRight:isMob?"none":"1px solid #eee",overflow:"auto",background:"#fafafa"}}>
         <div style={{padding:"16px 20px",borderBottom:"1px solid #eee"}}>
