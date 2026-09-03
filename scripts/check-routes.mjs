@@ -98,7 +98,7 @@ for (const f of src) {
       errors.push(`${f} submits the form "${name}", which index.html does not declare -- Netlify would reject it`);
       continue;
     }
-    const sent = [...body.matchAll(/(?:^|,)\s*(\w+)\s*[:,}]?/g)].map((m) => m[1]).filter((n) => n !== 'CONSENT_VERSION');
+    const sent = [...body.matchAll(/(?:^|,)\s*(\w+)/g)].map((m) => m[1]).filter((n) => n !== 'CONSENT_VERSION');
     const missing = sent.filter((n) => !declared.get(name).has(n));
     if (missing.length) errors.push(`form "${name}" sends ${missing.join(', ')} -- not declared in index.html`);
   }
