@@ -73,6 +73,13 @@ const visit = async (consent) => {
       const c = await br.newContext({ viewport: { width: 1280, height: 1000 }, reducedMotion: 'reduce' });
       await blockFonts(c);
       await c.addInitScript(() => { window.__ev = []; window.plausible = (e, o) => window.__ev.push([e, o]); });
+      // The real plausible.io script -- reachable from a hosted CI runner, blocked
+      // by this sandbox's own network policy locally -- overwrites window.plausible
+      // with its own implementation once it loads, same as it would in production.
+      // That's exactly what the earlier assertions in this block want to see; this
+      // one wants to inspect what gets passed to it, so the fetch is aborted here
+      // only, keeping the stub in place regardless of which environment runs it.
+      await c.route('https://plausible.io/**', (route) => route.abort());
       const p = await c.newPage();
       await p.goto(BASE + '/', { waitUntil: 'domcontentloaded' }); await p.waitForTimeout(900);
       await p.locator('button', { hasText: 'Allow measurement' }).click(); await p.waitForTimeout(400);
