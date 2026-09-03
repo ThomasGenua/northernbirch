@@ -1,0 +1,92 @@
+# Every check in this repo has, until now, only ever run on one developer's
+# machine: 520 browser assertions, 23 unit tests, a linter and two build-time
+# validators, none of them wired to anything that would notice a regression.
+# This runs them on every pull request and every push to main.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A second push to the same branch makes the first run's answer irrelevant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # The browser suites took 24m30s on a 2-core runner -- about twice what they
+    # take on a developer machine -- and the first run of this workflow was
+    # cancelled by a 25-minute limit with the suites still going. Everything
+    # before them finishes in well under a minute, so this budget is almost
+    # entirely theirs, with room for a slower runner or a cold Chromium cache.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests (/api/chat)
+        run: npm test
+
+      # Builds the client, the server bundle, and the 37 prerendered pages --
+      # and runs check-rates and check-routes on the way, which is where a
+      # contradictory rate or an unwired route stops.
+      - name: Build
+        run: npm run build
+
+      # playwright-core ships no browser of its own. Install just Chromium, and
+      # cache it: it is ~170MB and does not change between runs.
+      - name: Cache Chromium
+        id: chromium-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: chromium-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      # The CLI version must match the installed playwright-core: each release
+      # expects a specific Chromium revision, and executablePath() below looks
+      # for exactly that one. Pinning a different version installs a browser
+      # the library will not find.
+      - name: Install Chromium
+        if: steps.chromium-cache.outputs.cache-hit != 'true'
+        run: npx --yes playwright@$(node -p "require('playwright-core/package.json').version") install --with-deps chromium
+
+      - name: Install Chromium system dependencies
+        if: steps.chromium-cache.outputs.cache-hit == 'true'
+        run: npx --yes playwright@$(node -p "require('playwright-core/package.json').version") install-deps chromium
+
+      # The suites resolve a browser through CHROME_PATH before anything else.
+      # $(...) opens its own quoting context in bash, independent of the
+      # surrounding double quotes, so the single-quoted node argument needs no
+      # escaping -- backslash-escaping the inner quotes (as an earlier version
+      # of this line did) makes bash pass literal backslashes to node, which
+      # is a syntax error it reports as "Expected unicode escape". That failure
+      # left CHROME_PATH empty, and the suites silently fell back to whatever
+      # Chrome CANDIDATES in tests/browser/env.mjs found next -- this runner's
+      # pre-installed system Chrome, not the pinned build the step above just
+      # downloaded and cached.
+      - name: Point the suites at it
+        run: echo "CHROME_PATH=$(node -p 'require("playwright-core").chromium.executablePath()')" >> "$GITHUB_ENV"
+
+      - name: Browser suites
+        run: npm run test:browser
+
+      # A failed suite usually needs to be seen, not read about.
+      - name: Keep the built site on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 5
