@@ -67,8 +67,17 @@ jobs:
         run: npx --yes playwright@$(node -p "require('playwright-core/package.json').version") install-deps chromium
 
       # The suites resolve a browser through CHROME_PATH before anything else.
+      # $(...) opens its own quoting context in bash, independent of the
+      # surrounding double quotes, so the single-quoted node argument needs no
+      # escaping -- backslash-escaping the inner quotes (as an earlier version
+      # of this line did) makes bash pass literal backslashes to node, which
+      # is a syntax error it reports as "Expected unicode escape". That failure
+      # left CHROME_PATH empty, and the suites silently fell back to whatever
+      # Chrome CANDIDATES in tests/browser/env.mjs found next -- this runner's
+      # pre-installed system Chrome, not the pinned build the step above just
+      # downloaded and cached.
       - name: Point the suites at it
-        run: echo "CHROME_PATH=$(node -p 'require(\"playwright-core\").chromium.executablePath()')" >> "$GITHUB_ENV"
+        run: echo "CHROME_PATH=$(node -p 'require("playwright-core").chromium.executablePath()')" >> "$GITHUB_ENV"
 
       - name: Browser suites
         run: npm run test:browser
