@@ -15,14 +15,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Everything that is fast, and the build the browser shards test against.
   check:
+    name: Lint, unit tests, build
     runs-on: ubuntu-latest
-    # The browser suites took 24m30s on a 2-core runner -- about twice what they
-    # take on a developer machine -- and the first run of this workflow was
-    # cancelled by a 25-minute limit with the suites still going. Everything
-    # before them finishes in well under a minute, so this budget is almost
-    # entirely theirs, with room for a slower runner or a cold Chromium cache.
-    timeout-minutes: 45
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -44,6 +41,48 @@ jobs:
       # contradictory rate or an unwired route stops.
       - name: Build
         run: npm run build
+
+      # Built once and handed to every shard, rather than rebuilt four times:
+      # a few seconds cheaper, and it means the four of them are demonstrably
+      # testing the same bytes. It is also here to be downloaded when a suite
+      # fails and the built page needs looking at rather than reading about.
+      - name: Hand the built site to the browser shards
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 5
+
+  # The browser suites took 24m30s in one job on a 2-core runner -- about twice
+  # what they take on a developer machine, and long enough that nobody waits for
+  # the answer. They are 34 independent processes against a static server, so
+  # they split across machines with nothing to coordinate.
+  browser:
+    name: Browser suites (${{ matrix.shard }}/${{ strategy.job-total }})
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      # One shard's failure should not hide the other three's results.
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # For playwright-core and axe-core; the suites are plain node scripts.
+      - run: npm ci
+
+      - name: Fetch the built site
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
 
       # playwright-core ships no browser of its own. Install just Chromium, and
       # cache it: it is ~170MB and does not change between runs.
@@ -79,14 +118,9 @@ jobs:
       - name: Point the suites at it
         run: echo "CHROME_PATH=$(node -p 'require("playwright-core").chromium.executablePath()')" >> "$GITHUB_ENV"
 
+      # job-total is the length of the matrix above, so the split can only ever
+      # be over the number of machines actually running it. If it failed to
+      # expand, run.mjs rejects the argument rather than quietly running a
+      # fraction of the suites and reporting success.
       - name: Browser suites
-        run: npm run test:browser
-
-      # A failed suite usually needs to be seen, not read about.
-      - name: Keep the built site on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist
-          retention-days: 5
+        run: npm run test:browser -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
