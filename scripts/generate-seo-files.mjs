@@ -130,7 +130,11 @@ const emptyRoot = (html) => {
   return html;
 };
 
-const shell = emptyRoot(readFileSync(join(DIST, 'index.html'), 'utf8'));
+const rawShell = readFileSync(join(DIST, 'index.html'), 'utf8');
+const shell = emptyRoot(rawShell);
+// emptyRoot only changes the file if there was a body inside <div id="root">,
+// which means dist/ has already been prerendered by an earlier run.
+const alreadyPrerendered = shell !== rawShell;
 
 // The server build (npm run build:ssr) writes dist-ssr/entry-server.js. If it
 // is missing -- someone ran vite build on its own -- every page still gets its
@@ -139,6 +143,18 @@ const SSR_ENTRY = join(process.cwd(), 'dist-ssr', 'entry-server.js');
 let renderRoute = null;
 if (existsSync(SSR_ENTRY)) {
   ({ render: renderRoute } = await import(pathToFileURL(SSR_ENTRY).href));
+} else if (alreadyPrerendered) {
+  // Running now would rewrite 37 finished pages as empty shells -- silently,
+  // and reported as success. CI found this the honest way: the browser shards
+  // download dist/ as an artifact but not dist-ssr/, and tests/browser/seo.mjs
+  // runs this script to check it is idempotent, which turned every page in
+  // that shard into meta with no content (dist/accounts/index.html went from
+  // 59,942 bytes to 6,789). Whatever ran after it in the same shard was then
+  // testing a site with nothing in it.
+  throw new Error(
+    'dist/ is already prerendered but dist-ssr/entry-server.js is missing.\n' +
+    'Running now would replace every page with an empty shell. Use `npm run build`,\n' +
+    'which builds the server bundle first, or delete dist/ and start over.');
 } else {
   console.warn('dist-ssr/entry-server.js not found -- writing meta-only pages');
 }

@@ -46,11 +46,19 @@ jobs:
       # a few seconds cheaper, and it means the four of them are demonstrably
       # testing the same bytes. It is also here to be downloaded when a suite
       # fails and the built page needs looking at rather than reading about.
+      #
+      # dist-ssr goes with it. tests/browser/seo.mjs re-runs
+      # generate-seo-files.mjs to check that it is idempotent, and that script
+      # needs the server bundle to render the pages back; without it in the
+      # shard, the re-run rewrote all 37 pages as empty shells and every suite
+      # after it in that shard tested a site with no content in it.
       - name: Hand the built site to the browser shards
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: build
+          path: |
+            dist
+            dist-ssr
           retention-days: 5
 
   # The browser suites took 24m30s in one job on a 2-core runner -- about twice
@@ -78,11 +86,13 @@ jobs:
       # For playwright-core and axe-core; the suites are plain node scripts.
       - run: npm ci
 
+      # Both paths were uploaded from the workspace root, so they restore as
+      # dist/ and dist-ssr/ exactly where a local build would put them.
       - name: Fetch the built site
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: build
+          path: .
 
       # playwright-core ships no browser of its own. Install just Chromium, and
       # cache it: it is ~170MB and does not change between runs.
