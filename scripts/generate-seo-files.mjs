@@ -39,6 +39,12 @@ const defMatch = app.slice(app.indexOf('const META_DEFAULT')).match(/\["((?:[^"\
 const META_DEFAULT = [defMatch[1], defMatch[2]];
 if (Object.keys(META).length < 10) throw new Error('META table not parsed — did it move?');
 
+// The 404 page's title and description live outside META, because META is
+// checked route-by-route against ROUTES and this page has no route.
+const nfMatch = app.slice(app.indexOf('const META_NOTFOUND')).match(/\["((?:[^"\\]|\\.)*)","((?:[^"\\]|\\.)*)"\]/);
+if (!nfMatch) throw new Error('META_NOTFOUND not parsed — did it move?');
+const META_NOTFOUND = [nfMatch[1], nfMatch[2]].map((v) => v.replace(/\\"/g, '"'));
+
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 // Structured data for the credit union and its open branches. Every value here
@@ -98,7 +104,33 @@ function orgSchema(site) {
 // be promoted -- that decision just stopped at the sitemap.
 const EXCLUDE = new Set(['/dashboard', '/messages', '/leadership']);
 
-const shell = readFileSync(join(DIST, 'index.html'), 'utf8');
+// This script writes its output back over dist/index.html, which is also where
+// it reads the shell from -- so a second run reads a shell that already has the
+// homepage rendered into it. stripInjected below handles the meta that caused,
+// but not the body: the `<div id="root"></div>` that pageHtml looks for was no
+// longer empty, the replace silently did nothing, and every page came out
+// carrying the homepage's markup under its own title. tests/browser/seo.mjs
+// runs this script twice on purpose, so in practice every suite that ran after
+// it was testing 37 copies of the homepage.
+//
+// Empty the root before using it as a shell. The closing tag is found by
+// counting depth rather than by regex, because the rendered body is hundreds
+// of nested divs and the first </div> is not the right one.
+const emptyRoot = (html) => {
+  const open = '<div id="root">';
+  const i = html.indexOf(open);
+  if (i < 0) return html;
+  const tag = /<(\/?)div\b/g;
+  tag.lastIndex = i + open.length;
+  let depth = 1;
+  for (let m; (m = tag.exec(html));) {
+    depth += m[1] ? -1 : 1;
+    if (depth === 0) return html.slice(0, i) + open + '</div>' + html.slice(m.index + '</div>'.length);
+  }
+  return html;
+};
+
+const shell = emptyRoot(readFileSync(join(DIST, 'index.html'), 'utf8'));
 
 // The server build (npm run build:ssr) writes dist-ssr/entry-server.js. If it
 // is missing -- someone ran vite build on its own -- every page still gets its
@@ -135,9 +167,14 @@ const stripInjected = (html) => html
   .replace(/\s*<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '')
   .replace(/\s*<meta name="robots"[^>]*>/g, '');
 
-function pageHtml(path, title, desc) {
+function pageHtml(path, title, desc, opts = {}) {
   const url = SITE + (path === '/' ? '/' : path);
-  const body = prerendered.get(path);
+  const body = 'body' in opts ? opts.body : prerendered.get(path);
+  // The 404 file answers every unmatched URL, so it names no canonical and no
+  // og:url: either would be a claim that some one specific page is the page
+  // the visitor asked for, which is the soft-404 problem it exists to end.
+  const addressed = opts.canonical !== false;
+  const robots = opts.robots || (EXCLUDE.has(path) ? 'noindex, nofollow' : null);
   return stripInjected(shell)
     // React hydrates this markup rather than replacing it, so the member keeps
     // looking at the same pixels instead of watching the page blank and redraw.
@@ -149,17 +186,19 @@ function pageHtml(path, title, desc) {
     // og:image and the JSON-LD both need absolute URLs, and social crawlers do
     // not run JS, so they have to be written into every prerendered page here.
     .replace('</head>', [
-      `  <link rel="canonical" href="${url}" />`,
-      `    <meta property="og:url" content="${url}" />`,
+      ...(addressed ? [
+        `  <link rel="canonical" href="${url}" />`,
+        `    <meta property="og:url" content="${url}" />`,
+      ] : []),
       `    <meta property="og:image" content="${SITE}/og-image.png" />`,
       `    <meta property="og:image:width" content="1200" />`,
       `    <meta property="og:image:height" content="630" />`,
       `    <meta property="og:image:alt" content="Northern Birch Credit Union" />`,
       `    <meta name="twitter:image" content="${SITE}/og-image.png" />`,
       `    <script type="application/ld+json">${JSON.stringify(orgSchema(SITE))}</script>`,
-      ...(EXCLUDE.has(path) ? ['    <meta name="robots" content="noindex, nofollow" />'] : []),
+      ...(robots ? [`    <meta name="robots" content="${robots}" />`] : []),
       '  </head>',
-    ].join('\n'));
+    ].join('\n').replace(/^\s+/, '  '));
 }
 
 let written = 0;
@@ -175,6 +214,26 @@ for (const { key, path } of routes) {
   written++;
 }
 
+// --- 404 ---
+// Netlify serves dist/404.html, with a real 404 status, for any path that
+// matches no file. That only became possible when prerendering gave every
+// route its own file: until then netlify.toml needed a catch-all to
+// index.html so client-side routes survived a refresh, and that catch-all
+// also answered every unknown URL with the homepage under a 200.
+//
+// Rendered from a path that is deliberately not in ROUTES, which is what
+// makes pageFromPath fall through to the 404 page.
+const NOT_FOUND_PATH = '/__not-found__';
+if (routes.some((r) => r.path === NOT_FOUND_PATH)) throw new Error(`${NOT_FOUND_PATH} is a real route -- pick another sentinel for the 404 render`);
+let notFoundBody;
+if (renderRoute) {
+  try { notFoundBody = await renderRoute(NOT_FOUND_PATH); }
+  catch (e) { throw new Error(`prerendering the 404 page failed: ${e && e.stack || e}`); }
+}
+writeFileSync(join(DIST, '404.html'), pageHtml(NOT_FOUND_PATH, META_NOTFOUND[0], META_NOTFOUND[1], {
+  body: notFoundBody, canonical: false, robots: 'noindex, follow',
+}));
+
 // --- robots.txt and sitemap.xml ---
 const urls = routes.map((r) => r.path).filter((p) => !EXCLUDE.has(p));
 const priority = (p) => (p === '/' ? '1.0' : ['/mortgages', '/accounts', '/cards', '/rates'].includes(p) ? '0.9' : '0.6');
@@ -189,4 +248,4 @@ ${urls.map((p) => `  <url><loc>${SITE}${p === '/' ? '/' : p}</loc><priority>${pr
 // effective.
 writeFileSync(join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 
-console.log(`SEO files written for ${SITE} (${prerendered.size} prerendered, ${written} route pages, ${urls.length} sitemap urls)`);
+console.log(`SEO files written for ${SITE} (${prerendered.size} prerendered, ${written} route pages, 404.html, ${urls.length} sitemap urls)`);

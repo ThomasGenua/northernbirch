@@ -23,6 +23,7 @@ const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage.jsx'));
 const ComplaintsPage = lazy(() => import('./pages/ComplaintsPage.jsx'));
 const QuotePage = lazy(() => import('./pages/QuotePage.jsx'));
 const ComparePage = lazy(() => import('./pages/ComparePage.jsx'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'));
 import { applyMeta, BANKING, BirchTrees, Btn, C, callAI, Clickable, Cornflower, Daisy, ErrorBoundary, Fade, FAQ, ff, FlagStripe, FolkBorder, fs, initMeasurement, LANG_TAG, MEASUREMENT_DOMAIN, pageFromPath, RATE, RATE_TABLES, ratesEffectiveLabel, ROUTES, setApplyIntent, SH, t, track, trackPageview, TRANSLATED_PAGES, useBreakpoint, useCookiePref, useFocusTrap, useLang, useMob, useW, writeCookiePref, writeLang } from './ui.jsx';
 
 // ============ SEARCH OVERLAY ============
@@ -1009,6 +1010,9 @@ export default function App({ssrPath}){
     lifesim:<LifeSimPage setPage={setPage}/>,docreader:<DocReaderPage setPage={setPage}/>,
     tax:<TaxPage setPage={setPage}/>,messages:<MessagesPage setPage={setPage}/>,
     privacy:<PrivacyPage lang={lang}/>,accessibility:<AccessibilityPage lang={lang}/>,complaints:<ComplaintsPage lang={lang}/>,terms:<TermsPage lang={lang}/>,leadership:<LeadershipPage setPage={setPage}/>,
+    // Has no route on purpose: pageFromPath returns it for any URL that is not
+    // in ROUTES.
+    notfound:<NotFoundPage setPage={setPage}/>,
   };
   return(
     <ToastProvider>

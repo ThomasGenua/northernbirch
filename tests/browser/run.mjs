@@ -61,13 +61,18 @@ if (shardArg) {
   }
   let recorded = {};
   try { recorded = JSON.parse(readFileSync(join(HERE, 'timings.json'), 'utf8')); } catch { /* fall through to the default */ }
-  const known = Object.values(recorded).filter((n) => typeof n === 'number' && n > 0).sort((a, b) => a - b);
+  // Zero is a real measurement here, not a missing one: security-headers and
+  // social only read files and finish inside the rounding. Treating 0 as
+  // "unrecorded" would hand them the median and push a genuinely heavy suite
+  // onto another shard to make room.
+  const isRecorded = (s) => Number.isFinite(recorded[s]) && recorded[s] >= 0;
+  const known = Object.keys(recorded).filter(isRecorded).map((s) => recorded[s]).sort((a, b) => a - b);
   // An unrecorded suite is assumed median-length: guessing zero would pile every
   // new suite onto one shard.
   const fallback = known.length ? known[known.length >> 1] : 1;
-  const weight = (s) => (typeof recorded[s] === 'number' && recorded[s] > 0 ? recorded[s] : fallback);
+  const weight = (s) => (isRecorded(s) ? recorded[s] : fallback);
 
-  const missing = suites.filter((s) => !(typeof recorded[s] === 'number' && recorded[s] > 0));
+  const missing = suites.filter((s) => !isRecorded(s));
   if (missing.length) {
     const named = missing.length > 4 ? `${missing.length} suites` : missing.map((s) => s.replace('.mjs', '')).join(', ');
     console.log(`note: no recorded timing for ${named} -- assuming ${fallback}s each, so this split may be uneven`);

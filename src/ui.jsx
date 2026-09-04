@@ -202,7 +202,18 @@ export const ROUTES={
   terms:"/terms",leadership:"/leadership",
 };
 export const PATH_TO_PAGE=Object.fromEntries(Object.entries(ROUTES).map(([k,v])=>[v,k]));
-export function pageFromPath(path){return PATH_TO_PAGE[path.replace(/\/+$/,"")||"/"]||"home"}
+
+// "notfound" is a page without a route: it is reachable only by asking for a
+// URL that is not in the table above. It still needs a META entry and an entry
+// in the pages map, which is why check-routes.mjs knows it by name rather than
+// treating it as an unwired page.
+export const NON_ROUTE_PAGES=["notfound"];
+
+// An unknown path used to fall back to "home", so a mistyped or retired URL
+// rendered the homepage at the wrong address under the homepage's title --
+// a soft 404 that search engines index as a duplicate of the front page and
+// that tells a member nothing about what went wrong.
+export function pageFromPath(path){return PATH_TO_PAGE[path.replace(/\/+$/,"")||"/"]||"notfound"}
 
 // Per-page title and description. Without these every URL shared the one
 // <title> in index.html, so nothing was distinguishable in search or when
@@ -248,6 +259,17 @@ export const META={
 };
 export const META_DEFAULT=["Northern Birch Credit Union","A full-service Toronto credit union: everyday banking, mortgages, credit cards, investments and insurance."];
 
+// Not in META above because that table is checked route-by-route against
+// ROUTES, and this page deliberately has no route.
+export const META_NOTFOUND=["Page not found | Northern Birch Credit Union","That page could not be found. Browse personal banking, mortgages, current rates, accounts and advice, or contact a Northern Birch branch for help."];
+
+// Pages the prerendered HTML marks noindex: member views and the internal
+// board document. applyMeta has to know the same list, because a crawler that
+// runs JavaScript reads what the app sets, and writing "index, follow" over
+// the prerendered noindex would undo it. check-routes.mjs asserts this stays
+// equal to the EXCLUDE list in scripts/generate-seo-files.mjs.
+export const NOINDEX_PAGES=new Set(["dashboard","messages","leadership"]);
+
 export function setTag(selector,attr,value){
   let el=document.head.querySelector(selector);
   if(!el){
@@ -261,13 +283,24 @@ export function setTag(selector,attr,value){
 }
 
 export function applyMeta(page){
-  const[title,desc]=META[page]||META_DEFAULT;
+  const notFound=page==="notfound";
+  const[title,desc]=notFound?META_NOTFOUND:(META[page]||META_DEFAULT);
   document.title=title;
   setTag('meta[name="description"]',"content",desc);
-  setTag('link[rel="canonical"]',"href",window.location.origin+(ROUTES[page]||"/"));
+  // A 404 has no canonical URL of its own to advertise, and it must not name
+  // the homepage: that would tell a crawler the mistyped URL *is* the
+  // homepage, which is exactly the duplicate-content problem this page was
+  // added to end. Point it at the URL actually asked for, and mark it
+  // noindex so it is not indexed under that address either. "follow" so the
+  // links out of the page are still worth something.
+  const url=notFound?window.location.origin+window.location.pathname:window.location.origin+(ROUTES[page]||"/");
+  setTag('link[rel="canonical"]',"href",url);
+  // "follow" on the 404 so the links out of it still count; "nofollow" on the
+  // excluded pages, matching exactly what the prerendered HTML already says.
+  setTag('meta[name="robots"]',"content",notFound?"noindex, follow":NOINDEX_PAGES.has(page)?"noindex, nofollow":"index, follow");
   setTag('meta[property="og:title"]',"content",title);
   setTag('meta[property="og:description"]',"content",desc);
-  setTag('meta[property="og:url"]',"content",window.location.origin+(ROUTES[page]||"/"));
+  setTag('meta[property="og:url"]',"content",url);
 }
 
 // Form submission. Posts to Netlify Forms, which needs no API key: the hidden

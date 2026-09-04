@@ -58,12 +58,23 @@ check(!/<loc>[^<]*\/dashboard/.test(sm)&&!/<loc>[^<]*\/messages/.test(sm),'membe
   check(!/Disallow:/.test(rb),'robots.txt does not Disallow the noindexed pages (it would hide the directive)');
   check(EX.every(p=>!sitemapPaths.has(p)),'all three stay out of the sitemap too');
 }
-// the generator writes over the file it reads its shell from, so running it
-// without a rebuild used to append a second canonical/og:image/ld+json block
+// The generator writes over the file it reads its shell from, so running it
+// without a rebuild used to append a second canonical/og:image/ld+json block.
+//
+// Once prerendering landed it did something worse and much quieter: the shell
+// it read back already had the homepage rendered into <div id="root">, so the
+// empty-root replace found nothing and every page was rewritten carrying the
+// homepage's body under its own title. This block runs the generator twice and
+// so was itself the thing corrupting dist/ for every suite that ran after it.
+// Counting meta tags never noticed. Compare the bytes.
 {
   const { execSync } = await import('node:child_process');
+  const files = ['/index.html', '/404.html', '/accounts/index.html', '/rates/index.html', '/sitemap.xml', '/robots.txt'];
+  const before = files.map((f) => readFileSync(DIST + f));
   execSync('node scripts/generate-seo-files.mjs', {cwd:ROOT, stdio:'ignore'});
   execSync('node scripts/generate-seo-files.mjs', {cwd:ROOT, stdio:'ignore'});
+  const changed = files.filter((f, i) => !before[i].equals(readFileSync(DIST + f)));
+  check(changed.length===0, `running the generator again leaves every file byte-identical${changed.length?': '+changed.join(', '):''}`);
   const h=readFileSync(`${DIST}/index.html`,'utf8');
   const n=(re)=>(h.match(re)||[]).length;
   check(n(/rel="canonical"/g)===1&&n(/property="og:url"/g)===1&&n(/property="og:image"/g)===1&&n(/application\/ld\+json/g)===1,
