@@ -44,11 +44,38 @@ for (const { key, path } of routes) {
   if (!pageKeys.has(key)) errors.push(`${path} (${key}) is in ROUTES but not in the pages map -- it would render the homepage`);
   if (!testRoutes.has(path)) errors.push(`${path} is not in tests/browser/env.mjs ROUTES -- no suite would ever visit it`);
 }
+// Pages that deliberately have no URL. "notfound" is reachable only by asking
+// for a path that is not in ROUTES, so requiring a route for it would be
+// wrong -- but it still has to be in the pages map, or an unknown URL would
+// render nothing at all.
+const nonRoutePages = [...between(ui, 'export const NON_ROUTE_PAGES=[', '];', 'NON_ROUTE_PAGES')
+  .matchAll(/"(\w+)"/g)].map((m) => m[1]);
+for (const key of nonRoutePages) {
+  if (!pageKeys.has(key)) errors.push(`"${key}" is listed in NON_ROUTE_PAGES but is not in the pages map -- nothing would render it`);
+  if (routes.some((r) => r.key === key)) errors.push(`"${key}" is in NON_ROUTE_PAGES and also in ROUTES -- it cannot be both`);
+}
+
 for (const key of metaKeys) {
   if (!routes.some((r) => r.key === key)) errors.push(`META has "${key}", which is not a route`);
 }
 for (const key of pageKeys) {
-  if (!routes.some((r) => r.key === key)) errors.push(`the pages map has "${key}", which is not a route`);
+  if (!routes.some((r) => r.key === key) && !nonRoutePages.includes(key)) errors.push(`the pages map has "${key}", which is not a route`);
+}
+
+// The prerendered HTML and the running app each decide what to put in the
+// robots meta, and a crawler that runs JavaScript sees the app's answer write
+// over the file's. If these two lists drift, a page marked noindex at build
+// time quietly becomes indexable again.
+const excluded = new Set([...between(read('scripts/generate-seo-files.mjs'), 'const EXCLUDE = new Set([', ']);', 'the EXCLUDE list')
+  .matchAll(/'([^']+)'/g)].map((m) => m[1]));
+const noindexPages = new Set([...between(ui, 'export const NOINDEX_PAGES=new Set([', ']);', 'NOINDEX_PAGES')
+  .matchAll(/"(\w+)"/g)].map((m) => m[1]));
+const noindexPaths = new Set([...noindexPages].map((k) => (routes.find((r) => r.key === k) || {}).path || k));
+for (const p of excluded) {
+  if (!noindexPaths.has(p)) errors.push(`generate-seo-files.mjs marks ${p} noindex, but NOINDEX_PAGES in src/ui.jsx does not -- the app would set it back to index`);
+}
+for (const p of noindexPaths) {
+  if (!excluded.has(p)) errors.push(`NOINDEX_PAGES in src/ui.jsx marks ${p} noindex, but generate-seo-files.mjs does not -- the prerendered file would say index`);
 }
 for (const key of searchPages) {
   if (!routes.some((r) => r.key === key)) errors.push(`a search result points at "${key}", which is not a route`);

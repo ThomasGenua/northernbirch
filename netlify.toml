@@ -6,13 +6,21 @@
   command = "npm run dev"
   port = 8080
 
-# Serve index.html for client-side routes so /mortgages and friends survive a
-# refresh or a direct link. Not forced, so real files, the /api/chat function
-# and Netlify Forms posts are unaffected.
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# There is deliberately no catch-all redirect here any more.
+#
+# There used to be: /* -> /index.html with status 200, so that /mortgages and
+# friends survived a refresh or a direct link back when dist/ held a single
+# index.html. Prerendering made that unnecessary -- every route is now a real
+# file that Netlify serves directly -- and left it actively harmful, because
+# a rule matching /* also matches every URL that is NOT a route. A mistyped
+# address, or a link to a page that has since been renamed, returned the
+# homepage with a 200: search engines index those URLs as duplicates of the
+# front page, and a member cannot tell that the page they asked for is gone.
+#
+# With no rule to catch them, Netlify serves dist/404.html with a real 404 for
+# any path that matches no file, which is what generate-seo-files.mjs writes.
+# /api/chat is a Functions v2 route (config.path in netlify/functions/chat.mjs)
+# and Netlify Forms posts go to "/", so neither depended on this rule.
 
 # Baseline security headers. The Next.js copy of this app got these in the
 # security audit; the deployed site never had them.
