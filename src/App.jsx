@@ -55,7 +55,7 @@ function SearchOverlay({open,onClose,setPage}){const mob=useMob();
     {title:"Travel Insurance",page:"travel",cat:"Travel"},{title:"International Transfers",page:"travel",cat:"Travel"},{title:"Foreign Exchange",page:"travel",cat:"Travel"},
     {title:"Group Health & Dental Benefits",page:"business",cat:"Business"},{title:"Commercial Insurance",page:"business",cat:"Business"},{title:"Key Person Insurance",page:"business",cat:"Business"},
     {title:"Business Succession Planning",page:"business",cat:"Business"},{title:"Payroll & HR",page:"business",cat:"Business"},
-    {title:"Insurance Dashboard",page:"dashboard",cat:"Digital"},{title:"Smart Quote Engine",page:"quote",cat:"Digital"},{title:"Financial Planning Tools",page:"calculators",cat:"Digital"},{title:"Digital Banking",page:"digital",cat:"Digital",kw:"digital online tools hub"},
+    {title:"Insurance Dashboard",page:"dashboard",cat:"Digital"},{title:"Coverage Explorer",page:"quote",cat:"Digital"},{title:"Financial Planning Tools",page:"calculators",cat:"Digital"},{title:"Digital Banking",page:"digital",cat:"Digital",kw:"digital online tools hub"},
     {title:"Mobile Banking App",page:"mobileapp",cat:"Digital"},{title:"Estate Planning",page:"estate",cat:"Planning"},{title:"Apply Online",page:"apply",cat:"Apply",kw:"apply application open an account join membership become a member sign up start pre-approval preapproval new account"},{title:"Open an Account",page:"apply",cat:"Apply",kw:"open account new chequing savings join membership"},{title:"Financial Advice",page:"advice",cat:"Planning",kw:"advice advisory adviser advisor financial planning wealth management retirement planning investment advice check-up"},{title:"Financial Planning",page:"advice",cat:"Planning",kw:"plan planning retirement wealth advisor"},{title:"Retirement Planning",page:"advice",cat:"Planning",kw:"retirement rrsp rrif pension retire income"},{title:"Wealth Management",page:"advice",cat:"Planning",kw:"wealth invest portfolio aviso qtrade virtualwealth mutual funds managed"},{title:"Financial Check-Up",page:"advice",cat:"Planning",kw:"check up checkup review free advisor heili"},{title:"KESKUS Branch",page:"community",cat:"Community"},
     {title:"Scholarships",page:"community",cat:"Community"},
     {title:"Chequing Accounts",page:"accounts",cat:"Banking",kw:"chequing checking everyday banking debit e-transfer no fee student senior us dollar"},
@@ -65,7 +65,7 @@ function SearchOverlay({open,onClose,setPage}){const mob=useMob();
     {title:"Credit Cards",page:"cards",cat:"Banking",kw:"credit card mastercard collabria cash back rewards low rate apply"},
     {title:"Registered Accounts (TFSA, RRSP, FHSA, RESP)",page:"accounts",cat:"Banking",kw:"tfsa rrsp fhsa resp rdsp rrif registered retirement first home education tax free"},
     {title:"Compare Accounts",page:"accounts",cat:"Banking",kw:"compare accounts chequing savings fees"},
-    {title:"Messages",page:"messages",cat:"Member"},{title:"Contact & Branches",page:"contact",cat:"About"},{title:"Insurance Quote Calculator",page:"quote",cat:"Tools"},{title:"AI Insurance Advisor",page:"aiadvisor",cat:"AI"},{title:"AI Coverage Analyzer",page:"analyzer",cat:"AI"},{title:"Financial Health Check",page:"healthcheck",cat:"AI"},{title:"Life Event Simulator",page:"lifesim",cat:"AI"},{title:"Policy Document Reader",page:"docreader",cat:"AI"},{title:"Tax & Savings Optimizer",page:"tax",cat:"AI"},{title:"Claims Centre",page:"claims",cat:"Tools"},{title:"Coverage Comparison",page:"compare",cat:"Tools"},
+    {title:"Messages",page:"messages",cat:"Member"},{title:"Contact & Branches",page:"contact",cat:"About"},{title:"Insurance Coverage Explorer",page:"quote",cat:"Tools"},{title:"AI Insurance Advisor",page:"aiadvisor",cat:"AI"},{title:"AI Coverage Analyzer",page:"analyzer",cat:"AI"},{title:"Financial Health Check",page:"healthcheck",cat:"AI"},{title:"Life Event Simulator",page:"lifesim",cat:"AI"},{title:"Policy Document Reader",page:"docreader",cat:"AI"},{title:"Tax & Savings Optimizer",page:"tax",cat:"AI"},{title:"Claims Centre",page:"claims",cat:"Tools"},{title:"Coverage Comparison",page:"compare",cat:"Tools"},
     {title:"Mortgage Calculator",page:"calculators",cat:"Tools"},{title:"Insurance Needs Calculator",page:"calculators",cat:"Tools"},{title:"Retirement Calculator",page:"calculators",cat:"Tools"},{title:"Book an Appointment",page:"booking",cat:"Tools"},
     {title:"Referral Program",page:"referrals",cat:"Rewards"},{title:"Rates",page:"rates",cat:"Banking"},{title:"Insurance Glossary",page:"glossary",cat:"Education"},
     {title:"Blog & News",page:"blog",cat:"Education"},
@@ -392,7 +392,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
   </>);
 }
 
-// ============ QUOTE CALCULATOR ============
+// ============ COVERAGE EXPLORER ============
 // Rendered by QuotePage. Kept at module scope so React sees one stable
 // component identity instead of a new one on every render.
 
@@ -443,7 +443,7 @@ function Footer({setPage}){const mob=useMob();
           </div>
         </div>
         {[
-          {t:"Insurance",items:[["Life Insurance","insurance"],["Home Insurance","insurance"],["Auto Insurance","insurance"],["Travel Insurance","travel"],["Claims Centre","claims"],["Quote Calculator","quote"]]},
+          {t:"Insurance",items:[["Life Insurance","insurance"],["Home Insurance","insurance"],["Auto Insurance","insurance"],["Travel Insurance","travel"],["Claims Centre","claims"],["Coverage Explorer","quote"]]},
           {t:"Tools",items:[["Compare Plans","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["Refer a Friend","referrals"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
           {t:"Banking",items:[["Apply Online","apply"],["Chequing & Savings","accounts"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
           {t:"Advice",items:[["Financial Advice","advice"],["Financial Check-Up","advice"],["Retirement Planning","advice"],["Estate Planning","estate"],["Tax Planning","tax"],["Book an Advisor","booking"]]},

@@ -46,7 +46,7 @@ export default function PolicyAnalyzerPage({setPage}){
           <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
             <Btn onClick={()=>exportToPDF("coverage-analysis-result","Coverage Gap Analysis")} color={C.accentText}>&#128190; Download Analysis (PDF)</Btn>
             <Btn onClick={()=>setPage("booking")}>Book Advisor to Discuss</Btn>
-            <Btn onClick={()=>setPage("quote")} color={C.greenFill}>Get Quotes for Recommendations</Btn>
+            <Btn onClick={()=>setPage("quote")} color={C.greenFill}>Talk to an advisor about these gaps</Btn>
             <Btn outline onClick={()=>{setResult(null);setInput("")}}>Analyze Again</Btn>
           </div>
           <p style={{fontFamily:fs,fontSize:11,color:"#707070",marginTop:16}}>AI analysis is for informational purposes only. Book an advisor appointment for personalized quotes and binding coverage.</p>
