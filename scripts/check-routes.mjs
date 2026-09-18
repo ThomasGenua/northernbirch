@@ -104,33 +104,36 @@ for (const m of between(ui, 'export const META={', '\nexport const META_DEFAULT'
   titles.set(m[2], m[1]); descs.set(m[3], m[1]);
 }
 
-// --- forms Netlify can actually receive ---
-// Netlify registers a form by parsing the deployed HTML at build time. A React
-// form is invisible to that parser, so index.html carries a hidden copy. If the
-// names drift apart the submission 404s and the member sees a failure they can
-// do nothing about.
-const declared = new Map();
-for (const m of html.matchAll(/<form name="([^"]+)"[^>]*>([\s\S]*?)<\/form>/g))
-  declared.set(m[1], new Set([...m[2].matchAll(/name="([^"]+)"/g)].map((x) => x[1])));
+// --- forms must not collect, and must not store ---
+// These used to be Netlify Forms: index.html carried a hidden declaration of
+// each, and Netlify stored every submission. On a demonstration wearing a real
+// credit union's branding that meant visitors' names, phone numbers and free
+// text were being kept by a site that is not a bank. They post to
+// /api/demo-intake now, which validates the shape and discards the body.
+//
+// So this checks the opposite of what it used to: that no Netlify form is
+// declared anywhere (a declaration is what creates a store), that every form
+// the app submits is one the intake accepts, and that none of them has started
+// asking for something that must never be collected.
+const intake = read('netlify/functions/demo-intake.mjs');
+const accepted = new Set([...between(intake, 'const FORMS = new Set([', ']);', "demo-intake's form list")
+  .matchAll(/"(\w+)"/g)].map((m) => m[1]));
 
-// Read the directory rather than the import list: 21 of the pages are pulled
-// in with lazy(() => import(...)), which no "import X from" pattern matches --
-// scanning imports quietly skipped every one of them, this check included.
-const src = ['src/App.jsx', ...readdirSync(join(process.cwd(), 'src/pages')).filter((f) => f.endsWith('.jsx')).map((f) => `src/pages/${f}`)];
+if (/<form[^>]+data-netlify|netlify-honeypot/.test(html))
+  errors.push('index.html declares a Netlify form -- that creates a submission store, and this demo must not keep anything');
+
+const src = ['src/App.jsx', 'src/ui.jsx', ...readdirSync(join(process.cwd(), 'src/pages')).filter((f) => f.endsWith('.jsx')).map((f) => `src/pages/${f}`)];
 for (const f of src) {
   let text; try { text = read(f); } catch { continue; }
-  for (const call of text.matchAll(/submitForm\("([^"]+)",\s*\{([^}]*)\}/g)) {
-    const [, name, body] = call;
-    if (!declared.has(name)) {
-      errors.push(`${f} submits the form "${name}", which index.html does not declare -- Netlify would reject it`);
-      continue;
-    }
-    const sent = [...body.matchAll(/(?:^|,)\s*(\w+)\s*[:,}]?/g)].map((m) => m[1]).filter((n) => n !== 'CONSENT_VERSION');
-    const missing = sent.filter((n) => !declared.get(name).has(n));
-    if (missing.length) errors.push(`form "${name}" sends ${missing.join(', ')} -- not declared in index.html`);
+  for (const call of text.matchAll(/submitForm\("([^"]+)"/g)) {
+    if (!accepted.has(call[1]))
+      errors.push(`${f} submits the form "${call[1]}", which netlify/functions/demo-intake.mjs does not accept`);
   }
+  // Belt and braces with the same list inside demo-intake: this stops us
+  // writing the field, that stops a hand-crafted POST carrying it.
   for (const n of ['sin', 'socialInsurance', 'dateOfBirth', 'password', 'accountNumber']) {
-    if (new RegExp(`submitForm\\([^)]*\\b${n}\\b`).test(text)) errors.push(`${f} submits "${n}" through a Netlify form -- that must never leave the browser this way`);
+    if (new RegExp(`submitForm\\([^)]*\\b${n}\\b`).test(text))
+      errors.push(`${f} submits "${n}" -- that must never leave the browser`);
   }
 }
 
@@ -140,4 +143,4 @@ if (errors.length) {
   console.error('\nNothing was built.\n');
   process.exit(1);
 }
-console.log(`routes ok -- ${routes.length} routes wired through META, the page map, search and the suites; ${declared.size} forms declared`);
+console.log(`routes ok -- ${routes.length} routes wired through META, the page map, search and the suites; ${accepted.size} forms, none stored`);

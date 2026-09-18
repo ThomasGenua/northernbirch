@@ -325,9 +325,13 @@ export function applyMeta(page){
 // not show a confirmation on false — these forms used to declare success
 // unconditionally while sending nothing anywhere.
 export async function submitForm(formName,fields){
-  const body=new URLSearchParams({"form-name":formName,"bot-field":"",...fields});
+  // Posts to /api/demo-intake, which validates the shape and throws the
+  // submission away. It used to post to "/", which is how Netlify Forms
+  // captures a submission -- so a visitor's name, phone and free text were
+  // being stored by a demonstration. See netlify/functions/demo-intake.mjs.
+  const body=new URLSearchParams({"bot-field":"",...fields});
   try{
-    const res=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:body.toString()});
+    const res=await fetch(`/api/demo-intake?form=${encodeURIComponent(formName)}`,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:body.toString()});
     // which form, and whether it went through -- never any of the fields
     track("form_submit",{form:formName,result:res.ok?"ok":"failed"});
     return res.ok;
@@ -349,7 +353,8 @@ export function ConsentNotice({checked,onChange,purpose,extra,id}){
     <label htmlFor={id} style={{display:"flex",gap:10,alignItems:"flex-start",cursor:"pointer"}}>
       <input id={id} type="checkbox" checked={checked} onChange={e=>onChange(e.target.checked)} style={{marginTop:3,width:18,height:18,flexShrink:0,cursor:"pointer"}}/>
       <span style={{fontFamily:fs,fontSize:13,color:"#555",lineHeight:1.65}}>
-        I consent to Northern Birch collecting the information in this form {purpose}.{extra?" "+extra:""} It is handled by a service provider outside Canada and may be accessible to authorities there. You can withdraw consent at any time by calling 416-465-4659.
+        <strong style={{fontWeight:700,color:C.navy}}>This is a demonstration &mdash; nothing you type here is saved, sent, or shared.</strong>{" "}
+        On the real site this form would collect your details {purpose}.{extra?" "+extra:""} Here it checks its own shape and then discards what you entered, so there is nothing to consent to and nothing to withdraw. Please do not enter real personal or financial information. To do this for real, call Northern Birch on 416-465-4659.
       </span>
     </label>
   </div>;

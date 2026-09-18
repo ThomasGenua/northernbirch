@@ -9,7 +9,7 @@
     "build:ssr": "vite build --ssr src/entry-server.jsx --outDir dist-ssr --logLevel warn",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node netlify/functions/chat.test.mjs && node netlify/functions/prompts.test.mjs && node netlify/edge-functions/password-gate.test.mjs",
+    "test": "node netlify/functions/chat.test.mjs && node netlify/functions/prompts.test.mjs && node netlify/functions/demo-intake.test.mjs && node netlify/edge-functions/password-gate.test.mjs",
     "test:browser": "node tests/browser/run.mjs",
     "test:all": "npm run test && npm run test:browser"
   },
