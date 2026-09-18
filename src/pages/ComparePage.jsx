@@ -42,7 +42,7 @@ export default function ComparePage({setPage}){
                 <span style={{fontFamily:fs,fontSize:13,color:v==="No"?"#707070":C.navy,fontWeight:v==="No"?400:600}}>{v}</span>
               </div>)}
             </div>
-            <div style={{padding:"16px 24px 24px"}}><button onClick={()=>setPage("quote")} style={{width:"100%",background:i===1?C.accentText:C.navy,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Get a Quote</button></div>
+            <div style={{padding:"16px 24px 24px"}}><button onClick={()=>setPage("quote")} style={{width:"100%",background:i===1?C.accentText:C.navy,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Talk to an advisor</button></div>
           </div>)}
         </div>
       </div>

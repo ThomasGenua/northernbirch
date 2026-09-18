@@ -28,7 +28,7 @@ export default function DashboardPage({setPage}){
             <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:0}}>Member since 2018 -- Last login: March 19, 2026 -- <span style={{color:C.greenText,fontWeight:600}}>Identity Verified</span> &#9989;</p>
           </div>
           <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-            <Btn small color={C.accentText} onClick={()=>setPage&&setPage("quote")}>Get a Quote</Btn>
+            <Btn small color={C.accentText} onClick={()=>setPage&&setPage("quote")}>Talk to an advisor</Btn>
             <Btn small color={C.greenFill} onClick={scrollToTransfer}>Send Transfer</Btn>
             <Btn small color={C.purple} onClick={()=>setPage&&setPage("messages")}>Messages</Btn>
             <Btn small outline color={C.navy} onClick={()=>setPage&&setPage("contact")}>Account Settings</Btn>

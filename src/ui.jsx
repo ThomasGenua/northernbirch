@@ -102,7 +102,7 @@ export const TX={
   "Co-op Insurance":{est:"Ühistukindlustus",lat:"Kooperatīva apdrošināšana"},
   "Auto Insurance":{est:"Autokindlustus",lat:"Auto apdrošināšana"},
   "Tenant Insurance":{est:"Üürnikukindlustus",lat:"Īrnieka apdrošināšana"},
-  "Get a Quote":{est:"Küsi pakkumist",lat:"Saņemt piedāvājumu"},
+  "Talk to an advisor":{est:"Küsi pakkumist",lat:"Saņemt piedāvājumu"},
   "Compare Plans":{est:"Võrdle plaane",lat:"Salīdzināt plānus"},
   // Travel
   "Connected to Your Heritage":{est:"Ühenduses teie pärandiga",lat:"Saistīts ar jūsu mantojumu"},
@@ -119,7 +119,7 @@ export const TX={
   // Digital
   "Heritage values. Digital convenience.":{est:"Pärandväärtused. Digitaalne mugavus.",lat:"Mantojuma vērtības. Digitālais ērtums."},
   "Insurance Dashboard":{est:"Kindlustuse ülevaade",lat:"Apdrošināšanas panelis"},
-  "Smart Quote Engine":{est:"Nutikas pakkumismootor",lat:"Viedā piedāvājumu sistēma"},
+  "Coverage Explorer":{est:"Nutikas pakkumismootor",lat:"Viedā piedāvājumu sistēma"},
   "Financial Planning":{est:"Finantsplaneerimine",lat:"Finanšu plānošana"},
   "Mobile Banking":{est:"Mobiilipank",lat:"Mobilā banka"},
   // Estate
@@ -132,7 +132,7 @@ export const TX={
   "We're here for you":{est:"Oleme teie jaoks siin",lat:"Mēs esam šeit jūsu labā"},
   // Tools
   "See your estimated premium instantly":{est:"Vaadake oma hinnangulist kindlustusmakset koheselt",lat:"Skatiet savu apdrošināšanas prēmiju nekavējoties"},
-  "Interactive Quote Calculator":{est:"Interaktiivne pakkumiskalkulaator",lat:"Interaktīvais piedāvājumu kalkulators"},
+  "Interactive Coverage Explorer":{est:"Interaktiivne pakkumiskalkulaator",lat:"Interaktīvais piedāvājumu kalkulators"},
   "File an insurance claim":{est:"Esitage kindlustusnõue",lat:"Iesniegt apdrošināšanas prasību"},
   "Book an Appointment":{est:"Broneeri kohtumine",lat:"Rezervēt tikšanos"},
   "Meet with an advisor":{est:"Kohtu nõustajaga",lat:"Tikties ar konsultantu"},
@@ -237,7 +237,7 @@ export const META={
   community:["Our Community | Northern Birch Credit Union","Serving Toronto's Estonian and Latvian communities, with scholarships and cultural sponsorship."],
   digital:["Digital Banking Tools | Northern Birch","Your insurance dashboard, quote engine, planning calculators and mobile banking, all in one place."],
   estate:["Estate Planning | Northern Birch Credit Union","Wills, trusts, beneficiary designations and insurance strategies for every stage, from young family to senior."],
-  quote:["Insurance Quote Calculator | Northern Birch","Estimate a term life, home, auto or travel premium in under two minutes. No personal information required."],
+  quote:["Insurance Coverage Explorer | Northern Birch","Estimate a term life, home, auto or travel premium in under two minutes. No personal information required."],
   compare:["Compare Coverage Options | Northern Birch","Compare insurance plans side by side on coverage, limits and price before you request a quote."],
   referrals:["Member Referral Program | Northern Birch","Refer a friend to Northern Birch and you each earn $50 once they join and transact."],
   blog:["Blog & News | Northern Birch Credit Union","Financial insights, product updates and community news from Northern Birch Credit Union."],

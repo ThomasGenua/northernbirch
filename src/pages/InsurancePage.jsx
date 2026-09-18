@@ -15,7 +15,7 @@ function InsuranceProductRow({p,color,setPage}){
                 </div>
                 {open&&<div className="grid-2-1" style={{marginTop:16,paddingTop:16,borderTop:"1px solid #f0f0f0",gap:8}}>
                   {p.f.map((feat,fi)=><div key={fi} style={{display:"flex",gap:8,alignItems:"center"}}><div style={{width:16,height:16,borderRadius:4,background:`${color}12`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:9,color:color,fontWeight:700}}>{"\u2713"}</span></div><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{feat}</span></div>)}
-                  <div style={{gridColumn:"1/-1",marginTop:8,display:"flex",gap:8}}><Btn small color={color} onClick={e=>{e.stopPropagation();setPage("quote")}}>Get a Quote</Btn><Btn small outline color={color} onClick={e=>{e.stopPropagation();setPage("compare")}}>Compare Plans</Btn></div>
+                  <div style={{gridColumn:"1/-1",marginTop:8,display:"flex",gap:8}}><Btn small color={color} onClick={e=>{e.stopPropagation();setPage("quote")}}>Talk to an advisor</Btn><Btn small outline color={color} onClick={e=>{e.stopPropagation();setPage("compare")}}>Compare Plans</Btn></div>
                 </div>}
               </Clickable>
             );
@@ -60,7 +60,7 @@ export default function InsurancePage({setPage}){const mob=useMob();
           <Btn onClick={()=>setPage("quote")}>Get Your Quote</Btn>
         </div></Fade>
         <div style={{marginTop:48}}><h3 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 24px"}}>Insurance FAQ</h3>
-          <FAQ items={[{q:"How do I get a quote?",a:"Use our online quote calculator for instant estimates, get a quote through the mobile app, or visit any branch. Start online, finish in branch -- your quote follows you."},{q:"Do I need to be a member?",a:"Yes, our insurance is exclusive to Northern Birch members. Join online or at any branch -- membership is open to all Canadians."},{q:"What makes our rates different?",a:"Member pricing and carrier arrangements are part of this proposal and are not confirmed. Contact Northern Birch for what is actually available."},{q:"How do I file a claim?",a:"Visit our Claims Centre page, call Northern Birch on 416-465-4659, or visit your branch. They will tell you which insurer holds your policy and how to reach them."}]}/>
+          <FAQ items={[{q:"How do I get insurance through Northern Birch?",a:"Northern Birch does not quote or sell insurance directly. Tell an advisor what you need and they connect you with an insurer who can quote it. Start online, or visit any branch."},{q:"Do I need to be a member?",a:"Yes, our insurance is exclusive to Northern Birch members. Join online or at any branch -- membership is open to all Canadians."},{q:"What makes our rates different?",a:"Member pricing and carrier arrangements are part of this proposal and are not confirmed. Contact Northern Birch for what is actually available."},{q:"How do I file a claim?",a:"Visit our Claims Centre page, call Northern Birch on 416-465-4659, or visit your branch. They will tell you which insurer holds your policy and how to reach them."}]}/>
         </div>
       </div>
     </section>
