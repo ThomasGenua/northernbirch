@@ -6,7 +6,7 @@ export default function GlossaryPage(){
   const[filter,setFilter]=useState("");
   const terms=[
     {term:"Beneficiary",def:"The person or entity designated to receive the proceeds of an insurance policy or investment account upon the policyholder's death."},
-    {term:"Co-op Insurance",def:"Specialized insurance coverage designed for co-operative housing structures, covering unit improvements, loss assessments, and personal property under co-op bylaws."},
+    {term:"Co-op & Co-ownership Mortgage",def:"Financing for co-op and co-ownership housing, which most lenders decline. Northern Birch is one of the few Ontario lenders that writes it."},
     {term:"Coverage Limit",def:"The maximum amount an insurance company will pay for a covered claim. Higher limits mean more protection but typically higher premiums."},
     {term:"Creditor Insurance",def:"Life and disability insurance tied to a loan or mortgage. If the borrower dies or becomes disabled, the insurance pays off or reduces the outstanding balance."},
     {term:"Critical Illness Insurance",def:"Coverage that pays a tax-free lump sum upon diagnosis of a specified illness such as cancer, heart attack, or stroke."},

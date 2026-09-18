@@ -167,9 +167,9 @@ export default function LeadershipPage({setPage}){
             <h3 style={{fontFamily:ff,fontSize:24,color:C.navy,margin:"0 0 16px"}}>What No Competitor Can Replicate</h3>
             {[
               {title:"AI Insurance Advisor in Estonian & Latvian",desc:"No bank, credit union, or insurer in Canada has an AI advisor that speaks Estonian and Latvian. This isn't a translation -- it's a culturally informed advisor that understands Baltic travel patterns, co-op housing, and cross-border family needs.",color:C.purple},
-              {title:"Co-op Apartment Insurance",desc:"Northern Birch is one of the few Ontario institutions with both co-op mortgage expertise AND co-op insurance products. Standard condo policies don't fit co-op structures. This is a genuinely ownable niche.",color:C.accentText},
-              {title:"Baltic Travel Insurance + Transfers",desc:"Annual multi-trip coverage designed for members who visit Estonia and Latvia regularly, combined with in-app international transfers to the Baltics. No competitor bundles these.",color:C.amberText},
-              {title:"Multi-Generational Family Intelligence",desc:"NBCU knows members' parents, children, and grandchildren across 70+ years. A home insurance renewal for Juri triggers a life insurance review for his daughter Maria. No big bank has this depth of relationship.",color:C.greenText},
+              {title:"Co-op & Co-ownership Mortgages",desc:"Northern Birch is one of the few Ontario institutions with both co-op mortgage expertise AND co-op mortgage lending products. Standard condo policies don't fit co-op structures. This is a genuinely ownable niche.",color:C.accentText},
+              {title:"Baltic Travel Insurance + Transfers",desc:"Travel coverage designed for members who visit Estonia and Latvia regularly, combined with internationally sent wire transfers to the Baltics. No competitor bundles these.",color:C.amberText},
+              {title:"Multi-Generational Family Intelligence",desc:"NBCU knows members' parents, children, and grandchildren across roots dating to 1954. A home insurance renewal for Juri triggers a life insurance review for his daughter Maria. No big bank has this depth of relationship.",color:C.greenText},
               {title:"Community Network Effect",desc:"In tight-knit Estonian and Latvian communities, one satisfied insurance customer generates 3-4 referrals. Juri tells everyone at the Latvian Centre. This word-of-mouth multiplier doesn't exist at TD or Scotiabank.",color:C.navy},
             ].map((s,i)=>(
               <div key={i} style={{padding:"16px 0",borderBottom:i<4?"1px solid #f0f0f0":"none"}}>
@@ -182,7 +182,7 @@ export default function LeadershipPage({setPage}){
             <h4 style={{fontFamily:fs,fontSize:16,color:"#fff",margin:"0 0 16px",fontWeight:700}}>Competitor Comparison</h4>
             <div className="grid-5-1" style={{gap:12}}>
               {[
-                {name:"Northern Birch\n(with Oodler)",features:["AI advisor","Estonian/Latvian","Co-op insurance","Baltic transfers","Community trust"],score:"10/10",c:C.green},
+                {name:"Northern Birch\n(with Oodler)",features:["AI advisor","Estonian/Latvian","co-op mortgage lending","Baltic transfers","Community trust"],score:"10/10",c:C.green},
                 {name:"Desjardins /\nMeridian",features:["Insurance products","Large scale","No AI advisor","No Baltic focus","No co-op specialty"],score:"6/10",c:C.amber},
                 {name:"Big Banks\n(TD, RBC, CIBC)",features:["Basic insurance","Scale","No personalization","No heritage focus","Branch closures"],score:"4/10",c:C.amber},
                 {name:"Digital Insurers\n(Lemonade, Sonnet)",features:["Fast quotes","Modern UX","No banking","No community","No advice"],score:"5/10",c:C.amber},
@@ -205,7 +205,7 @@ export default function LeadershipPage({setPage}){
               {phase:"Month 1-2",title:"Discovery & Partner Selection",color:C.accentText,items:["Insurance partner RFP (CUMIS, The Personal, Manulife)","Commission structure negotiation","Regulatory review with FSRA","Member needs survey","KESKUS timeline alignment"]},
               {phase:"Month 2-3",title:"Licensing & Compliance",color:C.greenText,items:["FSRA notification filed","Referral agreement with insurers","Privacy assessment (PIPEDA)","Compliance framework established","Staff training program begins"]},
               {phase:"Month 3-6",title:"Phase 1 Launch: Creditor & Life",color:C.amberText,items:["Creditor insurance embedded in mortgage applications","Term life and critical illness referrals begin","Staff certified on insurance products","KESKUS pre-launch marketing","Digital platform soft launch"]},
-              {phase:"Month 6-10",title:"Phase 2: Home, Auto & Travel",color:C.purple,items:["The Personal P&C quote engine live","Co-op apartment insurance product","Auto insurance referrals active","Baltic travel insurance package","Tenant insurance via mobile app"]},
+              {phase:"Month 6-10",title:"Phase 2: Home, Auto & Travel",color:C.purple,items:["The Personal P&C quote engine live","Co-op and co-ownership mortgage lending product","Auto insurance referrals active","Baltic travel insurance package","Tenant insurance via mobile app"]},
               {phase:"Month 10-14",title:"Phase 3: Group Benefits & Digital",color:C.navy,items:["Manulife group benefits for business members","Commercial property & liability insurance","International transfer service live","Full insurance dashboard in online banking","AI advisor launched"]},
               {phase:"Month 14-18",title:"Optimization & Expansion",color:C.redText,items:["RIBO subsidiary transition (if volume justifies)","Estate planning advisory program","Payroll partnerships active","Cross-sell analytics and optimization","Board performance reporting"]},
             ].map((phase,i)=>(

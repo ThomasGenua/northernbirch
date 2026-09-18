@@ -16,9 +16,9 @@ export default function ComparePage({setPage}){
       {tier:"Comprehensive",price:"From $165/mo",features:{"Dwelling":"Guaranteed replacement","Contents":"$150K+","Liability":"$2M","Water damage":"Full (incl. overland)","Identity theft":"Yes","Equipment breakdown":"Yes","Replacement cost":"Yes","Bundle discount":"20%"}},
     ]},
     {name:"Travel Insurance",plans:[
-      {tier:"Single Trip",price:"From $29",features:{"Emergency medical":"$5M","Trip cancellation":"Yes","Baggage":"$1,500","Trip interruption":"Yes","Travel delay":"$500","Pre-existing conditions":"With stability","Duration":"Up to 60 days","24/7 assistance":"Yes"}},
-      {tier:"Annual Multi-Trip",price:"From $149/yr",features:{"Emergency medical":"$5M","Trip cancellation":"Yes","Baggage":"$2,000","Trip interruption":"Yes","Travel delay":"$1,000","Pre-existing conditions":"With stability","Duration":"Multiple trips/yr","24/7 assistance":"Yes"}},
-      {tier:"Annual Premium",price:"From $249/yr",features:{"Emergency medical":"$10M","Trip cancellation":"Enhanced","Baggage":"$3,000","Trip interruption":"Enhanced","Travel delay":"$2,000","Pre-existing conditions":"Included","Duration":"Unlimited trips","24/7 assistance":"Yes + concierge"}},
+      {tier:"Single Trip",price:"From $29",features:{"Emergency medical":"$5M","Trip cancellation":"Yes","Baggage":"$1,500","Trip interruption":"Yes","Travel delay":"$500","Ask Allianz":"With stability","Duration":"Up to 60 days","24/7 assistance":"Yes"}},
+      {tier:"Multi-Trip",price:"From $149/yr",features:{"Emergency medical":"$5M","Trip cancellation":"Yes","Baggage":"$2,000","Trip interruption":"Yes","Travel delay":"$1,000","Ask Allianz":"With stability","Duration":"Multiple trips/yr","24/7 assistance":"Yes"}},
+      {tier:"Annual Premium",price:"From $249/yr",features:{"Emergency medical":"$10M","Trip cancellation":"Enhanced","Baggage":"$3,000","Trip interruption":"Enhanced","Travel delay":"$2,000","Ask Allianz":"Included","Duration":"Unlimited trips","24/7 assistance":"Yes + concierge"}},
     ]},
   ];
   const t=tables[cat];

@@ -45,11 +45,11 @@ export default function AIAdvisorPage({setPage}){
           <div className="grid-2-1" style={{gap:12,marginBottom:32}}>
             {[
               {label:"I just bought my first home",icon:"&#127968;",desc:"Mortgage protection, home insurance, life insurance review"},
-              {label:"I'm planning a trip to Estonia this summer",icon:"&#9992;",desc:"Travel medical, trip cancellation, pre-existing conditions"},
+              {label:"I'm planning a trip to Estonia this summer",icon:"&#9992;",desc:"Travel medical, trip cancellation, travel cover"},
               {label:"I run a small business with 8 employees",icon:"&#128188;",desc:"Group benefits, commercial insurance, key person coverage"},
               {label:"I'm retiring soon and need an estate plan",icon:"&#127793;",desc:"Estate planning, life insurance, succession strategies"},
               {label:"I just started renting my first apartment",icon:"&#128273;",desc:"Tenant insurance, life insurance basics, auto coverage"},
-              {label:"I'm moving into a co-op apartment",icon:"&#127970;",desc:"Co-op insurance (exclusive to NBCU), home coverage"},
+              {label:"I'm buying into a co-op or co-ownership",icon:"&#127970;",desc:"Co-op insurance (exclusive to NBCU), home coverage"},
             ].map((s,i)=>(
               <button key={i} onClick={()=>startConversation(s.label)} style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,padding:"20px 24px",cursor:"pointer",textAlign:"left",transition:"all 0.3s"}}>
                 <span style={{fontSize:20,display:"block",marginBottom:8}} dangerouslySetInnerHTML={{__html:s.icon}}/>

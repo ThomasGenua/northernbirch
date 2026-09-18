@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 8080",
-    "build": "node scripts/check-rates.mjs && node scripts/check-routes.mjs && vite build && npm run build:ssr && node scripts/generate-seo-files.mjs",
+    "build": "node scripts/check-rates.mjs && node scripts/check-routes.mjs && node scripts/check-claims.mjs && vite build && npm run build:ssr && node scripts/generate-seo-files.mjs",
     "build:ssr": "vite build --ssr src/entry-server.jsx --outDir dist-ssr --logLevel warn",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node netlify/functions/chat.test.mjs && node netlify/edge-functions/password-gate.test.mjs",
+    "test": "node netlify/functions/chat.test.mjs && node netlify/functions/prompts.test.mjs && node netlify/edge-functions/password-gate.test.mjs",
     "test:browser": "node tests/browser/run.mjs",
     "test:all": "npm run test && npm run test:browser"
   },
