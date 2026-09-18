@@ -1,12 +1,22 @@
 {
   "_comment": "Every posted rate on the site. Edit this file to change what Northern Birch advertises -- see docs/updating-rates.md. Values appear verbatim; the build refuses to run if one is missing, malformed, or contradicts another.",
   "effective": "2026-09-01",
+  "guarantee": "130-day rate guarantee",
+
+  "_provenance": "Where each figure came from and when it was last checked against the source. UNVERIFIED means nobody has confirmed it against northernbirchcu.com -- it must not be published.",
+  "source": "https://www.northernbirchcu.com/rates",
+  "verified": {
+    "m3": "2026-09-18 (content review: 3-year closed)",
+    "m5hr": "2026-09-18 (content review: 5-year variable high ratio)",
+    "guarantee": "2026-09-18 (content review)",
+    "_everything_else": "UNVERIFIED -- carried over from the original demo and not yet checked against the source above"
+  },
 
   "_rates": "Named rates the site quotes outside the table: product cards, member notifications, calculators.",
   "rates": {
-    "m3": "4.39%",
+    "m3": "4.59%",
     "m5": "4.34%",
-    "m5hr": "3.89%",
+    "m5hr": "3.65%",
     "mvar": "Prime - 0.50%",
     "heloc": "Prime + 0.50%",
     "hisa": "2.00%",
@@ -22,10 +32,10 @@
     "mortgage": [
       ["1-Year Fixed", "5.54%"],
       ["2-Year Fixed", "4.69%"],
-      ["3-Year Fixed", "4.39%"],
+      ["3-Year Closed", "4.59%"],
       ["4-Year Fixed", "4.29%"],
       ["5-Year Fixed", "4.34%"],
-      ["5-Year High Ratio", "3.89%"],
+      ["5-Year Variable High Ratio", "3.65%"],
       ["Variable Rate", "Prime - 0.50%"],
       ["HELOC", "Prime + 0.50%"]
     ],

@@ -68,9 +68,15 @@ export default function ClaimsPage(){
         </div>
         <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>{steps[step].content}</div>
         <div style={{marginTop:32,background:`${C.amber}08`,borderRadius:16,padding:"24px 28px",borderLeft:`4px solid ${C.amber}`}}>
-          <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 8px",fontWeight:700}}>Claim Contact Numbers</h4>
+          <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 8px",fontWeight:700}}>Who to call about a claim</h4>
+          {/* This block used to print claims lines for The Personal, CUMIS and
+              Manulife. None of them is a current Northern Birch partner, so
+              every one of those numbers would have sent a member mid-claim to
+              a company that has never heard of them -- the worst thing a page
+              like this can do. Nothing replaces them until a real partner and
+              a real number are confirmed. */}
           <div className="grid-3-2-1" style={{gap:16}}>
-            {[{n:"The Personal (Home/Auto/Travel)",p:"1-888-476-8737"},{n:"CUMIS (Life/Creditor)",p:"1-800-263-9120"},{n:"Manulife (Group Benefits)",p:"1-800-268-6195"}].map((c2,i)=><div key={i}><div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{c2.n}</div><div style={{fontFamily:fs,fontSize:14,color:C.accentText,fontWeight:700}}>{c2.p}</div></div>)}
+            {[{n:"Northern Birch Credit Union",p:"416-465-4659",d:"Start here. They will tell you which insurer holds your policy and how to reach them."}].map((c2,i)=><div key={i}><div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{c2.n}</div><div style={{fontFamily:fs,fontSize:14,color:C.accentText,fontWeight:700}}><a href={`tel:+1${c2.p.replace(/[^0-9]/g,"")}`} style={{color:C.accentText}}>{c2.p}</a></div><div style={{fontFamily:fs,fontSize:12,color:"#666",lineHeight:1.6,marginTop:4}}>{c2.d}</div></div>)}
           </div>
         </div>
       </div>
