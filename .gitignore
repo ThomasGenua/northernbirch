@@ -21,5 +21,5 @@ mobile/android/
 # Build output. Netlify runs `npm run build` itself (netlify.toml), so the
 # deployed site never came from these files -- committing them only put a
 # regenerated copy of every page in every diff.
-dist/
+
 dist-ssr/
