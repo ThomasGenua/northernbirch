@@ -90,20 +90,18 @@ const go = async (r) => {
   await p.close();
 }
 
-// Netlify only accepts a form it found in the built HTML at deploy time
+// The built HTML must register NO Netlify form. A declaration is what creates
+// a submission store, and this demo -- which wears a real credit union's
+// branding -- must not keep anyone's name, phone number or free text. The
+// forms post to /api/demo-intake instead, which discards the body.
+// See docs/DATA-RETENTION.md.
 {
   const html = readFileSync(new URL('../../dist/index.html', import.meta.url), 'utf8');
-  const m = html.match(/<form name="application"[\s\S]*?<\/form>/);
-  check(!!m, 'the built HTML registers the application form with Netlify');
-  if (m) {
-    const declared = [...m[0].matchAll(/name="([^"]+)"/g)].map(x => x[1]);
-    const sent = ['product', 'member', 'branch', 'name', 'email', 'phone', 'reach', 'notes', 'consent', 'consentVersion', 'bot-field'];
-    const missing = sent.filter(f => !declared.includes(f));
-    check(missing.length === 0, `every field the app sends is declared${missing.length ? ': ' + JSON.stringify(missing) : ''}`);
-    check(declared.includes('bot-field'), 'including the honeypot');
-    check(!/name="(sin|dob|birth|password|accountNumber)"/i.test(m[0]), 'and nothing sensitive is collected');
-  }
+  check(!/<form[^>]+data-netlify/.test(html), 'the built HTML declares no Netlify form, so nothing can be stored');
+  check(!/netlify-honeypot/.test(html), 'and no Netlify form attributes survive at all');
+  check(!/<form name="(application|booking|claim|referral)"/.test(html), 'none of the four forms is registered for capture');
 }
+
 
 // reachable the way people look for it, and usable on a phone
 {

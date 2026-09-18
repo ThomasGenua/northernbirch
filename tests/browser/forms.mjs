@@ -7,10 +7,19 @@ ctx.setDefaultTimeout(7000);
 await blockFonts(ctx);
 let pass=0,fail=0; const check=(c,m)=>{c?pass++:fail++;console.log((c?'PASS ':'FAIL ')+m)};
 
-// capture every form POST and let it succeed, the way Netlify would
+// Capture every form POST and let it succeed, standing in for the Netlify
+// function. The forms used to post to "/" (Netlify Forms, which stored every
+// submission); they post to /api/demo-intake now, which discards the body --
+// see docs/DATA-RETENTION.md. The static server behind these suites serves
+// files only, so the endpoint is stubbed here.
 const posts=[];
+await ctx.route('**/api/demo-intake*', async (route,req)=>{
+  posts.push({url:req.url(),body:req.postData()||'',ct:req.headers()['content-type']||''});
+  return route.fulfill({status:200,contentType:'application/json',
+    body:JSON.stringify({ok:true,stored:false,message:'This is a demonstration. Your details were not saved, sent, or shared with anyone.'})});
+});
 await ctx.route('**/', async (route,req)=>{
-  if(req.method()==='POST'){ posts.push({url:req.url(),body:req.postData()||'',ct:req.headers()['content-type']||''}); return route.fulfill({status:200,body:'ok'}); }
+  if(req.method()==='POST'){ posts.push({url:req.url(),body:req.postData()||'',ct:req.headers()['content-type']||'',toRoot:true}); return route.fulfill({status:200,body:'ok'}); }
   return route.fallback();
 });
 const parse=(b)=>Object.fromEntries(new URLSearchParams(b));
@@ -35,11 +44,15 @@ const newPage=async(r)=>{const p=await ctx.newPage();await p.goto(BASE+r,{waitUn
   check(posts.length===1,`referral: exactly one POST (${posts.length})`);
   if(posts.length){
     const f=parse(posts[0].body);
-    check(f['form-name']==='referral',`referral: form-name=${f['form-name']}`);
+    // The form is named in the query string now, not in a "form-name" body
+    // field -- that field was Netlify Forms' convention, and these no longer
+    // post to Netlify Forms.
+    check(new URL(posts[0].url).searchParams.get('form')==='referral',`referral: posts as form={referral} (${new URL(posts[0].url).searchParams.get('form')})`);
+    check(!('form-name' in f),'referral: carries no Netlify form-name field');
     check(f['bot-field']==='','referral: honeypot sent empty');
     check(f.yourName==='Maria Ozols'&&f.friendEmail==='juris@example.com','referral: field values arrive intact');
     check(f.consent==='yes'&&!!f.consentVersion,`referral: consent recorded (${f.consentVersion})`);
-    check(posts[0].ct.includes('x-www-form-urlencoded'),'referral: urlencoded content-type Netlify expects');
+    check(posts[0].ct.includes('x-www-form-urlencoded'),'referral: urlencoded content-type the endpoint expects');
   }
   const txt=await p.locator('main').innerText();
   check(/Referral Sent/i.test(txt),'referral: confirmation only after a successful POST');
@@ -67,7 +80,11 @@ const newPage=async(r)=>{const p=await ctx.newPage();await p.goto(BASE+r,{waitUn
   check(posts.length===1,`booking: exactly one POST (${posts.length})`);
   if(posts.length){
     const f=parse(posts[0].body);
-    check(f['form-name']==='booking',`booking: form-name=${f['form-name']}`);
+    // The form is named in the query string now, not in a "form-name" body
+    // field -- that field was Netlify Forms' convention, and these no longer
+    // post to Netlify Forms.
+    check(new URL(posts[0].url).searchParams.get('form')==='booking',`booking: posts as form={booking} (${new URL(posts[0].url).searchParams.get('form')})`);
+    check(!('form-name' in f),'booking: carries no Netlify form-name field');
     check(f['bot-field']==='','booking: honeypot sent empty');
     check(f.name==='Maria Ozols'&&f.email==='maria@example.com'&&f.phone==='416-555-0134','booking: contact details arrive intact');
     check(!!f.branch&&!!f.service&&f.date==='2026-09-15'&&!!f.time,`booking: appointment details arrive (${f.branch} / ${f.service} / ${f.date} ${f.time})`);
@@ -106,7 +123,11 @@ const newPage=async(r)=>{const p=await ctx.newPage();await p.goto(BASE+r,{waitUn
   check(posts.length>=1,`claims: reached a POST (${posts.length})`);
   if(posts.length){
     const f=parse(posts[0].body);
-    check(f['form-name']==='claim',`claims: form-name=${f['form-name']}`);
+    // The form is named in the query string now, not in a "form-name" body
+    // field -- that field was Netlify Forms' convention, and these no longer
+    // post to Netlify Forms.
+    check(new URL(posts[0].url).searchParams.get('form')==='claim',`claims: posts as form={claim} (${new URL(posts[0].url).searchParams.get('form')})`);
+    check(!('form-name' in f),'claims: carries no Netlify form-name field');
     check(f['bot-field']==='','claims: honeypot sent empty');
     console.log('   claim payload keys:',Object.keys(f).join(', '));
   }
