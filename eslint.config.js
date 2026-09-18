@@ -40,8 +40,10 @@ export default [
     },
   },
   {
-    // The Netlify functions run on the server and use its globals.
-    files: ['netlify/**/*.mjs', 'scripts/**/*.mjs'],
+    // The Netlify functions and edge functions run on the server and use its
+    // globals. The edge function is .js rather than .mjs because that is what
+    // Netlify's edge bundler accepts, so this cannot match only .mjs.
+    files: ['netlify/**/*.{js,mjs}', 'scripts/**/*.mjs'],
     languageOptions: { globals: { ...globals.node, Netlify: 'readonly' } },
   },
 ];
