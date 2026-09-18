@@ -1,5 +1,4 @@
 node_modules/
-.env
 .env.local
 .env.*.local
 *.db
@@ -21,5 +20,10 @@ mobile/android/
 # Build output. Netlify runs `npm run build` itself (netlify.toml), so the
 # deployed site never came from these files -- committing them only put a
 # regenerated copy of every page in every diff.
-dist/
+
 dist-ssr/
+
+# Never commit these. .env carried SITE_PASSWORD into a public repo once
+# already; dist/ is build output Netlify regenerates itself.
+.env
+dist/

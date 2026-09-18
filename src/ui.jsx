@@ -73,7 +73,7 @@ export const TX={
   "Tools":{est:"Tööriistad",lat:"Rīki"},
   "Rates":{est:"Intressid",lat:"Likmes"},
   "Community":{est:"Kogukond",lat:"Kopiena"},
-  "Sign In":{est:"Logi sisse",lat:"Ieiet"},
+  "Access demo":{est:"Ava demo",lat:"Atvērt demo"},
   "Credit Union":{est:"Krediidiühistu",lat:"Krājaizdevu sabiedrība"},
   // Hero
   "Your whole financial life.":{est:"Kogu teie finantselu.",lat:"Visa jūsu finanšu dzīve."},
