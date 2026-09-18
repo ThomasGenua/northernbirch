@@ -24,7 +24,7 @@ const SHAPE = {
 // The table on /rates and the named rates quoted elsewhere have to agree. A
 // promotion contradicting the posted table is exactly the bug this guards.
 const LINKS = {
-  mortgage: { '3-Year Fixed': 'm3', '5-Year Fixed': 'm5', '5-Year High Ratio': 'm5hr', 'Variable Rate': 'mvar', HELOC: 'heloc' },
+  mortgage: { '3-Year Closed': 'm3', '5-Year Fixed': 'm5', '5-Year Variable High Ratio': 'm5hr', 'Variable Rate': 'mvar', HELOC: 'heloc' },
   deposit:  { 'High-Interest Savings': 'hisa', '1-Year GIC': 'gic1', '5-Year GIC': 'gic5' },
   lending:  { 'Collabria Mastercard': 'mc', 'Collabria Low Rate': 'mcLow' },
 };

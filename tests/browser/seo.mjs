@@ -53,7 +53,9 @@ check(!/<loc>[^<]*\/dashboard/.test(sm)&&!/<loc>[^<]*\/messages/.test(sm),'membe
   }
   for(const path of ['/','/mortgages','/privacy','/rates']){
     const f=path==='/'?`${DIST}/index.html`:`${DIST}${path}/index.html`;
-    check(!/<meta name="robots"/.test(readFileSync(f,'utf8')),`${path} is left indexable`);
+    // Every page is noindex while this is an Oodler proposal rather than a
+    // live Northern Birch service (PROPOSAL_NOINDEX in src/ui.jsx).
+    check(/<meta name="robots" content="noindex, nofollow"/.test(readFileSync(f,'utf8')),`${path} is noindex while this is a proposal`);
   }
   check(!/Disallow:/.test(rb),'robots.txt does not Disallow the noindexed pages (it would hide the directive)');
   check(EX.every(p=>!sitemapPaths.has(p)),'all three stay out of the sitemap too');

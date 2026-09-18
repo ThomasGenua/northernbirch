@@ -45,6 +45,8 @@ const nfMatch = app.slice(app.indexOf('const META_NOTFOUND')).match(/\["((?:[^"\
 if (!nfMatch) throw new Error('META_NOTFOUND not parsed — did it move?');
 const META_NOTFOUND = [nfMatch[1], nfMatch[2]].map((v) => v.replace(/\\"/g, '"'));
 
+const PROPOSAL_NOINDEX = /export const PROPOSAL_NOINDEX\s*=\s*true/.test(app);
+
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 // Structured data for the credit union and its open branches. Every value here
@@ -190,7 +192,11 @@ function pageHtml(path, title, desc, opts = {}) {
   // og:url: either would be a claim that some one specific page is the page
   // the visitor asked for, which is the soft-404 problem it exists to end.
   const addressed = opts.canonical !== false;
-  const robots = opts.robots || (EXCLUDE.has(path) ? 'noindex, nofollow' : null);
+  // While PROPOSAL_NOINDEX is set in src/ui.jsx this site is an Oodler
+  // proposal, not a live Northern Birch service, and no page should be
+  // indexed under their name. Forced here as well as in applyMeta so a
+  // crawler that never runs the JavaScript still sees it.
+  const robots = PROPOSAL_NOINDEX ? 'noindex, nofollow' : (opts.robots || (EXCLUDE.has(path) ? 'noindex, nofollow' : null));
   return stripInjected(shell)
     // React hydrates this markup rather than replacing it, so the member keeps
     // looking at the same pixels instead of watching the page blank and redraw.

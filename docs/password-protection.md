@@ -20,10 +20,17 @@ Netlify function log, not shown to visitors.
 
 ## Signing in
 
-The browser shows its own username/password prompt. Only the password is
-checked; the username box can be left blank. Do not put a colon in the
-username — HTTP Basic auth splits the credentials on the first colon, so a
-username containing one will send the wrong password.
+A branded password page, served at whatever URL the visitor asked for. It
+states plainly that this is an Oodler demonstration and not a real bank
+website — before anyone types anything — then takes a password and, on
+success, sets a signed cookie and sends them on to the page they wanted. The
+cookie lasts 12 hours.
+
+An earlier version of this used HTTP Basic auth, which put the browser's own
+credential dialog in front of the site. That was wrong for a client-facing
+demo: the dialog cannot be branded, cannot explain what the site is, is
+indistinguishable from a phishing prompt or a server error to a
+non-technical visitor, and leaves a bare error page if they press Cancel.
 
 ## Why an edge function rather than JavaScript on the page
 
@@ -42,6 +49,11 @@ plan that includes it, prefer the built-in one and delete this function.
 `config.path = "/*"` — every page, asset, `/api/chat` and form post. Nothing is
 excluded; an exception would be served to anyone who guessed its URL.
 
+The cookie is an expiry signed with HMAC-SHA256, keyed on the password itself,
+so it cannot be forged by someone who does not already know the password and
+cannot have its expiry edited. `next=` is restricted to same-site paths, so the
+form cannot be turned into an open redirect.
+
 ## Turning it off
 
 Delete `netlify/edge-functions/password-gate.js` and its test, and remove the
@@ -53,8 +65,9 @@ work; they simply have no audience until the gate comes off.
 
 ## Tests
 
-`netlify/edge-functions/password-gate.test.mjs`, run by `npm test`. It covers
-what gets in, what does not, the malformed and misconfigured cases, and the 401
-response itself. The browser suites cannot reach this code — they run against a
+`netlify/edge-functions/password-gate.test.mjs`, run by `npm test`. 50 assertions:
+that it serves a page rather than a browser dialog, that the page says it is a
+demo, unlocking and cookie flags, forged and expired cookies, open-redirect and
+markup-injection attempts, and the unconfigured case. The browser suites cannot reach this code — they run against a
 local static server, while this runs on Netlify's edge — so this file is the
 only thing standing behind it.

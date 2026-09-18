@@ -83,7 +83,7 @@ for (const path of MISSES) {
 // --- what it tells a crawler ---
 {
   const html = readFileSync(join(DIST, '404.html'), 'utf8');
-  check(/<meta name="robots" content="noindex, follow"/.test(html), '404.html is noindex');
+  check(/<meta name="robots" content="noindex, nofollow"/.test(html), '404.html is noindex');
   // One file answers every unmatched URL, so any canonical it named would
   // point a crawler at a page the visitor did not ask for.
   check(!/rel="canonical"/.test(html), '404.html declares no canonical');
@@ -103,7 +103,10 @@ for (const path of MISSES) {
   await p.goto(BASE + '/accounts', { waitUntil: 'domcontentloaded' });
   await p.waitForTimeout(1200);
   const ok = await p.locator('meta[name="robots"]').getAttribute('content');
-  check(ok === 'index, follow', `/accounts is indexable (got ${JSON.stringify(ok)})`);
+  // While PROPOSAL_NOINDEX is set, nothing on this site should be indexed
+  // under Northern Birch's name -- a lookalike in search results is the same
+  // problem as a lookalike at a .ca address.
+  check(ok === 'noindex, nofollow', `/accounts is noindex while this is a proposal (got ${JSON.stringify(ok)})`);
   await p.close();
 }
 

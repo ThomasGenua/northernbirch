@@ -398,6 +398,36 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
 // component identity instead of a new one on every render.
 
 
+// ============ PROPOSAL DISCLAIMER ============
+// This site reproduces Northern Birch Credit Union's name, branding and
+// product language. Without saying plainly what it is, a lookalike at a .ca
+// address reads as the regulated institution's own site -- so this states it
+// on every page, above the fold, and again in the footer.
+//
+// It renders unconditionally and sits in the document rather than behind a
+// dismiss button: it is in the prerendered HTML, so a crawler or a visitor
+// with no JavaScript sees it too. The 72px top padding clears the fixed nav,
+// the way each page's own padding does.
+//
+// Remove this, PROPOSAL_NOINDEX in ui.jsx, and the password gate together --
+// and only with written permission to use the marks.
+function ProposalBanner(){
+  // Dark on purpose. The nav is position:fixed and renders white and
+  // transparent over the dark heroes, so it floats on top of this band's
+  // background -- a light band made the nav's own text invisible (13 axe
+  // contrast failures, white on #FFF8E6). On the light pages the nav is
+  // opaque and covers the band entirely, so the dark treatment costs nothing.
+  return <div role="note" style={{background:C.navy,borderBottom:`1px solid ${C.birch}44`,padding:"72px 24px 12px"}}>
+    <p style={{maxWidth:1320,margin:"0 auto",fontFamily:fs,fontSize:13,color:C.amberOnDark,lineHeight:1.6}}>
+      <strong style={{fontWeight:700}}>Demonstration only &mdash; an illustrative proposal prepared by Oodler Inc.</strong>{" "}
+      <span style={{color:"rgba(255,255,255,0.78)"}}>
+        Not a live Northern Birch Credit Union service. Nothing here is an offer,
+        a quote, or advice, and no product shown can be bought or bound on this site.
+      </span>
+    </p>
+  </div>;
+}
+
 // ============ FOOTER ============
 function Footer({setPage}){const mob=useMob();
   return <footer style={{background:C.dark,borderTop:"1px solid rgba(200,184,138,0.08)"}}>
@@ -434,10 +464,22 @@ function Footer({setPage}){const mob=useMob();
           <p style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.6}}>Eligible deposits at Northern Birch Credit Union are insured by the Financial Services Regulatory Authority of Ontario (FSRA). Registered account deposits have unlimited coverage. Other eligible deposits are insured up to $250,000 per depositor. Insurance products are not deposits and are not insured by FSRA.</p>
         </div>
       </div>
+      {/* The permanent record of what this site is, carried on every page
+          alongside the banner at the top. */}
+      <div style={{background:"rgba(212,165,71,0.10)",border:`1px solid rgba(212,165,71,0.35)`,borderRadius:12,padding:"14px 20px",marginBottom:16}}>
+        <p style={{fontFamily:fs,fontSize:11,color:C.amberOnDark,margin:0,lineHeight:1.7}}>
+          <strong style={{fontWeight:700}}>Illustrative proposal prepared by Oodler Inc. — not a live Northern Birch Credit Union service.</strong>{" "}
+          This site is a design concept shown to Northern Birch for discussion. It is
+          not operated by, endorsed by, or affiliated with Northern Birch Credit Union.
+          Nothing on it is an offer, a quote, or financial, insurance or tax advice, and
+          no product shown can be purchased or bound here. Product names, rates and
+          coverage described may be illustrative and should not be relied on. For
+          anything real, contact Northern Birch Credit Union directly.
+        </p>
+      </div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:mob?"flex-start":"center",flexDirection:mob?"column":"row",gap:8}}>
         <div>
           <span style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",display:"block"}}>Northern Birch Credit Union Limited. Member of Central 1 Credit Union. Regulated by FSRA.</span>
-          <span style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)",display:"block"}}>Insurance distributed on behalf of The Personal Insurance Company, CUMIS/Co-operators, and Manulife Financial.</span>
         </div>
         <span style={{fontFamily:fs,fontSize:10,color:"rgba(255,255,255,0.6)"}}>Prepared by Thomas Genua, CEO Oodler</span>
       </div>
@@ -545,9 +587,10 @@ export default function App({ssrPath}){
       <div style={{background:C.cream,minHeight:"100vh"}}>
         <a href="#main" className="skip-link">Skip to main content</a>
         <Nav page={page} setPage={setPage} onSearch={()=>setSearch(true)} onLogin={()=>setLogin(true)} onNotifications={()=>setNotifs(true)} lang={lang} setLang={setLang}/>
-        {/* The nav is position:fixed and 57-60px tall at every breakpoint, so this
-            band has to clear it itself the way each page's paddingTop does. */}
-        {lang!=="en"&&<div style={{background:C.birchLight,borderBottom:`1px solid ${C.birch}`,padding:"72px 24px 12px"}}>
+        <ProposalBanner/>
+        {/* The banner above already clears the fixed nav, so this no longer
+            needs the 72px of top padding it used to carry. */}
+        {lang!=="en"&&<div style={{background:C.birchLight,borderBottom:`1px solid ${C.birch}`,padding:"12px 24px"}}>
           <p style={{maxWidth:1320,margin:"0 auto",fontFamily:fs,fontSize:13,color:C.navy,lineHeight:1.6}}>
             {t("Parts of this site are still only in English. Call us and we will serve you in your language.",lang)}{" "}
             <a href="tel:+14164654659" style={{color:C.accentText,fontWeight:600,whiteSpace:"nowrap"}}>416-465-4659</a>

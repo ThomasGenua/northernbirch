@@ -270,6 +270,20 @@ export const META_NOTFOUND=["Page not found | Northern Birch Credit Union","That
 // equal to the EXCLUDE list in scripts/generate-seo-files.mjs.
 export const NOINDEX_PAGES=new Set(["dashboard","messages","leadership"]);
 
+// While this site is an Oodler proposal rather than a live service, no page on
+// it should be indexed under Northern Birch's name: a lookalike in search
+// results is the same problem as a lookalike at a .ca address. This forces
+// noindex on every page regardless of the per-page list above, and
+// generate-seo-files.mjs does the same to the prerendered HTML, so a crawler
+// that does not run JavaScript sees it too.
+//
+// The password gate in netlify/edge-functions/ is the real barrier; this is
+// the belt to its braces, and covers the window between the gate coming off
+// and permission to use the marks being granted.
+//
+// Flip to false only with written permission from Northern Birch.
+export const PROPOSAL_NOINDEX=true;
+
 export function setTag(selector,attr,value){
   let el=document.head.querySelector(selector);
   if(!el){
@@ -297,7 +311,7 @@ export function applyMeta(page){
   setTag('link[rel="canonical"]',"href",url);
   // "follow" on the 404 so the links out of it still count; "nofollow" on the
   // excluded pages, matching exactly what the prerendered HTML already says.
-  setTag('meta[name="robots"]',"content",notFound?"noindex, follow":NOINDEX_PAGES.has(page)?"noindex, nofollow":"index, follow");
+  setTag('meta[name="robots"]',"content",PROPOSAL_NOINDEX?"noindex, nofollow":notFound?"noindex, follow":NOINDEX_PAGES.has(page)?"noindex, nofollow":"index, follow");
   setTag('meta[property="og:title"]',"content",title);
   setTag('meta[property="og:description"]',"content",desc);
   setTag('meta[property="og:url"]',"content",url);
