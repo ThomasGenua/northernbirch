@@ -211,10 +211,9 @@ function LoginModal({open,onClose,setPage}){const mob=useMob();
             <label htmlFor="login-password" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Password</label>
             <input id="login-password" name="password" autoComplete="current-password" type="password" placeholder="Enter your password" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/>
           </div>
-          <button onClick={()=>{setPage("dashboard");onClose()}} style={{width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,cursor:"pointer",marginBottom:16}}>Sign In</button>
-          <div style={{display:"flex",justifyContent:"space-between"}}>
+          <button onClick={()=>{setPage("dashboard");onClose()}} style={{width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,cursor:"pointer",marginBottom:16}}>Access demo</button>
+          <div style={{display:"flex",justifyContent:"flex-start"}}>
             <button style={{background:"none",border:"none",fontFamily:fs,fontSize:12,color:C.accentText,cursor:"pointer"}}>Forgot Password?</button>
-            <button style={{background:"none",border:"none",fontFamily:fs,fontSize:12,color:C.accentText,cursor:"pointer"}}>Register</button>
           </div>
         </div>
       </div>
@@ -355,7 +354,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
           </div>
           <button onClick={onSearch} aria-label="Search Northern Birch" style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:isDark?"rgba(255,255,255,0.6)":"#6B6B6B"}}><span aria-hidden="true">&#128269;</span></button>
           <button onClick={onNotifications} aria-label="Notifications" style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:isDark?"rgba(255,255,255,0.6)":"#6B6B6B",position:"relative"}}><span aria-hidden="true">&#128276;</span><span aria-hidden="true" style={{position:"absolute",top:4,right:4,width:8,height:8,borderRadius:"50%",background:C.red,border:"2px solid "+(isDark?C.dark:"#fdfbf7")}}/></button>
-          <button onClick={onLogin} style={{background:C.accentText,border:"none",borderRadius:8,padding:"7px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#fff",fontWeight:600}}>{t("Sign In",lang)}</button>
+          <button onClick={onLogin} style={{background:C.accentText,border:"none",borderRadius:8,padding:"7px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#fff",fontWeight:600}}>{t("Access demo",lang)}</button>
         </div>
         <div className="nav-narrow">
           <div style={{position:"relative"}}>
@@ -386,7 +385,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
         {(n.kids||[]).map(k=><button key={k.l} onClick={()=>setPage(k.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accentText}10`:"transparent",border:"none",padding:"14px 20px",borderRadius:12,fontFamily:fs,fontSize:15,color:page===k.p?C.accent:C.navy,fontWeight:page===k.p?700:500,marginBottom:4}}>{t(k.l,lang)}</button>)}
       </div>)}
       <div style={{borderTop:"1px solid #eee",marginTop:12,paddingTop:12}}>
-        <button onClick={()=>{onLogin();setMobileMenu(false)}} style={{display:"block",width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,marginBottom:8}}>{t("Sign In",lang)}</button>
+        <button onClick={()=>{onLogin();setMobileMenu(false)}} style={{display:"block",width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,marginBottom:8}}>{t("Access demo",lang)}</button>
         <button onClick={()=>setPage("booking")} style={{display:"block",width:"100%",background:C.navy,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>{t("Book Appointment",lang)}</button>
       </div>
     </div>}

@@ -1,101 +1,105 @@
-// One shared password in front of the whole site.
-//
-// This has to run on the server, not in the page. Since #19 every route is
-// prerendered to static HTML, so the entire site -- rates, branch addresses,
-// the lot -- is sitting in the markup before any JavaScript runs. A
-// client-side gate would hide it behind a div and leave it one "view source"
-// away. An edge function runs before Netlify serves the file at all, so an
-// unauthenticated visitor never receives the bytes.
-//
-// Netlify has built-in password protection that does the same job from the
-// UI, but it is a paid-plan feature; this works on any plan.
+// Server-side password gate for every page, asset, function, and form post.
+// The password stays in Netlify's SITE_PASSWORD environment variable and is
+// never sent to the browser or compiled into the application bundle.
 
-// The secret is read from the SITE_PASSWORD environment variable, set in the
-// Netlify UI (Site configuration -> Environment variables). It is deliberately
-// NOT written down here: this repository is public, so a literal in the source
-// would be readable by exactly the people the gate exists to keep out, and
-// would live in the git history after any later change.
-//
-// If the variable is missing the gate denies everyone rather than opening the
-// site -- a misconfiguration should fail shut, not publish the thing it was
-// meant to protect. Set the variable before deploying this.
+const COOKIE_NAME = "nb_site_access";
+const COOKIE_TTL = 60 * 60 * 24 * 7;
+const encoder = new TextEncoder();
 
-const REALM = "Northern Birch Credit Union";
-
-// Comparing with === leaks how much of the password was right through how long
-// the comparison took. This always looks at every byte.
-function sameSecret(a, b) {
-  const enc = new TextEncoder();
-  const A = enc.encode(a), B = enc.encode(b);
-  let diff = A.length ^ B.length;
-  for (let i = 0; i < Math.max(A.length, B.length); i++) diff |= (A[i] ?? 0) ^ (B[i] ?? 0);
-  return diff === 0;
+export function sameSecret(left, right) {
+  const a = encoder.encode(String(left ?? ""));
+  const b = encoder.encode(String(right ?? ""));
+  let difference = a.length ^ b.length;
+  for (let index = 0; index < Math.max(a.length, b.length); index += 1) {
+    difference |= (a[index] ?? 0) ^ (b[index] ?? 0);
+  }
+  return difference === 0;
 }
 
-// Exported so it can be tested without a Netlify runtime. Basic auth sends
-// "user:password"; the username is ignored, so a visitor only needs the one
-// password and can leave the name box blank.
-export function authorized(header, password) {
-  if (!password) return false;
-  const [scheme, encoded] = String(header ?? "").split(" ");
-  if (!/^Basic$/i.test(scheme ?? "") || !encoded) return false;
-  let raw;
-  try {
-    raw = atob(encoded);               // one character per byte
-  } catch {
-    return false;                      // not valid base64
-  }
-  // The realm below asks for UTF-8, which is what current browsers send. Older
-  // ones send latin-1, and decoding those bytes as UTF-8 would quietly produce
-  // replacement characters and refuse a correct password, so fall back to the
-  // raw bytes when they are not valid UTF-8. Moot for an ASCII password;
-  // free insurance if it is ever changed to one with an accent in it.
-  let decoded;
-  try {
-    decoded = new TextDecoder("utf-8", { fatal: true }).decode(Uint8Array.from(raw, (c) => c.charCodeAt(0)));
-  } catch {
-    decoded = raw;
-  }
-  const sep = decoded.indexOf(":");
-  if (sep < 0) return false;
-  return sameSecret(decoded.slice(sep + 1), password);
+export async function accessToken(password) {
+  const bytes = await crypto.subtle.digest(
+    "SHA-256",
+    encoder.encode(`northern-birch-site-access-v1:${password}`),
+  );
+  return btoa(String.fromCharCode(...new Uint8Array(bytes)))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replaceAll("=", "");
 }
 
-const DENIED = `<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Password required | Northern Birch Credit Union</title>
-<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#FDFBF7;
-font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#1B2A4A;padding:24px}
-main{max-width:30rem;text-align:center}h1{font-size:1.4rem;margin:0 0 .6rem}
-p{margin:0;color:#555;line-height:1.7;font-size:.95rem}</style></head>
-<body><main><h1>This site is password protected</h1>
-<p>Reload the page and enter the password when your browser asks. You can leave
-the username blank. If you don't have it, contact whoever sent you the link.</p>
-</main></body></html>`;
+function cookieValue(header) {
+  for (const part of String(header ?? "").split(";")) {
+    const separator = part.indexOf("=");
+    if (separator < 0) continue;
+    if (part.slice(0, separator).trim() === COOKIE_NAME) {
+      return part.slice(separator + 1).trim();
+    }
+  }
+  return "";
+}
 
-export default async (request, context) => {
-  const secret = Netlify.env.get("SITE_PASSWORD");
-  // Goes to the Netlify function log, where the site's owner will see it, and
-  // never to the visitor -- the 401 below looks the same either way, so a
-  // misconfiguration is not advertised to whoever is knocking.
-  if (!secret) console.error("SITE_PASSWORD is not set: denying every request. Set it in Site configuration -> Environment variables.");
-  if (authorized(request.headers.get("authorization"), secret)) return context.next();
+function safeReturnTo(value) {
+  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
+    ? value
+    : "/";
+}
 
-  return new Response(DENIED, {
+function escapeHtml(value) {
+  return value.replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[character]);
+}
+
+function passwordPage(returnTo, invalid = false) {
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Private access | Northern Birch</title>
+<style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#fdfbf7;color:#1b2a4a;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}main{width:min(100%,420px);background:#fff;border:1px solid #e6e2d9;border-radius:20px;padding:36px;box-shadow:0 18px 55px rgba(27,42,74,.12)}.mark{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#1b2a4a;color:#fff;font-weight:800}h1{margin:24px 0 8px;font-size:25px;line-height:1.2}p{margin:0 0 24px;color:#5f6570}.error{padding:10px 12px;border-radius:9px;background:#fff0ef;color:#9f2c23;font-size:14px}label{display:block;margin-bottom:7px;font-size:14px;font-weight:700}input{width:100%;padding:12px 13px;border:1px solid #bcc3ce;border-radius:10px;font:inherit;outline:none}input:focus{border-color:#176b57;box-shadow:0 0 0 3px rgba(23,107,87,.14)}button{width:100%;margin-top:16px;padding:13px;border:0;border-radius:10px;background:#176b57;color:#fff;font:700 16px system-ui;cursor:pointer}button:hover{background:#115545}.note{margin:20px 0 0;text-align:center;font-size:13px;color:#777}</style></head>
+<body><main><div class="mark" aria-hidden="true">NB</div><h1>This site is private</h1><p>Enter the access password to continue.</p>${invalid ? '<p class="error" role="alert">That password is incorrect. Please try again.</p>' : ""}<form method="post" action="/__site-access"><input type="hidden" name="returnTo" value="${escapeHtml(returnTo)}"><label for="password">Access password</label><input id="password" name="password" type="password" autocomplete="current-password" required autofocus><button type="submit">Access demo</button></form><p class="note">Authorized access only</p></main></body></html>`;
+}
+
+function denied(returnTo, invalid = false) {
+  return new Response(passwordPage(returnTo, invalid), {
     status: 401,
     headers: {
-      // charset tells the browser to send the password as UTF-8 rather than
-      // latin-1, which is what the TextDecoder above expects.
-      "WWW-Authenticate": `Basic realm="${REALM}", charset="UTF-8"`,
       "Content-Type": "text/html; charset=utf-8",
-      // Never let a 401 -- or a proxy -- cache in place of the real page.
       "Cache-Control": "no-store",
       "X-Robots-Tag": "noindex, nofollow",
     },
   });
+}
+
+export default async (request, context) => {
+  const secret = Netlify.env.get("SITE_PASSWORD");
+  if (!secret) {
+    console.error("SITE_PASSWORD is not set: denying every request.");
+    return denied("/");
+  }
+
+  const expected = await accessToken(secret);
+  if (sameSecret(cookieValue(request.headers.get("cookie")), expected)) {
+    return context.next();
+  }
+
+  const url = new URL(request.url);
+  if (request.method === "POST" && url.pathname === "/__site-access") {
+    const form = await request.formData();
+    const submitted = String(form.get("password") ?? "");
+    const returnTo = safeReturnTo(form.get("returnTo"));
+    if (!sameSecret(submitted, secret)) return denied(returnTo, true);
+
+    const secure = url.protocol === "https:" ? "; Secure" : "";
+    return new Response(null, {
+      status: 303,
+      headers: {
+        Location: returnTo,
+        "Cache-Control": "no-store",
+        "Set-Cookie": `${COOKIE_NAME}=${expected}; HttpOnly${secure}; SameSite=Lax; Path=/; Max-Age=${COOKIE_TTL}`,
+      },
+    });
+  }
+
+  return denied(safeReturnTo(`${url.pathname}${url.search}`));
 };
 
-// Everything: pages, assets, /api/chat and form posts alike. Anything left out
-// would be served to anyone who guessed its URL.
 export const config = { path: "/*" };

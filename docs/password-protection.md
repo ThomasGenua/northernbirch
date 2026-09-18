@@ -1,60 +1,33 @@
 # Password protection
 
-The whole site sits behind one shared password, enforced by
-`netlify/edge-functions/password-gate.js`.
+The whole site is protected by `netlify/edge-functions/password-gate.js` before
+Netlify serves any page, asset, function, or form endpoint.
 
-## Setting the password
+## Configuration
 
-Set `SITE_PASSWORD` in the Netlify UI: **Site configuration → Environment
-variables → Add a variable**. It takes effect on the next deploy; no code
-change is needed, and changing it later needs no deploy of its own beyond the
-next one.
+Set `SITE_PASSWORD` in Netlify under **Site configuration → Environment
+variables**. For local Netlify development, put it in the ignored `.env` file.
+Never prefix it with `VITE_`: Vite variables are compiled into public browser
+JavaScript.
 
-**Set it before deploying the gate.** The password is deliberately not written
-down in this repository — this repo is public, so a literal in the source would
-be readable by exactly the people the gate exists to keep out, and would remain
-in the git history after any later change. There is therefore no fallback: if
-`SITE_PASSWORD` is missing the gate denies *everyone*, which is the right way
-for it to fail but will look like an outage. The reason is written to the
-Netlify function log, not shown to visitors.
+The gate fails closed when the variable is absent, so configure the production
+environment before deploying. The requested password is present only in the
+local ignored `.env`; it is not committed to this repository.
 
-## Signing in
+## How access works
 
-The browser shows its own username/password prompt. Only the password is
-checked; the username box can be left blank. Do not put a colon in the
-username — HTTP Basic auth splits the credentials on the first colon, so a
-username containing one will send the wrong password.
+An unauthenticated visitor receives a dedicated password form. A correct
+password creates a one-week cookie with `HttpOnly`, `SameSite=Lax`, `Path=/`,
+and `Secure` on HTTPS, then returns the visitor to the requested page. The
+password is not stored in that cookie. Changing `SITE_PASSWORD` invalidates all
+existing access cookies automatically.
 
-## Why an edge function rather than JavaScript on the page
+The edge function applies to `/*`, including prerendered pages, static assets,
+`/api/chat`, and form posts. This is intentionally server-side: a React overlay
+would leave all prerendered content readable in page source.
 
-Every route is prerendered to static HTML at build time, so the entire site —
-rates, branch addresses, staff names — is in the markup before any JavaScript
-runs. A password check in the page could only hide that behind a `div`, one
-"view source" away. The edge function runs before Netlify serves the file, so
-an unauthenticated visitor never receives the content at all.
+## Removing the gate
 
-Netlify has built-in password protection that does the same job from the UI,
-but it is a paid-plan feature. This works on any plan. If the site moves to a
-plan that includes it, prefer the built-in one and delete this function.
-
-## What it covers
-
-`config.path = "/*"` — every page, asset, `/api/chat` and form post. Nothing is
-excluded; an exception would be served to anyone who guessed its URL.
-
-## Turning it off
-
-Delete `netlify/edge-functions/password-gate.js` and its test, and remove the
-test from the `test` script in `package.json`. Nothing else references it.
-
-Note that while the gate is on, search engines get a 401 and the site will drop
-out of search results. The prerendering, sitemap and per-page meta all still
-work; they simply have no audience until the gate comes off.
-
-## Tests
-
-`netlify/edge-functions/password-gate.test.mjs`, run by `npm test`. It covers
-what gets in, what does not, the malformed and misconfigured cases, and the 401
-response itself. The browser suites cannot reach this code — they run against a
-local static server, while this runs on Netlify's edge — so this file is the
-only thing standing behind it.
+Delete the edge function and its test, then remove the test command from
+`package.json`. While the gate is enabled, crawlers receive a 401 and noindex
+headers, so the site will not remain indexed publicly.
