@@ -79,7 +79,7 @@ export const TX={
   "Your whole financial life.":{est:"Kogu teie finantselu.",lat:"Visa jūsu finanšu dzīve."},
   "Under one Birch.":{est:"Ühe kase all.",lat:"Zem viena bērza."},
   "The Future of Member Financial Wellness":{est:"Liikmete rahalise heaolu tulevik",lat:"Biedru finanšu labklājības nākotne"},
-  "Insurance. Investments. International transfers. Estate planning. Business benefits. 70+ years of community trust.":{est:"Kindlustus. Investeeringud. Rahvusvahelised ülekanded. Pärandiplaneerimine. Äritoetused. 70+ aastat kogukonna usaldust.",lat:"Apdrošināšana. Investīcijas. Starptautiskie pārvedumi. Mantojuma plānošana. Biznesa priekšrocības. 70+ gadu kopienas uzticība."},
+  "Insurance. Investments. International transfers. Estate planning. Business benefits. Roots dating to 1954.":{est:"Kindlustus. Investeeringud. Rahvusvahelised ülekanded. Pärandiplaneerimine. Äritoetused. Juured ulatuvad aastasse 1954.",lat:"Apdrošināšana. Investīcijas. Starptautiskie pārvedumi. Mantojuma plānošana. Biznesa priekšrocības. Saknes meklējamas 1954. gadā."},
   "Get an Insurance Quote":{est:"Küsi kindlustuspakkumist",lat:"Saņemt apdrošināšanas piedāvājumu"},
   "AI Insurance Advisor":{est:"AI kindlustusnõustaja",lat:"AI apdrošināšanas padomnieks"},
   "Travel & Transfers":{est:"Reisimine ja ülekanded",lat:"Ceļošana un pārvedumi"},
@@ -125,7 +125,7 @@ export const TX={
   // Estate
   "Protect your family across generations":{est:"Kaitske oma perekonda põlvkondade vältel",lat:"Aizsargājiet savu ģimeni paaudžu garumā"},
   // Community
-  "70 years of trust":{est:"70 aastat usaldust",lat:"70 gadu uzticības"},
+  "Serving this community since 1954":{est:"70 aastat usaldust",lat:"70 gadu uzticības"},
   "Our Heritage":{est:"Meie pärand",lat:"Mūsu mantojums"},
   "KESKUS Flagship":{est:"KESKUS lipulaev",lat:"KESKUS galvenā filiāle"},
   // Contact
@@ -234,7 +234,7 @@ export const META={
   claims:["Claims Centre | Northern Birch Credit Union","Start an insurance claim online, or reach your insurer's claims line directly."],
   calculators:["Financial Calculators | Northern Birch","Mortgage, retirement and insurance-needs calculators for Northern Birch members."],
   contact:["Contact & Branches | Northern Birch Credit Union","Branch addresses, hours and phone numbers, including the KESKUS location."],
-  community:["Our Community | Northern Birch Credit Union","70+ years serving Toronto's Estonian and Latvian communities, with scholarships and cultural sponsorship."],
+  community:["Our Community | Northern Birch Credit Union","Serving Toronto's Estonian and Latvian communities, with scholarships and cultural sponsorship."],
   digital:["Digital Banking Tools | Northern Birch","Your insurance dashboard, quote engine, planning calculators and mobile banking, all in one place."],
   estate:["Estate Planning | Northern Birch Credit Union","Wills, trusts, beneficiary designations and insurance strategies for every stage, from young family to senior."],
   quote:["Insurance Quote Calculator | Northern Birch","Estimate a term life, home, auto or travel premium in under two minutes. No personal information required."],
