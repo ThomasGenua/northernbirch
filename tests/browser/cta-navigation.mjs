@@ -11,7 +11,7 @@ const CASES=[
   ['/rates','Explore mortgages','/mortgages'],
   ['/rates','Compare accounts','/accounts'],
   ['/rates','Compare credit cards','/cards'],
-  ['/travel','Get a travel quote','/quote'],
+  ['/travel','How travel cover works','/insurance'],   // was 'Get a travel quote': Northern Birch refers to Allianz, it does not quote
   ['/travel','See the mobile app','/mobile-app'],
   ['/travel','Find a branch','/contact'],
   ['/business','Estate & succession','/estate'],

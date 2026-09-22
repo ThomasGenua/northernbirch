@@ -11,7 +11,7 @@ export default function BlogPage({setPage}){
     {title:"5 Insurance Mistakes Young Professionals Make",go:["healthcheck","Take the financial check-up"],date:"February 2026",cat:"Financial Literacy",excerpt:"From skipping tenant insurance to underestimating disability risk, young professionals often overlook critical coverage. Here are the five most common mistakes and how to avoid them.",color:C.redText},
     {title:"KESKUS Branch: What to Expect",go:["contact","Find a branch"],date:"February 2026",cat:"Community",excerpt:"Our new flagship branch at the KESKUS International Estonian Centre is under construction. Here's a preview of the services, technology, and community features you'll find when we open.",color:C.birchText},
     {title:"Group Benefits: A Small Business Owner's Guide",go:["business","Business solutions"],date:"February 2026",cat:"Business",excerpt:"Offering employee benefits doesn't have to be complicated or expensive. Northern Birch now offers group health and dental plans for businesses with as few as 2 employees through Manulife.",color:C.greenText},
-    {title:"Estate Planning at Every Life Stage",go:["estate","Estate planning"],date:"January 2026",cat:"Planning",excerpt:"Estate planning isn't just for retirees. From your first will to your final legacy plan, here's what you need at each life stage -- and how insurance plays a critical role.",color:C.navy},
+    {title:"When a Member Dies: What Families Need to Know",go:["estate","Estates"],date:"January 2026",cat:"Estates",excerpt:"Losing someone is hard enough without paperwork you don't understand. What happens to a member's accounts, who handles them, and who to call first.",color:C.navy},
   ];
   return(
     <section className="sec" style={{background:C.cream,}}>

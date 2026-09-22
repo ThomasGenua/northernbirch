@@ -4,7 +4,7 @@ import { Btn, C, Fade, ff, fs, SH, useMob } from '../ui.jsx';
 // Financial advisory was the one product area with no destination. The
 // capability was described in half a dozen places -- the wealth team on the
 // leadership page, Aviso and Qtrade in the terms, registered plans under
-// Personal, estate planning on its own page -- and nowhere did a member find
+// Personal, estates on its own page -- and nowhere did a member find
 // "here is the advice we give and here is how to get it". Everything below
 // restates what the site already publishes; nothing new is claimed.
 const SERVICES = [
