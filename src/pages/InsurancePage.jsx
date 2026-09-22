@@ -31,12 +31,12 @@ export default function InsurancePage({setPage}){const mob=useMob();
     ]},
     {name:"Home & Auto",color:C.greenText,products:[
       {t:"Home Insurance",d:"Exclusive group rates through The Personal. 98% renewal rate.",f:["Exclusive member rates","Replacement cost","Liability up to $2M","Bundle discounts up to 20%"]},
-      {t:"Co-op Insurance",d:"Specialized co-op coverage only Northern Birch can provide.",f:["Unit improvement coverage","Loss assessment protection","Co-op bylaw specific","Expert underwriting"]},
+      {t:"Co-op & Co-ownership",d:"Not insurance: Northern Birch's co-op offering is mortgage lending for co-op and co-ownership homes, which most lenders decline.",f:["Co-op mortgages","Co-ownership mortgages","See the mortgages page"]},
       {t:"Auto Insurance",d:"Full Ontario coverage with Ajusto telematics discounts.",f:["Ajusto safe-driving savings","Multi-vehicle discounts","Accident forgiveness","24/7 claims"]},
       {t:"Tenant Insurance",d:"From $25/month. Quote in 2 minutes on the app.",f:["Personal property coverage","Liability up to $2M","Additional living expenses","Quick mobile quoting"]},
     ]},
     {name:"Travel & Specialty",color:C.amberText,products:[
-      {t:"Travel Insurance",d:"Referral to Allianz Global Assistance (agency code 8528). Quoted by Allianz online or through their contact centre -- not by Northern Birch.",f:["Up to $5M medical","24/7 multilingual assistance","Pre-existing condition options","Group cultural event rates"]},
+      {t:"Travel Insurance",d:"Referral to Allianz Global Assistance (agency code 8528). Quoted by Allianz online or through their contact centre -- not by Northern Birch.",f:["Underwritten by Allianz Global Assistance","Agency code 8528","Coverage and eligibility set by Allianz"]},
       {t:"Single-Trip Travel",d:"Flexible coverage for individual trips up to 365 days.",f:["Customizable coverage","Medical evacuation","Cancel for any reason upgrade","Last-minute purchase OK"]},
       {t:"Pet Insurance",d:"Bronze, Silver, Gold plans. 80% reimbursement.",f:["Three plan tiers","No breed restrictions","One annual deductible","Direct vet payment"]},
       {t:"Recreational Vehicle",d:"Boats, ATVs, snowmobiles, motorcycles, campers.",f:["All vehicle types","Seasonal payments","Agreed value coverage","Multi-policy discounts"]},

@@ -15,7 +15,7 @@ export default function MobileAppPage({setPage}){
                 {title:"Deposit Cheques",desc:"Snap a photo of your cheque and deposit it instantly from your phone."},
                 {title:"Insurance Dashboard",desc:"View all policies, coverage details, and file claims directly from the app."},
                 {title:"Insurance Quotes",desc:"Get home, auto, tenant, or travel insurance quotes in under 2 minutes."},
-                {title:"International Transfers",desc:"Send money to Estonia, Latvia, or worldwide with real-time tracking."},
+                {title:"International Transfers",desc:"International wires are sent in branch. Euro and US dollar cash can be ordered in advance for pickup."},
                 {title:"Interac e-Transfer",desc:"Send and receive money instantly to any Canadian bank account."},
                 {title:"Branch & ATM Locator",desc:"Find your nearest branch or surcharge-free ATM using GPS."},
                 {title:"Biometric Login",desc:"Sign in securely with Face ID, Touch ID, or fingerprint."},

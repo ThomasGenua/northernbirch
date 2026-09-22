@@ -152,7 +152,7 @@ export default function CalculatorsPage({setPage}){
                   </div>
                 </>:<>
                   <h4 style={{fontFamily:fs,fontSize:15,color:C.greenText,margin:"0 0 8px",fontWeight:700}}>On Track: Monthly Surplus of C${Math.abs(rResult.gap).toLocaleString()}</h4>
-                  <p style={{fontFamily:fs,fontSize:14,color:"#666",margin:0,lineHeight:1.7}}>Great news -- at your current pace, you'll have more than enough for retirement. Consider using the surplus for travel to Estonia and Latvia, maximizing your TFSA, or exploring estate planning strategies to pass wealth to the next generation tax-efficiently.</p>
+                  <p style={{fontFamily:fs,fontSize:14,color:"#666",margin:0,lineHeight:1.7}}>Great news -- at your current pace, you'll have more than enough for retirement. Consider using the surplus for travel to Estonia and Latvia, maximizing your TFSA, or talking to an advisor about passing wealth to the next generation tax-efficiently.</p>
                 </>}
               </div>
               <p style={{fontFamily:fs,fontSize:11,color:"#707070",lineHeight:1.6}}>Estimates assume {rReturn}% annual return, 2% inflation, 70% income replacement target, CPP/OAS at ~C$18,000/year combined, and living to age 90. Actual results will vary. This calculator does not account for employer pensions, rental income, or other assets. Book a Financial Check-Up with our wealth team for a comprehensive retirement plan.</p>
