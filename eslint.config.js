@@ -44,6 +44,8 @@ export default [
     // globals. The edge function is .js rather than .mjs because that is what
     // Netlify's edge bundler accepts, so this cannot match only .mjs.
     files: ['netlify/**/*.{js,mjs}', 'scripts/**/*.mjs'],
-    languageOptions: { globals: { ...globals.node, Netlify: 'readonly' } },
+    // 2025 for import attributes: the prompts read content/facts.json with
+    // `import ... with { type: "json" }`, which Node needs for a JSON import.
+    languageOptions: { ecmaVersion: 2025, globals: { ...globals.node, Netlify: 'readonly' } },
   },
 ];
