@@ -20,8 +20,12 @@ check(raw.length===0,`no un-interpolated template placeholders on any page${raw.
 {
   const p=await go('/rates');
   const rates=await p.locator('main').innerText();
-  const m5=rates.match(/5-Year GIC\s*\n?\s*([\d.]+%)/); const g1=rates.match(/1-Year GIC\s*\n?\s*([\d.]+%)/);
+  // a row may carry an "illustrative" tag between the term and the rate
+  const m5=rates.match(/5-Year GIC\s*(?:illustrative\s*)?([\d.]+%)/); const g1=rates.match(/1-Year GIC\s*(?:illustrative\s*)?([\d.]+%)/);
   check(!!m5&&!!g1,`rates page publishes 5-year=${m5?.[1]} 1-year=${g1?.[1]}`);
+  // only the rates confirmed against the posted table go untagged
+  check(/3-Year Closed\s*[\d.]+%/.test(rates)&&/5-Year Variable High Ratio\s*[\d.]+%/.test(rates),'confirmed rows (3-year closed, 5-year variable high ratio) are not tagged illustrative');
+  check(/5-Year GIC\s*illustrative/.test(rates)&&/Collabria Mastercard\s*illustrative/.test(rates),'unconfirmed rows are tagged illustrative');
   await p.locator('button[aria-label="Notifications"]:visible').first().click(); await p.waitForTimeout(600);
   const n=await p.locator('[role="dialog"]').innerText();
   check(!/3\.45%|3\.20%/.test(n),'notification no longer advertises a rate the table contradicts');
