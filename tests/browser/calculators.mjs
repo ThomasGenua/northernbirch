@@ -1,4 +1,6 @@
 import { chromium } from 'playwright-core';
+import { readFileSync } from 'node:fs';
+const RATES=JSON.parse(readFileSync(new URL('../../src/data/rates.json',import.meta.url),'utf8'));
 import { BASE, EXECUTABLE, blockFonts } from './env.mjs';
 
 const br=await chromium.launch({executablePath:EXECUTABLE});
@@ -31,7 +33,7 @@ for(const [amt,rate,frag] of [[-100000,4.39,'greater than zero'],[0,4.39,'greate
 const ok=await mort(500000,4.39,25);
 check(ok.err===''&&ok.res==='C$2,736.87','a valid calculation clears the error banner');
 // posted rates in the footnote come from the rate table
-check((await p.locator('#mortgage-result').innerText()).includes('3-year closed 4.39%'),'footnote reads the posted rate table');
+check((await p.locator('#mortgage-result').innerText()).includes(`3-year closed ${RATES.rates.m3}`),`footnote reads the posted rate table (3-year closed ${RATES.rates.m3})`);
 
 // retirement guards
 await p.locator('main button',{hasText:'Retirement'}).click(); await p.waitForTimeout(400);
