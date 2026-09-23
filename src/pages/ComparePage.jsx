@@ -1,49 +1,53 @@
 import React, { useState } from "react";
 import { C, ff, fs, SH } from '../ui.jsx';
 
+// This page used to be a table of insurance "plans" -- Essential, Standard and
+// Premium life tiers, home and travel tiers, each with a monthly or yearly
+// price, coverage limits, a "most popular" badge and a quote button. Every tier,
+// price and limit was invented, and Northern Birch does not sell insurance: it
+// refers members to insurers, who quote and underwrite.
+//
+// What a referral-only credit union can honestly publish is what the KINDS of
+// cover differ on, and what to ask the insurer. That is what this is now. It
+// names no product, no price and no limit.
 export default function ComparePage({setPage}){
-  
   const[cat,setCat]=useState(0);
-  const tables=[
-    {name:"Term Life Insurance",plans:[
-      {tier:"Essential",price:"From $18/mo",features:{"Coverage":"$100K-$500K","Term":"10 or 20 years","Conversion":"Yes","Spousal rider":"No","Child rider":"No","Waiver of premium":"No","Accelerated death":"Yes","Living benefit":"No"}},
-      {tier:"Standard",price:"From $28/mo",features:{"Coverage":"$250K-$1M","Term":"10, 20, or 30 years","Conversion":"Yes","Spousal rider":"Yes","Child rider":"Yes","Waiver of premium":"Yes","Accelerated death":"Yes","Living benefit":"No"}},
-      {tier:"Premium",price:"From $45/mo",features:{"Coverage":"$500K-$2M","Term":"10, 20, or 30 years","Conversion":"Yes","Spousal rider":"Yes","Child rider":"Yes","Waiver of premium":"Yes","Accelerated death":"Yes","Living benefit":"Yes"}},
+  const topics=[
+    {name:"Life",pairs:[
+      {a:"Term",b:"Permanent",
+       diff:"Term cover lasts a set number of years and ends; permanent cover lasts your whole life and some kinds build a cash value.",
+       ask:["How long do I need cover for, and why?","What happens when the term ends?","Can I convert term to permanent later?"]},
     ]},
-    {name:"Home Insurance",plans:[
-      {tier:"Basic",price:"From $85/mo",features:{"Dwelling":"Actual cash value","Contents":"$50K","Liability":"$1M","Water damage":"Standard","Identity theft":"No","Equipment breakdown":"No","Replacement cost":"No","Bundle discount":"10%"}},
-      {tier:"Enhanced",price:"From $120/mo",features:{"Dwelling":"Replacement cost","Contents":"$100K","Liability":"$2M","Water damage":"Enhanced","Identity theft":"Yes","Equipment breakdown":"Yes","Replacement cost":"Yes","Bundle discount":"15%"}},
-      {tier:"Comprehensive",price:"From $165/mo",features:{"Dwelling":"Guaranteed replacement","Contents":"$150K+","Liability":"$2M","Water damage":"Full (incl. overland)","Identity theft":"Yes","Equipment breakdown":"Yes","Replacement cost":"Yes","Bundle discount":"20%"}},
+    {name:"Home",pairs:[
+      {a:"Actual cash value",b:"Replacement cost",
+       diff:"Actual cash value pays what the damaged thing was worth after depreciation; replacement cost pays what it costs to replace it new.",
+       ask:["Which one does this policy use, for the building and for contents?","Are there limits on particular items?","What is and isn't covered for water damage?"]},
     ]},
-    {name:"Travel Insurance",plans:[
-      {tier:"Single Trip",price:"From $29",features:{"Emergency medical":"$5M","Trip cancellation":"Yes","Baggage":"$1,500","Trip interruption":"Yes","Travel delay":"$500","Ask Allianz":"With stability","Duration":"Up to 60 days","24/7 assistance":"Yes"}},
-      {tier:"Multi-Trip",price:"From $149/yr",features:{"Emergency medical":"$5M","Trip cancellation":"Yes","Baggage":"$2,000","Trip interruption":"Yes","Travel delay":"$1,000","Ask Allianz":"With stability","Duration":"Multiple trips/yr","24/7 assistance":"Yes"}},
-      {tier:"Annual Premium",price:"From $249/yr",features:{"Emergency medical":"$10M","Trip cancellation":"Enhanced","Baggage":"$3,000","Trip interruption":"Enhanced","Travel delay":"$2,000","Ask Allianz":"Included","Duration":"Unlimited trips","24/7 assistance":"Yes + concierge"}},
+    {name:"Travel",pairs:[
+      {a:"One trip",b:"A year of trips",
+       diff:"Some plans cover a single trip; others cover every trip in a year up to a length each. Northern Birch refers members to Allianz Global Assistance, who explain the options and quote them.",
+       ask:["Does a condition I already have affect my cover?","What is the longest single trip covered?","What does the plan pay for if I have to cut a trip short?"]},
     ]},
   ];
-  const t=tables[cat];
+  const t=topics[cat];
   return(
-    <section className="sec" style={{background:C.cream,}}>
-      <div style={{maxWidth:1100,margin:"0 auto"}}>
-        <SH tag="Compare Plans" tagColor={C.accentText} title="Coverage comparison" desc="Compare plan tiers side-by-side to find the right level of protection for your needs."/>
-        <div style={{display:"flex",gap:8,marginBottom:32}}>
-          {tables.map((tb,i)=><button key={i} onClick={()=>setCat(i)} style={{flex:1,background:cat===i?C.navy:"#fff",border:cat===i?"none":"1px solid #ddd",borderRadius:12,padding:"14px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:cat===i?"#fff":C.navy}}>{tb.name}</button>)}
+    <section className="sec" style={{background:C.cream}}>
+      <div style={{maxWidth:900,margin:"0 auto"}}>
+        <SH tag="Understanding cover" tagColor={C.accentText} title="What the kinds of cover differ on" desc="Northern Birch does not sell or quote insurance. It refers members to insurers. Before you talk to one, it helps to know what to ask."/>
+        <div role="tablist" style={{display:"flex",gap:8,marginBottom:28}}>
+          {topics.map((tb,i)=><button key={i} role="tab" aria-selected={cat===i} onClick={()=>setCat(i)} style={{flex:1,background:cat===i?C.navy:"#fff",border:cat===i?"none":"1px solid #ddd",borderRadius:12,padding:"12px 8px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:cat===i?"#fff":C.navy}}>{tb.name}</button>)}
         </div>
-        <div style={{display:"grid",gridTemplateColumns:`repeat(${t.plans.length},1fr)`,gap:16}}>
-          {t.plans.map((plan,i)=><div key={i} style={{background:"#fff",borderRadius:20,overflow:"hidden",border:i===1?`2px solid ${C.accent}`:"1px solid #eee"}}>
-            {i===1&&<div style={{background:C.accentText,padding:"6px",textAlign:"center"}}><span style={{fontFamily:fs,fontSize:11,color:"#fff",fontWeight:700,textTransform:"uppercase",letterSpacing:1}}>Most Popular</span></div>}
-            <div style={{padding:"28px 24px",textAlign:"center",borderBottom:"1px solid #eee"}}>
-              <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 8px"}}>{plan.tier}</h3>
-              <div style={{fontFamily:fs,fontSize:20,color:C.accentText,fontWeight:700}}>{plan.price}</div>
-            </div>
-            <div style={{padding:"16px 24px"}}>
-              {Object.entries(plan.features).map(([k,v],fi)=><div key={fi} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:fi<Object.keys(plan.features).length-1?"1px solid #f5f5f5":"none"}}>
-                <span style={{fontFamily:fs,fontSize:13,color:"#6B6B6B"}}>{k}</span>
-                <span style={{fontFamily:fs,fontSize:13,color:v==="No"?"#707070":C.navy,fontWeight:v==="No"?400:600}}>{v}</span>
-              </div>)}
-            </div>
-            <div style={{padding:"16px 24px 24px"}}><button onClick={()=>setPage("quote")} style={{width:"100%",background:i===1?C.accentText:C.navy,border:"none",borderRadius:10,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Talk to an advisor</button></div>
+        {t.pairs.map((pr,i)=>
+          <div key={i} style={{background:"#fff",borderRadius:20,padding:"28px 30px",border:"1px solid #eee"}}>
+            <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 12px"}}>{pr.a} <span style={{color:"#707070",fontWeight:400}}>vs</span> {pr.b}</h3>
+            <p style={{fontFamily:fs,fontSize:15,color:"#555",lineHeight:1.8,margin:"0 0 20px"}}>{pr.diff}</p>
+            <h4 style={{fontFamily:fs,fontSize:13,color:C.navy,margin:"0 0 10px",fontWeight:700,textTransform:"uppercase",letterSpacing:1}}>Questions to ask the insurer</h4>
+            <ul style={{margin:0,paddingLeft:20}}>
+              {pr.ask.map((q,qi)=><li key={qi} style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.9}}>{q}</li>)}
+            </ul>
           </div>)}
+        <div style={{textAlign:"center",marginTop:28}}>
+          <button onClick={()=>setPage("booking")} style={{background:C.navy,border:"none",borderRadius:12,padding:"14px 28px",cursor:"pointer",fontFamily:fs,fontSize:14,color:"#fff",fontWeight:700}}>Talk to an advisor &rarr;</button>
         </div>
       </div>
     </section>

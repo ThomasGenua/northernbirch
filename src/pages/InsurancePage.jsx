@@ -24,16 +24,16 @@ function InsuranceProductRow({p,color,setPage}){
 export default function InsurancePage({setPage}){const mob=useMob();
   const cats=[
     {name:"Life & Health",color:C.accentText,products:[
-      {t:"Term Life Insurance",d:"Flexible 10/20/30-year coverage from $100K to $2M. Competitive credit union rates through CUMIS.",f:["Guaranteed level premiums","Convertible to permanent","Spousal and child riders","No exam up to $500K"]},
+      {t:"Term Life Insurance",d:"Term life cover is quoted and underwritten by an insurer. Northern Birch refers you; it does not set terms, amounts or price.",f:["Guaranteed level premiums","Convertible to permanent","Spousal and child riders","No exam up to $500K"]},
       {t:"Critical Illness",d:"Tax-free lump sum for 25+ conditions. Use however you choose.",f:["25+ covered conditions","Return of premium option","Partial early-stage payout","Coverage up to $500K"]},
       {t:"Disability Insurance",d:"Replace up to 70% of income. Short and long-term options.",f:["Own-occupation available","Choice of waiting periods","Cost-of-living rider","Covers illness and injury"]},
       {t:"Mortgage Protection",d:"Life and disability tied to your mortgage balance. Easy application.",f:["Apply at mortgage signing","No medical exam","Life, disability, CI options","Joint borrower coverage"]},
     ]},
     {name:"Home & Auto",color:C.greenText,products:[
-      {t:"Home Insurance",d:"Exclusive group rates through The Personal. 98% renewal rate.",f:["Exclusive member rates","Replacement cost","Liability up to $2M","Bundle discounts up to 20%"]},
+      {t:"Home Insurance",d:"Referred to an insurer, who quotes and underwrites it.",f:["Exclusive member rates","Replacement cost","Liability up to $2M","Bundle discounts up to 20%"]},
       {t:"Co-op & Co-ownership",d:"Not insurance: Northern Birch's co-op offering is mortgage lending for co-op and co-ownership homes, which most lenders decline.",f:["Co-op mortgages","Co-ownership mortgages","See the mortgages page"]},
       {t:"Auto Insurance",d:"Full Ontario coverage with Ajusto telematics discounts.",f:["Ajusto safe-driving savings","Multi-vehicle discounts","Accident forgiveness","24/7 claims"]},
-      {t:"Tenant Insurance",d:"From $25/month. Quote in 2 minutes on the app.",f:["Personal property coverage","Liability up to $2M","Additional living expenses","Quick mobile quoting"]},
+      {t:"Tenant Insurance",d:"Quoted and underwritten by an insurer. Northern Birch can refer you.",f:["Personal property coverage","Liability up to $2M","Additional living expenses","Quick mobile quoting"]},
     ]},
     {name:"Travel & Specialty",color:C.amberText,products:[
       {t:"Travel Insurance",d:"Referral to Allianz Global Assistance (agency code 8528). Quoted by Allianz online or through their contact centre -- not by Northern Birch.",f:["Underwritten by Allianz Global Assistance","Agency code 8528","Coverage and eligibility set by Allianz"]},
@@ -45,7 +45,7 @@ export default function InsurancePage({setPage}){const mob=useMob();
   return(
     <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:1320,margin:"0 auto"}}>
-        <SH tag="Insurance Protection" tagColor={C.accentText} title="Protection for every stage of your life" desc="Exclusive member rates through The Personal, CUMIS, and Co-operators. Click any product to learn more."/>
+        <SH tag="Insurance Protection" tagColor={C.accentText} title="Protection for every stage of your life" desc="Northern Birch refers members to insurers, who quote and underwrite. Click any product to learn more."/>
         {cats.map((cat,ci)=><Fade key={ci} delay={ci*0.08}><div style={{marginBottom:40}}>
           <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16}}>
             <div style={{width:40,height:40,borderRadius:12,background:`${cat.color}15`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:cat.color,fontSize:18,fontWeight:800}}>{ci+1}</span></div>
@@ -56,7 +56,7 @@ export default function InsurancePage({setPage}){const mob=useMob();
           </div>
         </div></Fade>)}
         <Fade><div style={{background:`linear-gradient(135deg,${C.navy},#2a4a6a)`,borderRadius:24,padding:mob?"28px 24px":"44px 52px",display:"flex",flexDirection:mob?"column":"row",justifyContent:"space-between",alignItems:"center",gap:mob?24:40}}>
-          <div style={{flex:1}}><div style={{fontFamily:fs,fontSize:11,color:C.birchText,letterSpacing:2,textTransform:"uppercase",fontWeight:600,marginBottom:8}}>Powered by The Personal (Desjardins) + CUMIS (Co-operators) + Manulife</div><h3 style={{fontFamily:ff,fontSize:24,color:"#fff",margin:"0 0 8px"}}>Exclusive rates for Northern Birch members</h3><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.7}}>650+ organization partnerships. 380+ credit union partnerships. 98% policy renewal rate. Best-in-class partners for every insurance line.</p></div>
+          <div style={{flex:1}}><div style={{fontFamily:fs,fontSize:11,color:C.birchText,letterSpacing:2,textTransform:"uppercase",fontWeight:600,marginBottom:8}}>Referral only &mdash; see the underwriter matrix for which insurers are live and which are proposed</div><h3 style={{fontFamily:ff,fontSize:24,color:"#fff",margin:"0 0 8px"}}>Exclusive rates for Northern Birch members</h3><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",margin:0,lineHeight:1.7}}>650+ organization partnerships. 380+ credit union partnerships. 98% policy renewal rate. Best-in-class partners for every insurance line.</p></div>
           <Btn onClick={()=>setPage("quote")}>Get Your Quote</Btn>
         </div></Fade>
         <div style={{marginTop:48}}><h3 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 24px"}}>Insurance FAQ</h3>

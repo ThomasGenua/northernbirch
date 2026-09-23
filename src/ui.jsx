@@ -5,6 +5,8 @@
 import React, { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import './index.css';
 import ratesData from './data/rates.json';
+import etStrings from '../content/i18n/et.json';
+import lvStrings from '../content/i18n/lv.json';
 
 export const C={navy:"#1B2A4A",accent:"#2E86C1",dark:"#0C1829",green:"#27AE60",amber:"#D4A547",amberText:"#8A6410",red:"#E74C3C",redText:"#B3271A",birch:"#C8B88A",birchLight:"#F5F0E6",cream:"#FDFBF7",purple:"#8E44AD",accentText:"#1F6FA5",accentOnDark:"#7FB8E0",greenOnDark:"#6FD79B",amberOnDark:"#E8C46A",purpleOnDark:"#C89BDB",redOnDark:"#F5A99F",amberFill:"#8A6410",birchText:"#7D6C3E",greenText:"#197A41",greenFill:"#177A41",lightBlue:"#EBF5FB"};
 export const ff="'Playfair Display',Georgia,serif",fs="'DM Sans',sans-serif";
@@ -35,133 +37,12 @@ export const BANKING=[
 ];
 
 // ============ TRANSLATION SYSTEM ============
-export const TX={
-  // Nav
-  "Personal":{est:"Eraisik",lat:"Privātpersonām"},
-  "Banking":{est:"Pangandus",lat:"Bankas pakalpojumi"},
-  "Chequing & Savings":{est:"Arve- ja säästukontod",lat:"Norēķinu un krājkonti"},
-  "Chequing":{est:"Arvelduskonto",lat:"Norēķinu konts"},
-  "Mortgages":{est:"Hüpoteeklaenud",lat:"Hipotēkas"},
-  "Credit Cards":{est:"Krediitkaardid",lat:"Kredītkartes"},
-  "Personal Banking":{est:"Erapangandus",lat:"Privātpersonu banka"},
-  "Banking Products":{est:"Pangatooted",lat:"Bankas produkti"},
-  "Everyday banking, start to finish":{est:"Igapäevane pangandus algusest lõpuni",lat:"Ikdienas banku pakalpojumi no sākuma līdz beigām"},
-  "A Full-Service Credit Union Since 1954":{est:"Täisteenust pakkuv krediidiühistu alates 1954",lat:"Pilna servisa krājaizdevu sabiedrība kopš 1954. gada"},
-  "Compare Accounts":{est:"Võrdle kontosid",lat:"Salīdzināt kontus"},
-  "Explore Mortgages":{est:"Tutvu hüpoteeklaenudega",lat:"Iepazīties ar hipotēkām"},
-  "Apply for a Credit Card":{est:"Taotle krediitkaarti",lat:"Pieteikties kredītkartei"},
-  "Apply for this card":{est:"Taotle seda kaarti",lat:"Pieteikties šai kartei"},
-  "Explore Investing":{est:"Tutvu investeerimisega",lat:"Iepazīt investēšanu"},
-  "See All Rates":{est:"Vaata kõiki intresse",lat:"Skatīt visas likmes"},
-  "Get Pre-Approved":{est:"Küsi eelnõusolekut",lat:"Saņemt priekšapstiprinājumu"},
-  "Open an Account":{est:"Ava konto",lat:"Atvērt kontu"},
-  "Savings & GICs":{est:"Säästud ja tähtajalised hoiused",lat:"Uzkrājumi un noguldījumi"},
-  "Registered accounts":{est:"Registreeritud kontod",lat:"Reģistrētie konti"},
-  "Compare accounts side by side":{est:"Võrdle kontosid kõrvuti",lat:"Salīdziniet kontus līdzās"},
-  "Insurance":{est:"Kindlustus",lat:"Apdrošināšana"},
-  "Advice":{est:"Nõustamine",lat:"Konsultācijas"},
-  "Financial Advice":{est:"Finantsnõustamine",lat:"Finanšu konsultācijas"},
-  "Advice from people you can meet":{est:"Nõu inimestelt, keda saate kohata",lat:"Padoms no cilvēkiem, kurus varat satikt"},
-  "Planning, retirement, investments, estate and tax advice from Northern Birch's wealth team -- starting with a Financial Check-Up that costs members nothing.":{est:"Planeerimine, pension, investeeringud, pärand ja maksunõustamine Northern Birchi varahaldusmeeskonnalt -- alustades finantsülevaatusest, mis on liikmetele tasuta.",lat:"Plānošana, pensija, investīcijas, mantojums un nodokļu konsultācijas no Northern Birch bagātības pārvaldības komandas -- sākot ar finanšu pārbaudi, kas biedriem ir bez maksas."},
-  "Financial Check-Up":{est:"Finantsülevaatus",lat:"Finanšu pārbaude"},
-  "Retirement & Investments":{est:"Pension ja investeeringud",lat:"Pensija un investīcijas"},
-  "Estate & Tax Planning":{est:"Pärandi- ja maksuplaneerimine",lat:"Mantojuma un nodokļu plānošana"},
-  "Explore Financial Advice":{est:"Tutvu finantsnõustamisega",lat:"Iepazīt finanšu konsultācijas"},
-  "Travel":{est:"Reisimine",lat:"Ceļošana"},
-  "Business":{est:"Ettevõtlus",lat:"Bizness"},
-  "Digital":{est:"Digitaalne",lat:"Digitālā"},
-  "Tools":{est:"Tööriistad",lat:"Rīki"},
-  "Rates":{est:"Intressid",lat:"Likmes"},
-  "Community":{est:"Kogukond",lat:"Kopiena"},
-  "Access demo":{est:"Ava demo",lat:"Atvērt demo"},
-  "Credit Union":{est:"Krediidiühistu",lat:"Krājaizdevu sabiedrība"},
-  // Hero
-  "Your whole financial life.":{est:"Kogu teie finantselu.",lat:"Visa jūsu finanšu dzīve."},
-  "Under one Birch.":{est:"Ühe kase all.",lat:"Zem viena bērza."},
-  "The Future of Member Financial Wellness":{est:"Liikmete rahalise heaolu tulevik",lat:"Biedru finanšu labklājības nākotne"},
-  "Insurance referrals. Investments. International wires. Business banking. Roots dating to 1954.":{est:"Kindlustuse suunamine. Investeeringud. Rahvusvahelised ülekanded. Ettevõtete pangandus. Juured ulatuvad aastasse 1954.",lat:"Apdrošināšanas nosūtīšana. Investīcijas. Starptautiskie pārvedumi. Uzņēmumu banka. Saknes meklējamas 1954. gadā."},
-  "Get an Insurance Quote":{est:"Küsi kindlustuspakkumist",lat:"Saņemt apdrošināšanas piedāvājumu"},
-  "AI Insurance Advisor":{est:"AI kindlustusnõustaja",lat:"AI apdrošināšanas padomnieks"},
-  "Travel & Transfers":{est:"Reisimine ja ülekanded",lat:"Ceļošana un pārvedumi"},
-  "Business Solutions":{est:"Ärilahendused",lat:"Biznesa risinājumi"},
-  "Years of Heritage":{est:"Aastat pärandit",lat:"Gadu mantojuma"},
-  "Branches incl. KESKUS":{est:"Filiaalid sh. KESKUS",lat:"Filiāles ieskaitot KESKUS"},
-  "Insurance Products":{est:"Kindlustustooted",lat:"Apdrošināšanas produkti"},
-  "New Digital Services":{est:"Uued digiteenused",lat:"Jauni digitālie pakalpojumi"},
-  // Insurance
-  "Protection for every stage of your life":{est:"Kaitse igaks eluetapiks",lat:"Aizsardzība katram dzīves posmam"},
-  "Comprehensive Insurance Protection":{est:"Terviklik kindlustuskaitse",lat:"Visaptveroša apdrošināšanas aizsardzība"},
-  "Life & Health":{est:"Elu ja tervis",lat:"Dzīvība un veselība"},
-  "Home & Auto":{est:"Kodu ja auto",lat:"Māja un auto"},
-  "Travel & Specialty":{est:"Reis ja eriliigid",lat:"Ceļojumi un speciālā"},
-  "Term Life Insurance":{est:"Tähtajaline elukindlustus",lat:"Termiņa dzīvības apdrošināšana"},
-  "Critical Illness":{est:"Kriitilised haigused",lat:"Kritiskas slimības"},
-  "Disability Insurance":{est:"Töövõimetuskindlustus",lat:"Invaliditātes apdrošināšana"},
-  "Mortgage Protection":{est:"Hüpoteegi kaitse",lat:"Hipotēkas aizsardzība"},
-  "Home Insurance":{est:"Kodukindlustus",lat:"Mājas apdrošināšana"},
-  
-  "Auto Insurance":{est:"Autokindlustus",lat:"Auto apdrošināšana"},
-  "Tenant Insurance":{est:"Üürnikukindlustus",lat:"Īrnieka apdrošināšana"},
-  "Talk to an advisor":{est:"Küsi pakkumist",lat:"Saņemt piedāvājumu"},
-  "Compare Plans":{est:"Võrdle plaane",lat:"Salīdzināt plānus"},
-  // Travel
-  "Connected to Your Heritage":{est:"Ühenduses teie pärandiga",lat:"Saistīts ar jūsu mantojumu"},
-  "Travel, transfers & foreign exchange for the Baltic community":{est:"Reisimine, ülekanded ja valuutavahetus Balti kogukonnale",lat:"Ceļošana, pārvedumi un valūtas maiņa Baltijas kopienai"},
-  "Travel Insurance":{est:"Reisikindlustus",lat:"Ceļojumu apdrošināšana"},
-  "International Transfers":{est:"Rahvusvahelised ülekanded",lat:"Starptautiskie pārvedumi"},
-  "Foreign Exchange":{est:"Valuutavahetus",lat:"Valūtas maiņa"},
-  // Business
-  "Everything your business needs":{est:"Kõik, mida teie ettevõte vajab",lat:"Viss, kas nepieciešams jūsu biznesam"},
-  "Group Health & Dental":{est:"Grupi tervis ja hambaravi",lat:"Grupas veselība un zobārstniecība"},
-  "Commercial Insurance":{est:"Ärikindlustus",lat:"Komerciālā apdrošināšana"},
-  "Key Person Insurance":{est:"Võtmeisiku kindlustus",lat:"Galvenās personas apdrošināšana"},
-  "Succession Planning":{est:"Järeltulijate planeerimine",lat:"Pēctecības plānošana"},
-  // Digital
-  "Heritage values. Digital convenience.":{est:"Pärandväärtused. Digitaalne mugavus.",lat:"Mantojuma vērtības. Digitālais ērtums."},
-  "Insurance Dashboard":{est:"Kindlustuse ülevaade",lat:"Apdrošināšanas panelis"},
-  "Coverage Explorer":{est:"Nutikas pakkumismootor",lat:"Viedā piedāvājumu sistēma"},
-  "Financial Planning":{est:"Finantsplaneerimine",lat:"Finanšu plānošana"},
-  "Mobile Banking":{est:"Mobiilipank",lat:"Mobilā banka"},
-  // Estate
-  "Protect your family across generations":{est:"Kaitske oma perekonda põlvkondade vältel",lat:"Aizsargājiet savu ģimeni paaudžu garumā"},
-  // Community
-  "Serving this community since 1954":{est:"70 aastat usaldust",lat:"70 gadu uzticības"},
-  "Our Heritage":{est:"Meie pärand",lat:"Mūsu mantojums"},
-  "KESKUS Flagship":{est:"KESKUS lipulaev",lat:"KESKUS galvenā filiāle"},
-  // Contact
-  "We're here for you":{est:"Oleme teie jaoks siin",lat:"Mēs esam šeit jūsu labā"},
-  // Tools
-  "See your estimated premium instantly":{est:"Vaadake oma hinnangulist kindlustusmakset koheselt",lat:"Skatiet savu apdrošināšanas prēmiju nekavējoties"},
-  "Interactive Coverage Explorer":{est:"Interaktiivne pakkumiskalkulaator",lat:"Interaktīvais piedāvājumu kalkulators"},
-  "File an insurance claim":{est:"Esitage kindlustusnõue",lat:"Iesniegt apdrošināšanas prasību"},
-  "Book an Appointment":{est:"Broneeri kohtumine",lat:"Rezervēt tikšanos"},
-  "Meet with an advisor":{est:"Kohtu nõustajaga",lat:"Tikties ar konsultantu"},
-  // Dashboard
-  "Welcome back":{est:"Tere tulemast tagasi",lat:"Laipni lūdzam atpakaļ"},
-  "My Insurance Policies":{est:"Minu kindlustuspoliisid",lat:"Manas apdrošināšanas polises"},
-  "Recent Activity":{est:"Hiljutised tehingud",lat:"Nesenā darbība"},
-  "Quick Actions":{est:"Kiirtoimingud",lat:"Ātrās darbības"},
-  "Your Coverage Score":{est:"Teie kaitse skoor",lat:"Jūsu seguma novērtējums"},
-  // AI
-  "Tell me about your life situation and I'll recommend the right insurance products for you.":{est:"Rääkige mulle oma eluolukorrast ja soovitan teile õigeid kindlustustooteid.",lat:"Pastāstiet par savu dzīves situāciju, un es ieteikšu jums piemērotus apdrošināšanas produktus."},
-  "Powered by Claude -- Available 24/7":{est:"Töötab Claude baasil -- Saadaval 24/7",lat:"Darbina Claude -- Pieejams 24/7"},
-  // Footer
-  "Your whole financial life. Under one Birch.":{est:"Kogu teie finantselu. Ühe kase all.",lat:"Visa jūsu finanšu dzīve. Zem viena bērza."},
-  "Privacy Policy":{est:"Privaatsuspoliitika",lat:"Privātuma politika"},
-  "Terms of Use":{est:"Kasutustingimused",lat:"Lietošanas noteikumi"},
-  "Accessibility (AODA)":{est:"Ligipääsetavus (AODA)",lat:"Pieejamība (AODA)"},
-  "Complaint Resolution":{est:"Kaebuste lahendamine",lat:"Sūdzību izskatīšana"},
-  // Common
-  "Learn More":{est:"Loe lisaks",lat:"Uzzināt vairāk"},
-  "Contact Us":{est:"Võtke meiega ühendust",lat:"Sazinieties ar mums"},
-  "Send":{est:"Saada",lat:"Sūtīt"},
-  "Book Appointment":{est:"Broneeri kohtumine",lat:"Rezervēt tikšanos"},
-  "Coming Soon":{est:"Tulekul",lat:"Drīzumā"},
-  // Shown only when a non-English language is selected. NOTE: like the rest of
-  // this table these two strings should be confirmed by a native speaker.
-  "Parts of this site are still only in English. Call us and we will serve you in your language.":{est:"Osa sellest veebisaidist on praegu ainult inglise keeles. Helistage meile ja teenindame teid eesti keeles.",lat:"Daļa šīs vietnes pašlaik ir pieejama tikai angļu valodā. Zvaniet mums, un mēs jūs apkalposim latviešu valodā."},
-};
-export function t(key,lang){if(!lang||lang==="en")return key;return TX[key]?.[lang==="est"?"est":"lat"]||key;}
+// Strings live in content/i18n/<language>.json, keyed by the English text.
+// scripts/check-i18n.mjs keeps the two files in step and reports English on
+// translated pages that has no entry yet. None of it is reviewed by a native
+// speaker -- see the files' "reviewed" field.
+const TX={est:etStrings.strings,lat:lvStrings.strings};
+export function t(key,lang){if(!lang||lang==="en")return key;return TX[lang==="est"?"est":"lat"][key]||key;}
 
 // The language switcher only lived in React state, so a refresh, a bookmark or
 // a shared link always came back in English -- the choice was silently thrown
@@ -199,7 +80,8 @@ export const ROUTES={
   aiadvisor:"/ai-advisor",analyzer:"/coverage-analyzer",healthcheck:"/financial-health-check",
   lifesim:"/life-event-simulator",docreader:"/policy-document-reader",tax:"/tax-optimizer",
   messages:"/messages",privacy:"/privacy",accessibility:"/accessibility",complaints:"/complaints",
-  terms:"/terms",leadership:"/leadership",
+  terms:"/terms",leadership:"/leadership",underwriters:"/underwriters",
+  borrowing:"/borrowing",keskus:"/keskus",phasedask:"/phased-ask",
 };
 export const PATH_TO_PAGE=Object.fromEntries(Object.entries(ROUTES).map(([k,v])=>[v,k]));
 
@@ -256,6 +138,10 @@ export const META={
   complaints:["Complaint Resolution | Northern Birch","How to raise a concern, escalate it, and reach OBSI, FSRA or the FCAC if it stays unresolved."],
   terms:["Terms of Use | Northern Birch Credit Union","Website terms, deposit insurance, rate disclaimers and investment risk disclosure for Northern Birch."],
   leadership:["Insurance Business Case | Northern Birch","The revenue model, cost structure and five-year projections behind the Northern Birch insurance program."],
+  borrowing:["Borrowing | Mortgages, Loans, Co-ops & Cards | Northern Birch","Mortgages, personal loans and lines of credit, co-op and co-ownership mortgages, and Collabria credit cards from a Toronto credit union."],
+  keskus:["KESKUS Branch | Northern Birch Credit Union","Our new flagship branch at the KESKUS International Estonian Centre in Toronto: what we plan, and how to reach us until it opens."],
+  phasedask:["Phased Ask | Northern Birch Credit Union proposal","Phase one: insurance by referral only, with no licensing spend. Phase two: licensing, only once referral volume justifies it. A discussion document for Northern Birch."],
+  underwriters:["Underwriter Matrix | Northern Birch Credit Union proposal","Who underwrites each insurance line, who holds the licence, who bears the cost and whether it is live today or proposed. A discussion document for Northern Birch."],
 };
 export const META_DEFAULT=["Northern Birch Credit Union","A full-service Toronto credit union: everyday banking, mortgages, credit cards, investments and insurance."];
 
@@ -268,7 +154,7 @@ export const META_NOTFOUND=["Page not found | Northern Birch Credit Union","That
 // runs JavaScript reads what the app sets, and writing "index, follow" over
 // the prerendered noindex would undo it. check-routes.mjs asserts this stays
 // equal to the EXCLUDE list in scripts/generate-seo-files.mjs.
-export const NOINDEX_PAGES=new Set(["dashboard","messages","leadership"]);
+export const NOINDEX_PAGES=new Set(["dashboard","messages","leadership","underwriters","phasedask"]);
 
 // While this site is an Oodler proposal rather than a live service, no page on
 // it should be indexed under Northern Birch's name: a lookalike in search
@@ -416,7 +302,7 @@ export function exportToPDF(elementId,title="Northern Birch Document"){
       <div class="meta">${title}<br/>${date}</div>
     </div>
     ${el.innerHTML.replace(/<button[^>]*>.*?<\/button>/g,"").replace(/<input[^>]*\/?>(.*?<\/input>)?/g,"").replace(/<select[\s\S]*?<\/select>/g,"")}
-    <div class="footer">Northern Birch Credit Union Limited &middot; FSRA Insured &middot; northernbirchcu.com &middot; 416-465-4659<br/>Insurance products distributed via The Personal Insurance Company, CUMIS/Co-operators, and Manulife Financial.</div>
+    <div class="footer">Northern Birch Credit Union Limited &middot; FSRA Insured &middot; northernbirchcu.com &middot; 416-465-4659<br/>Illustrative demonstration prepared by Oodler Inc. Not a live Northern Birch service. Northern Birch does not sell, quote or underwrite insurance.</div>
     <script>setTimeout(()=>{window.print();setTimeout(()=>window.close(),500)},250)</script>
   </body></html>`);
   w.document.close();

@@ -1,0 +1,31 @@
+{
+  "src/pages/HomePage.jsx": [
+    "Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus financial advice, investments, insurance and international transfers, all from one Toronto credit union.",
+    "Northern Birch is a full-service credit union. Open a chequing account, finance a home, carry a card, save in a GIC or TFSA, and invest -- all in one membership."
+  ],
+  "src/pages/MortgagesPage.jsx": [
+    "5-year closed fixed",
+    "A mortgage from people you can meet",
+    "Choose the structure that fits",
+    "Fixed, variable, and high-ratio mortgages -- plus co-op apartment financing most lenders will not touch. Decisions are made in Toronto, by the same advisor who takes your call.",
+    "How it works",
+    "Payment Calculator",
+    "Rates are subject to change without notice and are subject to credit approval. Special offers including C$3,500 cash back on mortgages may be available -- ask your advisor. Call 416-465-4659 for today's rate."
+  ],
+  "src/pages/CardsPage.jsx": [
+    "Collabria Mastercard cards issued for Northern Birch members -- cash back for everyday spending, a low rate if you carry a balance, and travel rewards if you do not.",
+    "Eligible Collabria Mastercard cards include insurance at no extra cost. Northern Birch does not sell or underwrite it; the insurers below do, through Collabria. Which card carries which benefit, the limits and the exclusions are in that card's certificate of insurance.",
+    "Illustrative card lineup: card names, fees and earn rates are for the proposal and must be confirmed against Collabria's current offer. Rates are subject to change and to credit approval. Cash advance and balance transfer rates differ from the purchase APR shown. Cards are issued by Collabria Financial Services. Mastercard is a registered trademark of Mastercard International Incorporated.",
+    "Insurance that comes with the card",
+    "Three cards. One straightforward choice.",
+    "To make a claim or get your certificate, call Collabria cardholder services at 1-855-341-4643, or the number on the back of your card.",
+    "Underwritten by",
+    "purchase APR"
+  ],
+  "src/pages/AccountsPage.jsx": [
+    "Chequing, Savings & Registered",
+    "Each plan can hold savings, a GIC, or an investment portfolio -- the wrapper is the tax treatment, not the product.",
+    "No-fee everyday chequing, high-interest savings, GIC terms from 90 days to 5 years, and every registered plan a Canadian household needs.",
+    "Rates are subject to change without notice. Eligible deposits are insured by FSRA; registered account deposits have unlimited coverage. Contact your branch for current rates and account terms."
+  ]
+}

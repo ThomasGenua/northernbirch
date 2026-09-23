@@ -24,6 +24,10 @@ const QuotePage = lazy(() => import('./pages/QuotePage.jsx'));
 const ComparePage = lazy(() => import('./pages/ComparePage.jsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'));
 const AdvicePage = lazy(() => import('./pages/AdvicePage.jsx'));
+const UnderwritersPage = lazy(() => import('./pages/UnderwritersPage.jsx'));
+const BorrowingPage = lazy(() => import('./pages/BorrowingPage.jsx'));
+const KeskusPage = lazy(() => import('./pages/KeskusPage.jsx'));
+const PhasedAskPage = lazy(() => import('./pages/PhasedAskPage.jsx'));
 const RatesPage = lazy(() => import('./pages/RatesPage.jsx'));
 const BlogPage = lazy(() => import('./pages/BlogPage.jsx'));
 const MobileAppPage = lazy(() => import('./pages/MobileAppPage.jsx'));
@@ -63,6 +67,9 @@ function SearchOverlay({open,onClose,setPage}){const mob=useMob();
     {title:"Mortgages",page:"mortgages",cat:"Banking",kw:"mortgage home loan pre-approval renewal refinance fixed variable high ratio co-op heloc"},
     {title:"GICs & Term Deposits",page:"accounts",cat:"Banking",kw:"gic guaranteed investment certificate term deposit 90 day 1 year 5 year"},
     {title:"Credit Cards",page:"cards",cat:"Banking",kw:"credit card mastercard collabria cash back rewards low rate apply"},
+    {title:"Card Insurance Benefits",page:"cards",cat:"Banking",kw:"purchase protection extended warranty mobile device rental car collision trip cancellation baggage travel assistance"},
+    {title:"Borrowing",page:"borrowing",cat:"Banking",kw:"borrow loan personal loan line of credit loc mortgage co-op co-ownership credit card"},
+    {title:"KESKUS Branch",page:"keskus",cat:"About",kw:"keskus new branch flagship estonian centre madison opening"},
     {title:"Registered Accounts (TFSA, RRSP, FHSA, RESP)",page:"accounts",cat:"Banking",kw:"tfsa rrsp fhsa resp rdsp rrif registered retirement first home education tax free"},
     {title:"Compare Accounts",page:"accounts",cat:"Banking",kw:"compare accounts chequing savings fees"},
     {title:"Messages",page:"messages",cat:"Member"},{title:"Contact & Branches",page:"contact",cat:"About"},{title:"Insurance Coverage Explorer",page:"quote",cat:"Tools"},{title:"AI Insurance Advisor",page:"aiadvisor",cat:"AI"},{title:"AI Coverage Analyzer",page:"analyzer",cat:"AI"},{title:"Financial Health Check",page:"healthcheck",cat:"AI"},{title:"Life Event Simulator",page:"lifesim",cat:"AI"},{title:"Policy Document Reader",page:"docreader",cat:"AI"},{title:"Tax & Savings Optimizer",page:"tax",cat:"AI"},{title:"Claims Centre",page:"claims",cat:"Tools"},{title:"Coverage Comparison",page:"compare",cat:"Tools"},
@@ -248,8 +255,8 @@ function useToast(){return React.useContext(ToastContext)||((m)=>console.log(m))
 function NotificationsPanel({open,onClose,setPage}){const mob=useMob();
   const trapRef=useFocusTrap(open,onClose);
   const[notes,setNotes]=useState([
-    {id:1,type:"renewal",icon:"\uD83D\uDD14",title:"Home Insurance Renewal in 28 Days",desc:"Your home insurance with The Personal renews April 15, 2026 at C$142.50/month. Review coverage to ensure you're still adequately protected.",time:"2 hours ago",unread:true,action:"insurance",actionLabel:"Review Coverage",color:C.amberText},
-    {id:2,type:"signature",icon:"\u270D\uFE0F",title:"Document Awaiting Your Signature",desc:"Critical Illness Insurance Application from CUMIS is ready for e-signature. Sign now to activate coverage.",time:"5 hours ago",unread:true,action:"dashboard",actionLabel:"Sign Now",color:C.accentText},
+    {id:1,type:"renewal",icon:"\uD83D\uDD14",title:"Home Insurance Renewal in 28 Days",desc:"A home insurance renewal is coming up on April 15, 2026. Your insurer sets the price; an advisor can connect you with them if you have questions.",time:"2 hours ago",unread:true,action:"insurance",actionLabel:"Review Coverage",color:C.amberText},
+    {id:2,type:"signature",icon:"\u270D\uFE0F",title:"Document Awaiting Your Signature",desc:"The insurer you were referred to has been in touch about critical illness cover. Northern Birch does not sell or activate coverage; the insurer handles the application directly.",time:"5 hours ago",unread:true,action:"dashboard",actionLabel:"Sign Now",color:C.accentText},
     {id:3,type:"life-event",icon:"\uD83C\uDF89",title:"Life Event Reminder: Mortgage Anniversary",desc:"It's been one year since your mortgage with Northern Birch. Time for a coverage review -- your equity has likely increased.",time:"Yesterday",unread:true,action:"healthcheck",actionLabel:"Run Health Check",color:C.purple},
     {id:4,type:"advisor",icon:"\uD83D\uDCAC",title:"New Message from Heili Orav",desc:"Heili replied to your question about TFSA contribution room. \"You have C$22,500 of unused TFSA room from prior years...\"",time:"Yesterday",unread:false,action:"messages",actionLabel:"Read Message",color:C.greenText},
     {id:5,type:"transfer",icon:"\u2705",title:"International Transfer Delivered",desc:"Your C$200 transfer to Maija in Riga has been received. Tracking ID: NB-TXN-487291.",time:"2 days ago",unread:false,action:"dashboard",actionLabel:"View Transfer",color:C.greenText},
@@ -311,7 +318,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
   if(page!==lastPage){setLastPage(page);setMobileMenu(false);setMenu(null)}
   const isDark=page==="home"&&!sc;
   // Banking leads: chequing, savings, mortgages and cards are what most visitors arrive looking for.
-  const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Advice",p:"advice"},{l:"Apply",p:"apply"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"quote"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
+  const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Borrowing",p:"borrowing",d:"Mortgages, loans, lines of credit, co-ops & cards"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Advice",p:"advice"},{l:"Apply",p:"apply"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"quote"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
   const langLabels={en:"EN",est:"EST",lat:"LAT"};
   const langFull={en:"English",est:"Eesti",lat:"Latviesu"};
   return(<>
@@ -445,7 +452,7 @@ function Footer({setPage}){const mob=useMob();
         {[
           {t:"Insurance",items:[["Life Insurance","insurance"],["Home Insurance","insurance"],["Auto Insurance","insurance"],["Travel Insurance","travel"],["Claims Centre","claims"],["Coverage Explorer","quote"]]},
           {t:"Tools",items:[["Compare Plans","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["Refer a Friend","referrals"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
-          {t:"Banking",items:[["Apply Online","apply"],["Chequing & Savings","accounts"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
+          {t:"Banking",items:[["Apply Online","apply"],["Chequing & Savings","accounts"],["Borrowing","borrowing"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
           {t:"Advice",items:[["Financial Advice","advice"],["Financial Check-Up","advice"],["Retirement Planning","advice"],["Estates","estate"],["Tax Planning","tax"],["Book an Advisor","booking"]]},
           {t:"About",items:[["Community","community"],["Blog & News","blog"],["Glossary","glossary"],["Contact & Branches","contact"],["Careers","contact"],["KESKUS Branch","community"]]},
         ].map((col,i)=><div key={i}><h4 style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:"0 0 10px",textTransform:"uppercase",letterSpacing:1}}>{col.t}</h4>{col.items.map(([l,p],ii)=><div key={ii}><button onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.6)",fontFamily:fs,fontSize:12,padding:"2px 0",cursor:"pointer",display:"block"}}>{l}</button></div>)}</div>)}
@@ -576,7 +583,8 @@ export default function App({ssrPath}){
     analyzer:<PolicyAnalyzerPage setPage={setPage}/>,healthcheck:<HealthAssessmentPage setPage={setPage}/>,
     lifesim:<LifeSimPage setPage={setPage}/>,docreader:<DocReaderPage setPage={setPage}/>,
     tax:<TaxPage setPage={setPage}/>,messages:<MessagesPage setPage={setPage}/>,
-    privacy:<PrivacyPage lang={lang}/>,accessibility:<AccessibilityPage lang={lang}/>,complaints:<ComplaintsPage lang={lang}/>,terms:<TermsPage lang={lang}/>,leadership:<LeadershipPage setPage={setPage}/>,
+    privacy:<PrivacyPage lang={lang}/>,accessibility:<AccessibilityPage lang={lang}/>,complaints:<ComplaintsPage lang={lang}/>,terms:<TermsPage lang={lang}/>,leadership:<LeadershipPage setPage={setPage}/>,underwriters:<UnderwritersPage setPage={setPage}/>,
+    borrowing:<BorrowingPage setPage={setPage} lang={lang}/>,keskus:<KeskusPage setPage={setPage} lang={lang}/>,phasedask:<PhasedAskPage setPage={setPage}/>,
     // Has no route on purpose: pageFromPath returns it for any URL that is not
     // in ROUTES.
     notfound:<NotFoundPage setPage={setPage}/>,
