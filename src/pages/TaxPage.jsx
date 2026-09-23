@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Btn, C, callAI, exportToPDF, FAQ, ff, fs, SH, useMob } from '../ui.jsx';
+import facts from '../../content/facts.json';
 
 export default function TaxPage({setPage}){
   const mob=useMob();
@@ -11,7 +12,7 @@ export default function TaxPage({setPage}){
   const[rIncome,setRIncome]=useState(100000);const[rContrib,setRContrib]=useState(18000);const[rRate,setRRate]=useState(33);
   const rrspRefund=Math.round(rContrib*(rRate/100));
   const rrspGrowth20=Math.round(rContrib*Math.pow(1.06,20));
-  const tfsaGrowth20=Math.round(7000*Math.pow(1.06,20));
+  const tfsaGrowth20=Math.round(facts.limits.tfsaAnnual*Math.pow(1.06,20));
 
   const analyze=async()=>{
     if(!input.trim()||loading)return;
@@ -71,19 +72,19 @@ export default function TaxPage({setPage}){
                 {l:"Effective cost after refund",v:`C$${(rContrib-rrspRefund).toLocaleString()}`},
                 {l:"Value in 20 years (6% return)",v:`C$${rrspGrowth20.toLocaleString()}`},
                 {l:"Tax on withdrawal",v:`Taxed as income`},
-                {l:"2025 limit",v:`18% of income, max $31,560`},
+                {l:`${facts.limits.taxYear} limit`,v:`18% of last year's earned income, max $${facts.limits.rrspMax.toLocaleString("en-CA")}`},
               ].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<5?"1px solid rgba(0,0,0,0.05)":"none"}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.v}</span></div>)}
               <div style={{marginTop:12,background:`${C.accentText}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.accentText,margin:0,lineHeight:1.6}}>Best for: High income now, lower income in retirement. Reinvest the refund in your TFSA for maximum benefit.</p></div>
             </div>
             <div style={{background:`${C.greenFill}06`,borderRadius:16,padding:24,borderTop:`3px solid ${C.green}`}}>
               <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 16px",fontWeight:700}}>TFSA</h4>
               {[
-                {l:"Max annual contribution",v:"C$7,000"},
+                {l:`${facts.limits.taxYear} annual limit`,v:`C$${facts.limits.tfsaAnnual.toLocaleString("en-CA")}`},
                 {l:"Tax refund",v:"None (after-tax $)"},
-                {l:"Effective cost",v:"C$7,000"},
+                {l:"Effective cost",v:`C$${facts.limits.tfsaAnnual.toLocaleString("en-CA")}`},
                 {l:"Value in 20 years (6% return)",v:`C$${tfsaGrowth20.toLocaleString()}`},
                 {l:"Tax on withdrawal",v:"Completely tax-free"},
-                {l:"Cumulative room (since 2009)",v:"Up to $95,000"},
+                {l:`Cumulative room (2009-${facts.limits.taxYear})`,v:`Up to $${facts.limits.tfsaCumulative.toLocaleString("en-CA")}`},
               ].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<5?"1px solid rgba(0,0,0,0.05)":"none"}}><span style={{fontFamily:fs,fontSize:13,color:"#666"}}>{r.l}</span><span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{r.v}</span></div>)}
               <div style={{marginTop:12,background:`${C.greenFill}10`,borderRadius:10,padding:"12px 16px"}}><p style={{fontFamily:fs,fontSize:12,color:C.greenText,margin:0,lineHeight:1.6}}>Best for: Everyone. Tax-free growth forever. Ideal emergency fund, medium-term savings, or supplement to RRSP.</p></div>
             </div>

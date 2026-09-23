@@ -4,6 +4,7 @@
 // after the content review, and the guardrails that keep the assistant a
 // referral channel rather than an advisor.
 import { FEATURES, FEATURE_KEYS } from "./prompts.mjs";
+import facts from "../../content/facts.json" with { type: "json" };
 
 let pass = 0, fail = 0;
 const check = (name, cond, detail = "") => { cond ? (pass++, console.log("  PASS", name)) : (fail++, console.log("  FAIL", name, detail)); };
@@ -53,6 +54,21 @@ check("the 1954 and 1959 roots are stated", /1954/.test(all) && /1959/.test(all)
 
 // --- estate planning is not a service line ---
 check("no prompt offers estate & succession planning as a service", !offenders(/estate & succession planning/i).length);
+
+// --- contact data and limits come from content/facts.json, as the pages do ---
+{
+  const known = new Set(facts.phones.map((p) => p.number));
+  const shown = [...all.matchAll(/(?<![\d-])(?:1-)?\d{3}-\d{3}-\d{4}(?![\d-])/g)].map((m) => m[0]);
+  const unknown = [...new Set(shown.filter((n) => !known.has(n)))];
+  check("every phone number in a prompt is in content/facts.json", !unknown.length, unknown.join(", "));
+  for (const b of facts.branches.filter((b) => b.phone))
+    check(`chat: gives ${b.name} its recorded number`, FEATURES.chat.system.includes(`${b.name} (${b.address}, ${b.hours}, ${facts.phones.find((p) => p.id === b.phone).number})`));
+  const L = facts.limits;
+  check(`tax: quotes the ${L.taxYear} RRSP maximum`, FEATURES.tax.system.includes(`${L.taxYear} limit is 18% of prior year earned income up to $${L.rrspMax.toLocaleString("en-CA")}`));
+  check("tax: no stale RRSP maximum", !/\$31,560|\$32,490/.test(FEATURES.tax.system));
+  check("no prompt offers co-op apartment insurance", !offenders(/co-op apartment(?! financ| mortgage)/i).length, offenders(/co-op apartment(?! financ| mortgage)/i).join(", "));
+  check("no prompt tells an advisor persona to discuss rates or costs", !offenders(/products and rates when relevant|specific about coverage and costs/i).length);
+}
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

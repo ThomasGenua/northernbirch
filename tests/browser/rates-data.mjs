@@ -41,7 +41,7 @@ const go = async (r) => {
 {
   const p = await go('/');
   const txt = await p.locator('main').innerText();
-  check(txt.includes(data.rates.m5), `home page quotes the 5-year fixed from the file (${data.rates.m5})`);
+  check(txt.includes(data.rates.m3), `home page quotes the confirmed 3-year closed from the file (${data.rates.m3})`);
   check(txt.includes(data.rates.gic1), `home page quotes the 1-year GIC from the file (${data.rates.gic1})`);
   check(/Rates effective/.test(txt), 'home page dates its rates too');
   await p.close();

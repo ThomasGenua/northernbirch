@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Btn, C, exportToPDF, ff, fs, RATE, SH, useMob } from '../ui.jsx';
+import facts from '../../content/facts.json';
 
 export default function CalculatorsPage({setPage}){
   const mob=useMob();
@@ -144,7 +145,7 @@ export default function CalculatorsPage({setPage}){
                   <div style={{display:"flex",flexDirection:"column",gap:8}}>
                     {[
                       `Increase monthly contributions by C$${Math.round(rResult.gap*0.6)} to close the gap through savings growth`,
-                      "Open or maximize your TFSA (C$7,000/year tax-free growth) at Northern Birch",
+                      `Open or maximize your TFSA (C$${facts.limits.tfsaAnnual.toLocaleString("en-CA")}/year tax-free growth) at Northern Birch`,
                       "Maximize RRSP contributions for tax deductions and compound growth",
                       `Consider term life insurance (C$${(rResult.insGap/1000).toFixed(0)}K) to protect your family if you pass before building sufficient savings`,
                       "Book a Financial Check-Up with our wealth team led by Heili Orav",
