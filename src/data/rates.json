@@ -27,6 +27,13 @@
     "chq": "$0"
   },
 
+  "_links": "Which table row each named rate is posted as. check-rates.mjs refuses a named rate that disagrees with its row, and /rates marks a row confirmed only when its named rate is in \"verified\" above.",
+  "links": {
+    "mortgage": { "3-Year Closed": "m3", "5-Year Fixed": "m5", "5-Year Variable High Ratio": "m5hr", "Variable Rate": "mvar", "HELOC": "heloc" },
+    "deposit": { "High-Interest Savings": "hisa", "1-Year GIC": "gic1", "5-Year GIC": "gic5" },
+    "lending": { "Collabria Mastercard": "mc", "Collabria Low Rate": "mcLow" }
+  },
+
   "_tables": "The posted rate table, exactly as it appears on /rates. Rows are [term, rate].",
   "tables": {
     "mortgage": [

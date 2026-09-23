@@ -21,13 +21,6 @@ const SHAPE = {
   chq:   /^\$\d+(\.\d{2})?$/,
 };
 
-// The table on /rates and the named rates quoted elsewhere have to agree. A
-// promotion contradicting the posted table is exactly the bug this guards.
-const LINKS = {
-  mortgage: { '3-Year Closed': 'm3', '5-Year Fixed': 'm5', '5-Year Variable High Ratio': 'm5hr', 'Variable Rate': 'mvar', HELOC: 'heloc' },
-  deposit:  { 'High-Interest Savings': 'hisa', '1-Year GIC': 'gic1', '5-Year GIC': 'gic5' },
-  lending:  { 'Collabria Mastercard': 'mc', 'Collabria Low Rate': 'mcLow' },
-};
 
 const STALE_DAYS = 90;
 const errors = [], warnings = [];
@@ -37,6 +30,11 @@ try { data = JSON.parse(readFileSync(FILE, 'utf8')); }
 catch (e) { console.error(`rates.json is not valid JSON: ${e.message}`); process.exit(1); }
 
 const { effective, rates } = data;
+// The table on /rates and the named rates quoted elsewhere have to agree. A
+// promotion contradicting the posted table is exactly the bug this guards.
+// The mapping lives in rates.json ("links") so /rates can use it too.
+const LINKS = data.links || {};
+if (!data.links) errors.push('"links" is missing -- it says which table row each named rate is posted as');
 
 if (!/^\d{4}-\d{2}-\d{2}$/.test(effective || '')) {
   errors.push(`"effective" must be a YYYY-MM-DD date, got ${JSON.stringify(effective)}`);

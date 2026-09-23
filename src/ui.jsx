@@ -20,6 +20,10 @@ export const RATE=ratesData.rates;
 export const RATES_EFFECTIVE=ratesData.effective;
 // The posted table on /rates, as [term, rate] rows.
 export const RATE_TABLES=ratesData.tables;
+// Only the rates named in rates.json "verified" have been checked against
+// northernbirchcu.com. /rates marks every other row illustrative.
+const CONFIRMED_RATES=new Set(Object.keys(ratesData.verified).filter(k=>!k.startsWith("_")));
+export const rateConfirmed=(table,term)=>CONFIRMED_RATES.has(ratesData.links[table]?.[term]);
 // "1 September 2026" -- the date members see beside the rates.
 export function ratesEffectiveLabel(){
   const d=new Date(`${RATES_EFFECTIVE}T00:00:00`);
@@ -29,7 +33,7 @@ export function ratesEffectiveLabel(){
 
 // ============ CORE BANKING PRODUCTS (homepage cards, nav, search) ============
 export const BANKING=[
-  {k:"mortgages",t:"Mortgages",p:"mortgages",c:C.green,tc:C.greenText,d:"Fixed, variable, and high-ratio mortgages -- including co-op apartment financing few lenders offer.",rate:RATE.m5,rl:"5-year fixed",b:[`Free pre-approval, ${ratesData.guarantee}`,"Co-op and multi-unit financing","C$3,500 cash back offer available"],cta:"Explore Mortgages",kw:"mortgage home loan pre-approval renewal refinance fixed variable high ratio co-op heloc"},
+  {k:"mortgages",t:"Mortgages",p:"mortgages",c:C.green,tc:C.greenText,d:"Fixed, variable, and high-ratio mortgages -- including co-op apartment financing few lenders offer.",rate:RATE.m3,rl:"3-year closed",b:[`Free pre-approval, ${ratesData.guarantee}`,"Co-op and multi-unit financing","C$3,500 cash back offer available"],cta:"Explore Mortgages",kw:"mortgage home loan pre-approval renewal refinance fixed variable high ratio co-op heloc"},
   {k:"cards",t:"Credit Cards",p:"cards",c:C.purple,tc:C.purple,d:"Collabria Mastercard cards with cash back, low-rate, and travel rewards options.",rate:RATE.mcLow,rl:"Low Rate APR",b:["No-annual-fee options","Cash back up to 2%","Lock and unlock in the app"],cta:"Apply for a Credit Card",kw:"credit card mastercard collabria cash back rewards low rate apply"},
   {k:"chequing",t:"Chequing Accounts",p:"accounts",c:C.accent,tc:C.accentText,d:"No-fee everyday banking with unlimited e-Transfers and free member cheques.",rate:RATE.chq,rl:"Monthly fee",b:["$0 monthly fee for members","Unlimited e-Transfers","THE EXCHANGE ATM network"],cta:"Compare Accounts",kw:"chequing checking everyday banking debit e-transfer account fees student senior"},
   {k:"savings",t:"Savings & GICs",p:"accounts",c:C.amber,tc:C.amberText,d:"High-interest savings, GIC terms from 90 days to 5 years, and registered TFSA, RRSP, FHSA and RESP plans.",rate:RATE.gic1,rl:"1-year GIC",b:["No minimum balance","GIC terms from 90 days","TFSA, RRSP, FHSA, RESP eligible"],cta:"Compare Accounts",kw:"savings gic tfsa rrsp fhsa resp rdsp registered high interest term deposit"},
