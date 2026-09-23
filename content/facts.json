@@ -1,0 +1,48 @@
+{
+  "_comment": "Every checkable fact the site states about Northern Birch, the people members may need to call, and the government limits the planning tools quote. scripts/check-facts.mjs fails the build if the site shows a phone number that is not here, or a tel: link that dials a different number than it displays. docs/COMPLIANCE.md is generated from this file. A record with verified: null has NOT been checked against its source -- it is listed as open in docs/COMPLIANCE.md.",
+  "reviewed": "2026-09-18",
+
+  "organisation": [
+    {"id": "roots", "claim": "Roots date to 1954", "value": "1954", "detail": "Estonian Credit Union, founded 1954.", "sourceUrl": null, "verified": "2026-09-18", "verifiedBy": "content review"},
+    {"id": "latvian-cu", "claim": "Latvian Credit Union founded 1959", "value": "1959", "detail": "The second of the two credit unions that merged.", "sourceUrl": null, "verified": "2026-09-18", "verifiedBy": "content review"},
+    {"id": "merger", "claim": "Northern Birch formed by merger on January 1, 2020", "value": "2020-01-01", "detail": "The entity dates from the merger; the site says 'roots dating to 1954', never '70 years'.", "sourceUrl": null, "verified": "2026-09-18", "verifiedBy": "content review"},
+    {"id": "keskus", "claim": "A flagship branch is coming to the KESKUS International Estonian Centre", "value": "Madison Avenue, Toronto", "detail": "Opening date, hours and phone TO CONFIRM.", "sourceUrl": null, "verified": null, "verifiedBy": "existing site copy; the content review treats it as the timing hook"}
+  ],
+
+  "phones": [
+    {"id": "latvian-centre", "number": "416-465-4659", "label": "Latvian Centre branch (head office)", "owner": "northern-birch", "sourceUrl": null, "verified": "2026-09-18", "verifiedBy": "content review (number); branch mapping from existing site copy"},
+    {"id": "tartu-college", "number": "416-922-2551", "label": "Tartu College branch", "owner": "northern-birch", "sourceUrl": null, "verified": "2026-09-18", "verifiedBy": "content review (number); branch mapping from existing site copy"},
+    {"id": "hamilton", "number": "905-527-4344", "label": "Hamilton branch", "owner": "northern-birch", "sourceUrl": null, "verified": "2026-09-18", "verifiedBy": "content review"},
+    {"id": "toll-free", "number": "1-866-844-3828", "label": "Toll-free", "owner": "northern-birch", "sourceUrl": null, "verified": "2026-09-18", "verifiedBy": "content review"},
+    {"id": "online-banking", "number": "1-866-992-2490", "label": "Online banking support", "owner": "northern-birch", "sourceUrl": null, "verified": "2026-09-18", "verifiedBy": "content review"},
+    {"id": "collabria", "number": "1-855-341-4643", "label": "Collabria cardholder service", "owner": "collabria", "sourceUrl": null, "verified": "2026-09-18", "verifiedBy": "content review"},
+    {"id": "opc", "number": "1-800-282-1376", "label": "Office of the Privacy Commissioner of Canada", "owner": "regulator", "sourceUrl": "https://www.priv.gc.ca/en/contact-the-opc/", "verified": null, "verifiedBy": "not yet checked against source"},
+    {"id": "fsra", "number": "416-250-7250", "label": "Financial Services Regulatory Authority of Ontario (FSRA)", "owner": "regulator", "sourceUrl": "https://www.fsrao.ca/contact-us", "verified": null, "verifiedBy": "not yet checked against source"},
+    {"id": "obsi", "number": "1-888-451-4519", "label": "Ombudsman for Banking Services and Investments (OBSI)", "owner": "regulator", "sourceUrl": "https://www.obsi.ca/en/contact-us.aspx", "verified": null, "verifiedBy": "not yet checked against source"},
+    {"id": "fcac", "number": "1-866-461-3222", "label": "Financial Consumer Agency of Canada (FCAC)", "owner": "regulator", "sourceUrl": "https://www.canada.ca/en/financial-consumer-agency/corporate/contact-us.html", "verified": null, "verifiedBy": "not yet checked against source"}
+  ],
+
+  "branches": [
+    {"id": "latvian-centre", "name": "Latvian Centre (HQ)", "address": "4 Credit Union Dr, North York", "hours": "M-W 10-3, Th 10-7, F 10-3, Sa 9-1", "phone": "latvian-centre", "verified": null, "verifiedBy": "existing site copy; address and hours not checked"},
+    {"id": "tartu-college", "name": "Tartu College", "address": "310 Bloor St W, Toronto", "hours": "M-F 10-3 (Cashless)", "phone": "tartu-college", "verified": null, "verifiedBy": "existing site copy; address and hours not checked"},
+    {"id": "hamilton", "name": "Hamilton", "address": "16 Queen St N", "hours": "Tu-F 10-3, Th 10-7", "phone": "hamilton", "verified": null, "verifiedBy": "existing site copy; address and hours not checked"},
+    {"id": "keskus", "name": "KESKUS", "address": "Madison Ave, Toronto", "hours": "Coming Soon", "phone": null, "verified": null, "verifiedBy": "existing site copy"}
+  ],
+
+  "_open": "Asked for in the content review and not yet known: the lending address and the estates address.",
+
+  "limits": {
+    "_comment": "Government limits quoted by the planning tools. Figures are for the tax year shown and change every January -- update them with the year.",
+    "taxYear": 2026,
+    "tfsaAnnual": 7000,
+    "tfsaCumulative": 109000,
+    "rrspMax": 33810,
+    "fhsaAnnual": 8000,
+    "fhsaLifetime": 40000,
+    "cesgRate": "20%",
+    "cesgMatchedContribution": 2500,
+    "sourceUrl": "https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html",
+    "verified": null,
+    "verifiedBy": "not yet checked against source -- replaces figures that were a year or two stale ($31,560 RRSP labelled 2025; $95,000 cumulative TFSA room)"
+  }
+}
