@@ -34,7 +34,7 @@ let total=0;
  total+=await audit(p,'search overlay (with results)');await p.close();}
 // login modal
 {const p=await ctx.newPage();await p.goto(`${BASE}/`,{waitUntil:'domcontentloaded'});await p.waitForTimeout(1200);
- await p.locator('button',{hasText:/Sign In/i}).first().click();await p.waitForTimeout(600);
+ await p.locator('button',{hasText:/Access demo/i}).first().click();await p.waitForTimeout(600);
  total+=await audit(p,'login modal');await p.close();}
 // notifications
 {const p=await ctx.newPage();await p.goto(`${BASE}/`,{waitUntil:'domcontentloaded'});await p.waitForTimeout(1200);
