@@ -48,7 +48,7 @@ const go = async (r) => {
     ['Book a Financial Check-Up', '/booking'],
     ['Compare registered plans', '/accounts'],
     ['Explore investing', '/personal'],
-    ['Plan your estate', '/estate'],
+    ['When a member has died', '/estate'],
     ['Open the tax optimizer', '/tax-optimizer'],
     ['Business solutions', '/business'],
     ['Financial Health Check', '/financial-health-check'],
@@ -112,7 +112,7 @@ const go = async (r) => {
     ['/', 'Explore Financial Advice'],
     ['/', 'Financial Advice'],          // the product-area grid lower down
     ['/personal', 'Financial advice'],
-    ['/estate', 'See our advice services'],
+    ['/estate', 'Talk to an advisor'],
     ['/tax-optimizer', 'Financial advice'],
     ['/calculators', 'Take this to an advisor'],
     ['/booking', 'What a Financial Check-Up covers'],

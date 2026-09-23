@@ -108,7 +108,7 @@ export const META={
   personal:["Personal Banking | Northern Birch Credit Union","Everyday accounts, borrowing and investing for Northern Birch members."],
   rates:["Current Rates | Northern Birch Credit Union","Today's posted mortgage, GIC, savings and lending rates at Northern Birch Credit Union."],
   apply:["Apply | Open an Account or Start a Mortgage | Northern Birch","Start an application for a chequing account, savings, GIC, mortgage pre-approval or credit card. An advisor calls you back within one business day."],
-  advice:["Financial Advice & Planning | Northern Birch","Retirement, investment, estate and tax advice from Northern Birch's wealth team, starting with a Financial Check-Up that costs members nothing."],
+  advice:["Financial Advice & Planning | Northern Birch","Retirement, investment, tax and beneficiary advice from Northern Birch's wealth team, starting with a Financial Check-Up that costs members nothing."],
   insurance:["Insurance | Northern Birch Credit Union","How Northern Birch refers members to insurers for life, home, auto and travel cover. Northern Birch does not quote or sell insurance."],
   travel:["Travel & International Transfers | Northern Birch","Baltic travel insurance, international transfers to Estonia and Latvia, and competitive foreign exchange."],
   business:["Business Solutions | Northern Birch Credit Union","Group benefits, commercial insurance, payroll and commercial lending for Ontario businesses."],
