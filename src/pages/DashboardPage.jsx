@@ -125,10 +125,10 @@ export default function DashboardPage({setPage}){
                 <span style={{fontFamily:fs,fontSize:12,color:C.accentText,fontWeight:600,cursor:"pointer"}}>View All Details</span>
               </div>
               {[
-                {type:"Home Insurance",provider:"The Personal",policy:"HP-2024-88721",status:"Active",renewal:"Apr 15, 2026",premium:"C$142.50/mo",coverage:"C$650,000 Replacement Cost",c:C.green},
-                {type:"Auto Insurance",provider:"The Personal",policy:"AP-2024-34219",status:"Active",renewal:"Jun 1, 2026",premium:"C$168.00/mo",coverage:"C$2M Liability + Collision + Ajusto",c:C.amber},
-                {type:"Term Life Insurance",provider:"CUMIS",policy:"TL-2025-11087",status:"Active",renewal:"Guaranteed 20yr",premium:"C$32.50/mo",coverage:"C$500,000 - 20 Year Term",c:C.accent},
-                {type:"Mortgage Protection",provider:"CUMIS",policy:"MP-2024-55432",status:"Active",renewal:"Tied to Mortgage",premium:"Included",coverage:"Life + Disability on Mortgage",c:C.navy},
+                {type:"Home Insurance",provider:"Referred insurer (proposed)",policy:"HP-2024-88721",status:"Active",renewal:"Apr 15, 2026",premium:"C$142.50/mo",coverage:"C$650,000 Replacement Cost",c:C.green},
+                {type:"Auto Insurance",provider:"Referred insurer (proposed)",policy:"AP-2024-34219",status:"Active",renewal:"Jun 1, 2026",premium:"C$168.00/mo",coverage:"C$2M Liability + Collision + Ajusto",c:C.amber},
+                {type:"Term Life Insurance",provider:"Referred insurer (proposed)",policy:"TL-2025-11087",status:"Active",renewal:"Guaranteed 20yr",premium:"C$32.50/mo",coverage:"C$500,000 - 20 Year Term",c:C.accent},
+                {type:"Mortgage Protection",provider:"Referred insurer (proposed)",policy:"MP-2024-55432",status:"Active",renewal:"Tied to Mortgage",premium:"Included",coverage:"Life + Disability on Mortgage",c:C.navy},
               ].map((p,i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:16,padding:"14px 0",borderBottom:i<3?"1px solid #f5f5f5":"none"}}>
                   <div style={{width:40,height:40,borderRadius:10,background:`${p.c}10`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
@@ -152,9 +152,9 @@ export default function DashboardPage({setPage}){
                 <span style={{background:C.redText,color:"#fff",fontFamily:fs,fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:10}}>2 Pending</span>
               </div>
               {[
-                {name:"Critical Illness Insurance Application",provider:"CUMIS",date:"Mar 15, 2026",status:"pending",type:"Insurance"},
+                {name:"Critical Illness Insurance Application",provider:"Referred insurer (proposed)",date:"Mar 15, 2026",status:"pending",type:"Insurance"},
                 {name:"TFSA Beneficiary Designation Update",provider:"Northern Birch",date:"Mar 12, 2026",status:"pending",type:"Account"},
-                {name:"Home Insurance Policy Renewal",provider:"The Personal",date:"Feb 28, 2026",status:"signed",type:"Insurance"},
+                {name:"Home Insurance Policy Renewal",provider:"Referred insurer (proposed)",date:"Feb 28, 2026",status:"signed",type:"Insurance"},
                 {name:"Mortgage Renewal Agreement",provider:"Northern Birch",date:"Jan 15, 2026",status:"signed",type:"Mortgage"},
               ].map((doc,i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:16,padding:"14px 0",borderBottom:i<3?"1px solid #f5f5f5":"none"}}>
@@ -181,7 +181,7 @@ export default function DashboardPage({setPage}){
                 {desc:"Interac e-Transfer sent to Laila J.",amount:"-C$150.00",date:"Mar 19",type:"transfer",cat:"Transfer"},
                 {desc:"Apple Pay - Loblaws",amount:"-C$87.43",date:"Mar 18",type:"purchase",cat:"Food & Grocery"},
                 {desc:"Mortgage Payment",amount:"-C$1,847.22",date:"Mar 15",type:"payment",cat:"Housing"},
-                {desc:"Home Insurance - The Personal",amount:"-C$142.50",date:"Mar 15",type:"insurance",cat:"Insurance"},
+                {desc:"Home Insurance - referred insurer",amount:"-C$142.50",date:"Mar 15",type:"insurance",cat:"Insurance"},
                 {desc:"Payroll Deposit - TechCorp Inc.",amount:"+C$3,245.00",date:"Mar 14",type:"deposit",cat:"Income"},
                 {desc:"Google Pay - Uber",amount:"-C$18.45",date:"Mar 13",type:"purchase",cat:"Transportation"},
                 {desc:"International Transfer to Riga",amount:"-C$275.00",date:"Mar 10",type:"transfer",cat:"Int'l Transfer"},

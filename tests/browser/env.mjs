@@ -37,7 +37,7 @@ export const ROUTES = [
   '/compare', '/claims', '/calculators', '/booking', '/referrals', '/blog', '/glossary',
   '/mobile-app', '/dashboard', '/ai-advisor', '/coverage-analyzer', '/financial-health-check',
   '/life-event-simulator', '/policy-document-reader', '/tax-optimizer', '/messages',
-  '/privacy', '/accessibility', '/complaints', '/terms', '/leadership',
+  '/privacy', '/accessibility', '/complaints', '/terms', '/leadership', '/underwriters', '/borrowing', '/keskus', '/phased-ask',
 ];
 
 // Google Fonts is unreachable behind some proxies and adds ~30s per page to a

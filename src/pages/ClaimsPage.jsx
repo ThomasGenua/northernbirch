@@ -69,8 +69,8 @@ export default function ClaimsPage(){
         <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>{steps[step].content}</div>
         <div style={{marginTop:32,background:`${C.amber}08`,borderRadius:16,padding:"24px 28px",borderLeft:`4px solid ${C.amber}`}}>
           <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 8px",fontWeight:700}}>Who to call about a claim</h4>
-          {/* This block used to print claims lines for The Personal, CUMIS and
-              Manulife. None of them is a current Northern Birch partner, so
+          {/* This block used to print claims lines for three insurers. None of
+              them is a current Northern Birch partner, so
               every one of those numbers would have sent a member mid-claim to
               a company that has never heard of them -- the worst thing a page
               like this can do. Nothing replaces them until a real partner and

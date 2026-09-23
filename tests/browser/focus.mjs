@@ -13,7 +13,7 @@ const who=()=>p.evaluate(()=>{const a=document.activeElement;return a?(a.getAttr
 // each overlay: focus enters, is trapped, and returns to its trigger
 for(const [name,openIt,inside] of [
   ['search',   async()=>p.locator('button[aria-label="Search Northern Birch"]:visible').first().focus(), 'Search products, services and tools'],
-  ['login',    async()=>p.locator('button',{hasText:/^Sign In$/}).first().focus(), null],
+  ['login',    async()=>p.locator('button',{hasText:/^Access demo$/}).first().focus(), null],
   ['notifications', async()=>p.locator('button[aria-label="Notifications"]:visible').first().focus(), null],
 ]){
   await openIt(); await p.waitForTimeout(200);

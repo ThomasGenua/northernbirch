@@ -50,16 +50,16 @@ const newPage=async(route)=>{
   await p.close();
 }
 
-// ---------- 3. Estate stage tabs ----------
+// ---------- 3. Estates ----------
 {
   const p=await newPage('/estate');
-  // scoped to the stage tabs themselves -- the page also carries CTAs into
-  // /advice and /booking, which navigate rather than switching the panel
-  const tabs=p.locator('main button').filter({hasText:/^(Young Family|Mid-Career|Pre-Retirement|Senior)$/});
-  const n=await tabs.count();
-  const seen=new Set();
-  for(let i=0;i<n;i++){ await tabs.nth(i).click(); await p.waitForTimeout(250); seen.add((await p.locator('main h3').first().innerText())); }
-  check(seen.size===n&&n===4,`estate: all ${n} stage tabs change the panel (${seen.size} distinct)`);
+  // estates is administration for a member who has died, not planning: three
+  // steps, a pointer to a lawyer or notary for planning, and no stage tabs
+  const txt=await p.locator('main').innerText();
+  const steps=await p.locator('main h3').allInnerTexts();
+  check(/When a member has died/i.test(txt)&&steps.length>=4,`estate: settlement steps shown (${steps.length} headings)`);
+  check(/lawyer or notary/i.test(txt),'estate: planning questions go to a lawyer or notary');
+  check(await p.locator('main button').filter({hasText:/^(Young Family|Mid-Career|Pre-Retirement|Senior)$/}).count()===0,'estate: no life-stage planning tabs');
   await p.close();
 }
 
@@ -137,7 +137,7 @@ for(const [route,label] of [['/ai-advisor','AI advisor'],['/coverage-analyzer','
 // ---------- 9. Login + notifications overlays ----------
 {
   const p=await newPage('/');
-  await p.locator('button',{hasText:/Sign In/i}).first().click(); await p.waitForTimeout(500);
+  await p.locator('button',{hasText:/Access demo/i}).first().click(); await p.waitForTimeout(500);
   check(await p.locator('[role="dialog"]').count()>=1,'login: opens a dialog');
   await p.keyboard.press('Escape'); await p.waitForTimeout(400);
   check(await p.locator('[role="dialog"]').count()===0,'login: Escape closes it');

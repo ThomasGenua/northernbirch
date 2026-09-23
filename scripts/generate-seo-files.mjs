@@ -104,7 +104,7 @@ function orgSchema(site) {
 // addressed to the board and carrying five-year revenue projections, the cost
 // to NBCU and partnership terms. Someone already decided none of these should
 // be promoted -- that decision just stopped at the sitemap.
-const EXCLUDE = new Set(['/dashboard', '/messages', '/leadership']);
+const EXCLUDE = new Set(['/dashboard', '/messages', '/leadership', '/underwriters', '/phased-ask']);
 
 // This script writes its output back over dist/index.html, which is also where
 // it reads the shell from -- so a second run reads a shell that already has the

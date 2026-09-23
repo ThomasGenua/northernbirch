@@ -44,17 +44,18 @@ for(const [label,want] of [['Close Coverage Gaps','/coverage-analyzer'],['Review
   check(await p.locator('main button',{hasText:'Call your branch'}).count()===1,'a real "Call your branch" action is offered instead');
   await p.close();
 }
-// compare: the three quote buttons, and the tab no-op is legitimate
+// compare: an explainer now -- tabs switch topics, no priced tiers, one advisor CTA
 {
   const p=await go('/compare');
-  const tabs=p.locator('main button',{hasText:'Term Life Insurance'});
-  const wasActive=await tabs.first().evaluate(e=>getComputedStyle(e).backgroundColor);
-  await tabs.first().click(); await p.waitForTimeout(400);
-  check(await tabs.first().evaluate(e=>getComputedStyle(e).backgroundColor)===wasActive,'compare: clicking the already-selected tab correctly does nothing');
-  const q=p.locator('main button',{hasText:'Get a Quote'});
-  check(await q.count()===3,`compare: 3 quote buttons (${await q.count()})`);
-  await q.nth(1).click(); await p.waitForTimeout(600);
-  check(new URL(p.url()).pathname==='/quote',`compare: "Get a Quote" -> ${new URL(p.url()).pathname}`);
+  const tabs=p.locator('main [role="tab"]');
+  check(await tabs.count()===3,`compare: 3 topic tabs (${await tabs.count()})`);
+  await tabs.nth(1).click(); await p.waitForTimeout(300);
+  check(await tabs.nth(1).getAttribute('aria-selected')==='true','compare: clicking "Home" selects it');
+  const t=await p.locator('main').innerText();
+  check(!/C\$\d/.test(t),'compare: no prices on the page');
+  check(await p.locator('main button',{hasText:'Get a Quote'}).count()===0,'compare: no quote buttons');
+  await p.locator('main button',{hasText:'Talk to an advisor'}).click(); await p.waitForTimeout(600);
+  check(new URL(p.url()).pathname==='/booking',`compare: "Talk to an advisor" -> ${new URL(p.url()).pathname}`);
   await p.close();
 }
 console.log(`\n${pass} passed, ${fail} failed`);

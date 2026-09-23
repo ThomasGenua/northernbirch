@@ -55,6 +55,16 @@ const RULES = [
     why: 'implies quoting; an unlicensed credit union may refer, not quote' },
   { re: /\bbind (?:coverage|a policy)|we (?:advise|recommend) (?:you|that)/gi,
     why: 'implies advising or binding' },
+
+  // --- invented pricing, discounts and track records -------------------------
+  // Found after the carriers moved into content/partners.json: the same claims
+  // were still in page copy in phrasings the rules above did not cover.
+  { re: /\d{1,2}(?:-\d{1,2})?%\s*below market|\d{2}% renewal(?: rate)?/gi,
+    why: 'invented discount or track record; no source for it' },
+  { re: /(?:from|starting at(?: about)?|approximately) C?\$\d[\d,.]*\s*\/\s*(?:mo|month|year|yr)\b/gi,
+    why: 'invented premium; Northern Birch does not quote insurance' },
+  { re: /(?:sign|click) (?:now|here) to activate coverage/gi,
+    why: 'implies binding coverage' },
 ];
 
 // Files whose whole job is to catch these strings, or to explain them.

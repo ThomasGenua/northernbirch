@@ -85,14 +85,14 @@ const go=async(r)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(r+
   const back=await p.evaluate(()=>document.activeElement?.getAttribute('aria-label'));
   check(back==='Search Northern Birch',`search: focus returns to the trigger on close (${back})`);
   // login: Tab must stay inside the dialog
-  await p.locator('button',{hasText:/Sign In/i}).first().click(); await p.waitForTimeout(500);
+  await p.locator('button',{hasText:/Access demo/i}).first().click(); await p.waitForTimeout(500);
   let escaped=false;
   for(let i=0;i<25;i++){ await p.keyboard.press('Tab');
     if(!await p.evaluate(()=>!!document.activeElement?.closest('[role="dialog"]'))){escaped=true;break} }
   check(!escaped,'login: Tab is trapped inside the dialog');
   await p.keyboard.press('Escape'); await p.waitForTimeout(400);
   const back2=await p.evaluate(()=>(document.activeElement?.textContent||'').trim());
-  check(/Sign In/i.test(back2),`login: focus returns to the trigger (${JSON.stringify(back2.slice(0,20))})`);
+  check(/Access demo/i.test(back2),`login: focus returns to the trigger (${JSON.stringify(back2.slice(0,20))})`);
   await p.close();
 }
 check(errs.length===0,`no page errors${errs.length?': '+JSON.stringify(errs.slice(0,2)):''}`);

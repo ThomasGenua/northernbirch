@@ -16,9 +16,9 @@ export default function MessagesPage({setPage:_setPage}){
       {from:"advisor",author:"Heili Orav",role:"Wealth & Estate Advisor",text:"Perfect. I have time Tuesday at 10:30 AM at the Latvian Centre branch, or we can do video. Either works for you?",time:"Today, 9:38 AM"},
     ],
     insurance:[
-      {from:"advisor",author:"Andres Tamm",role:"Insurance Advisor",text:"Hi Maria, I noticed your home insurance is up for renewal April 15. The Personal is offering an enhanced bundle with auto -- you'd save approximately C$340/year by combining. Want me to run the numbers?",time:"2 days ago, 11:20 AM"},
+      {from:"advisor",author:"Andres Tamm",role:"Insurance Advisor",text:"Hi Maria, your home insurance renewal is coming up on April 15. Northern Birch can't quote or compare policies, but I can connect you with an insurer who can review it with you. Would that help?",time:"2 days ago, 11:20 AM"},
       {from:"member",text:"Yes please! Also, can you tell me about critical illness coverage? Heili mentioned it.",time:"2 days ago, 12:05 PM"},
-      {from:"advisor",author:"Andres Tamm",role:"Insurance Advisor",text:"Great question. Critical illness is often overlooked. CUMIS offers a 25-condition policy starting at about C$45/month for someone in your age bracket. Lump-sum payout if you're diagnosed. Should we discuss at your appointment with Heili next week, or earlier?",time:"2 days ago, 1:15 PM"},
+      {from:"advisor",author:"Andres Tamm",role:"Insurance Advisor",text:"Good question -- critical illness cover is often overlooked. I can't recommend a policy or quote a price, but I can refer you to an insurer who can walk you through the options. Want me to set that up before your appointment with Heili next week?",time:"2 days ago, 1:15 PM"},
     ],
     branch:[
       {from:"advisor",author:"Northern Birch Support",role:"Branch Services",text:"Hi Maria, your debit card replacement has been processed and will arrive within 5-7 business days. The temporary card you can use through online banking is now active.",time:"4 days ago, 3:00 PM"},
@@ -45,7 +45,7 @@ export default function MessagesPage({setPage:_setPage}){
   const isMob=mob;
   const threads=[
     {id:"heili",name:"Heili Orav",role:"Wealth & Estate",unread:0,last:"Perfect. I have time Tuesday at 10:30 AM..."},
-    {id:"insurance",name:"Andres Tamm",role:"Insurance Advisor",unread:0,last:"CUMIS offers a 25-condition policy..."},
+    {id:"insurance",name:"Andres Tamm",role:"Insurance Advisor",unread:0,last:"I can refer you to an insurer who can..."},
     {id:"branch",name:"Northern Birch Support",role:"Branch Services",unread:0,last:"Debit card replacement processed..."},
   ];
   return <section style={{background:"#f0f2f5",padding:isMob?"60px 0 0":"80px 0 0",paddingTop:isMob?64:80,minHeight:"100vh"}}>
