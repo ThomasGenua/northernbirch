@@ -45,7 +45,7 @@ for(const [from,label,to] of CASES){
 }
 
 // linkified legal pages: hrefs are well-formed and text is not mangled
-for(const [route,needles] of [['/privacy',['privacy@northernbirchcu.com','1-800-282-1376','www.priv.gc.ca']],['/complaints',['1-888-451-4519','asaar@northernbirchcu.com']],['/accessibility',['accessibility@northernbirchcu.com']]]){
+for(const [route,needles] of [['/privacy',['privacy@northernbirchcu.com','1-800-282-1376','www.priv.gc.ca']],['/complaints',['1-888-451-4519','416-250-7250','www.obsi.ca']],['/accessibility',['accessibility@northernbirchcu.com']]]){
   const page=await ctx.newPage();
   await page.goto(BASE+route,{waitUntil:'domcontentloaded'}); await page.waitForTimeout(900);
   const links=await page.locator('main a[href]').evaluateAll(a=>a.map(x=>[x.getAttribute('href'),x.textContent]));
