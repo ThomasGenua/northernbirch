@@ -1,5 +1,5 @@
 import React from "react";
-import { Btn, C, Fade, RATE, SH, ff, fs, setApplyIntent, t, track, useW } from '../ui.jsx';
+import { Btn, C, Fade, RATE, rateConfirmed, SH, ff, fs, setApplyIntent, t, track, useW } from '../ui.jsx';
 
 
 // ============ HOME PAGE ============
@@ -7,7 +7,9 @@ import { Btn, C, Fade, RATE, SH, ff, fs, setApplyIntent, t, track, useW } from '
 export default function MortgagesPage({setPage,lang}){
   const T=(k)=>t(k,lang);
   const w=useW();
-  const posted=[{term:"3-Year Closed Fixed",rate:RATE.m3},{term:"5-Year Closed Fixed",rate:RATE.m5},{term:"5-Year High Ratio (insured, 5% down)",rate:RATE.m5hr},{term:"Variable Rate",rate:RATE.mvar},{term:"HELOC",rate:RATE.heloc}];
+  // Terms match the posted table on /rates exactly, so rateConfirmed() can say
+  // which ones have been checked. The high-ratio rate is the 5-year VARIABLE.
+  const posted=[{term:"3-Year Closed",rate:RATE.m3},{term:"5-Year Fixed",rate:RATE.m5},{term:"5-Year Variable High Ratio",rate:RATE.m5hr},{term:"Variable Rate",rate:RATE.mvar},{term:"HELOC",rate:RATE.heloc}];
   const options=[
     {t:"Fixed-Rate Closed",d:"Your rate and payment stay the same for the whole term. The simplest way to budget.",c:C.green},
     {t:"Variable-Rate",d:"Priced off prime. Your payment moves with rates, and you can convert to fixed at any time.",c:C.accent},
@@ -22,13 +24,14 @@ export default function MortgagesPage({setPage,lang}){
       <SH tag={T("Mortgages")} tagColor={C.greenText} title={T("A mortgage from people you can meet")} desc={T("Fixed, variable, and high-ratio mortgages -- plus co-op apartment financing most lenders will not touch. Decisions are made in Toronto, by the same advisor who takes your call.")}/>
       <Fade><div style={{background:"#fff",borderRadius:20,padding:w<=768?24:32,border:"1px solid #eee",marginBottom:32}}>
         <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:20}}>
-          <span style={{fontFamily:ff,fontSize:44,color:C.greenText,fontWeight:700}}>{RATE.m5}</span>
-          <span style={{fontFamily:fs,fontSize:13,color:"#6B6B6B"}}>{T("5-year closed fixed")}</span>
+          <span style={{fontFamily:ff,fontSize:44,color:C.greenText,fontWeight:700}}>{RATE.m3}</span>
+          <span style={{fontFamily:fs,fontSize:13,color:"#6B6B6B"}}>{T("3-year closed")}</span>
         </div>
         {posted.map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"13px 0",borderBottom:i<posted.length-1?"1px solid #f5f5f5":"none"}}>
           <span style={{fontFamily:fs,fontSize:14,color:C.navy}}>{r.term}</span>
-          <span style={{fontFamily:fs,fontSize:16,color:C.greenText,fontWeight:700}}>{r.rate}</span>
+          <span style={{display:"flex",alignItems:"center",gap:10}}>{!rateConfirmed("mortgage",r.term)&&<span style={{fontFamily:fs,fontSize:11,fontWeight:600,color:"#6b5a2a",background:"#FFF4DD",border:"1px solid #EBD49A",borderRadius:999,padding:"2px 8px"}}>illustrative</span>}<span style={{fontFamily:fs,fontSize:16,color:C.greenText,fontWeight:700}}>{r.rate}</span></span>
         </div>)}
+        <p style={{fontFamily:fs,fontSize:12,color:"#6b5a2a",margin:"12px 0 0"}}>{T("Rates marked illustrative have not been checked against Northern Birch's posted rates.")}</p>
         <div style={{display:"flex",gap:12,marginTop:24,flexWrap:"wrap"}}>
           <Btn color={C.greenFill} onClick={()=>{setApplyIntent("Mortgage pre-approval");track("apply_start",{from:"mortgages"});setPage("apply")}}>{T("Get Pre-Approved")}</Btn>
           <Btn outline color={C.navy} onClick={()=>setPage("calculators")}>{T("Payment Calculator")}</Btn>

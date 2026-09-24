@@ -34,7 +34,7 @@ check(!!active&&active!=='','ArrowDown moves into results (focus: '+JSON.stringi
 
 // titles that name a specific page should land on that page
 await p.goto(`${BASE}/`,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(1000);
-for(const [q,title,want] of [['Insurance Dashboard','Insurance Dashboard','/dashboard'],['Coverage Explorer','Coverage Explorer','/quote'],['Financial Planning','Financial Planning Tools','/calculators']]){
+for(const [q,title,want] of [['Member Dashboard','Member Dashboard','/dashboard'],['Coverage Explorer','Coverage Explorer','/quote'],['Financial Planning','Financial Planning Tools','/calculators']]){
   await open();
   await p.locator('[role="dialog"] input').fill(q); await p.waitForTimeout(300);
   const b=p.locator('[role="dialog"] button',{hasText:title}).first();

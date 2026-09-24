@@ -1,4 +1,5 @@
 import { chromium } from 'playwright-core';
+import { readFileSync } from 'node:fs';
 import { BASE, EXECUTABLE, blockFonts } from './env.mjs';
 
 const br=await chromium.launch({executablePath:EXECUTABLE});
@@ -95,44 +96,21 @@ const newPage=async(r)=>{const p=await ctx.newPage();await p.goto(BASE+r,{waitUn
 }
 
 // ---------- claims ----------
+// Claims are a "who to call" guide now: no form, nothing posted, and only
+// numbers from content/facts.json.
 {
   posts.length=0;
   const p=await newPage('/claims');
-  for(let round=0;round<9;round++){
-    const inputs=await p.locator('main input:not([type=checkbox]), main select, main textarea').all();
-    for(const el of inputs){
-      const t=await el.evaluate(e=>e.tagName+'|'+(e.type||''));
-      if(t.startsWith('SELECT')){const n=await el.locator('option').count(); if(n>1) await el.selectOption({index:1}).catch(()=>{});}
-      else if(/email/.test(t)) await el.fill('maria@example.com').catch(()=>{});
-      else if(/\|date\|/.test(t)) await el.fill('2026-09-01').catch(()=>{});
-      else if((await el.inputValue().catch(()=>'x'))==='') await el.fill('Kitchen flood after a burst pipe.').catch(()=>{});
-    }
-    const cb=p.locator('main input[type=checkbox]');
-    for(let i=0;i<await cb.count();i++) await cb.nth(i).check().catch(()=>{});
-    await p.waitForTimeout(250);
-    const next=p.locator('main button',{hasText:/Next|Continue|Submit|Send|File/i}).first();
-    if(await next.count()===0||await next.isDisabled().catch(()=>true)){
-      const chips=p.locator('main button');
-      if(await chips.count()) await chips.first().click().catch(()=>{});
-      await p.waitForTimeout(300);
-      continue;
-    }
-    await next.click().catch(()=>{}); await p.waitForTimeout(500);
-    if(posts.length) break;
+  check(await p.locator('main input, main textarea, main select').count()===0,'claims: collects nothing (no inputs)');
+  const known=JSON.parse(readFileSync(new URL('../../content/facts.json',import.meta.url),'utf8')).phones.map(x=>x.number);
+  for(const label of ['Insurance on my Collabria card','Travel insurance','Home, auto, tenant','Insurance on a Northern Birch loan']){
+    await p.locator('main button',{hasText:label}).first().click(); await p.waitForTimeout(300);
+    const t=await p.locator('main').innerText();
+    const nums=t.match(/(?:1-)?\d{3}-\d{3}-\d{4}/g)||[];
+    check(/^Call /m.test(t)&&nums.every(n=>known.includes(n)),`claims: "${label}" says who to call, with known numbers only (${[...new Set(nums)].join(', ')})`);
+    await p.locator('main button',{hasText:'Choose a different claim'}).click(); await p.waitForTimeout(250);
   }
-  check(posts.length>=1,`claims: reached a POST (${posts.length})`);
-  if(posts.length){
-    const f=parse(posts[0].body);
-    // The form is named in the query string now, not in a "form-name" body
-    // field -- that field was Netlify Forms' convention, and these no longer
-    // post to Netlify Forms.
-    check(new URL(posts[0].url).searchParams.get('form')==='claim',`claims: posts as form={claim} (${new URL(posts[0].url).searchParams.get('form')})`);
-    check(!('form-name' in f),'claims: carries no Netlify form-name field');
-    check(f['bot-field']==='','claims: honeypot sent empty');
-    console.log('   claim payload keys:',Object.keys(f).join(', '));
-  }
-  const txt=await p.locator('main').innerText();
-  check(!/claim number is\s*[A-Z0-9-]{4,}/i.test(txt)||/issued by them/i.test(txt),'claims: does not fabricate a claim reference number');
+  check(posts.length===0,'claims: nothing is posted');
   await p.close();
 }
 console.log(`\n${pass} passed, ${fail} failed`);

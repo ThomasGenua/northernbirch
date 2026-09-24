@@ -1,87 +1,64 @@
 import React, { useState } from "react";
-import { Btn, C, Clickable, CONSENT_VERSION, ConsentNotice, errBox, exportToPDF, ff, fs, SH, submitForm } from '../ui.jsx';
+import { Btn, C, Clickable, ff, fs, SH } from '../ui.jsx';
+import facts from '../../content/facts.json';
 
-export default function ClaimsPage(){
-  
-  const[step,setStep]=useState(0);
-  const[claimType,setClaimType]=useState("");
-  const[policy,setPolicy]=useState("");const[incidentDate,setIncidentDate]=useState("");const[details,setDetails]=useState("");
-  const[name,setName]=useState("");const[email,setEmail]=useState("");const[phone,setPhone]=useState("");
-  const[sending,setSending]=useState(false);const[error,setError]=useState("");
-  const[consent,setConsent]=useState(false);
-  const canSubmit=policy.trim()&&details.trim()&&name.trim()&&(email.trim()||phone.trim())&&consent;
-  // No claim number is invented here. Only the insurer can open a claim and
-  // issue a number; this form starts that conversation.
-  const submit=async()=>{
-    setError("");setSending(true);
-    const ok=await submitForm("claim",{claimType,policy,incidentDate,details,name,email,phone,consent:"yes",consentVersion:CONSENT_VERSION});
-    setSending(false);
-    if(ok)setStep(2);
-    else setError("We could not send your claim request. Nothing has been filed. Please try again, or call your insurer directly using the numbers below — for an urgent claim, always call.");
-  };
-  const steps=[
-    {title:"Select Claim Type",content:<div className="grid-2-1" style={{gap:16}}>
-      {[{l:"Home Insurance Claim",v:"home",d:"Property damage, theft, water damage, liability"},{l:"Auto Insurance Claim",v:"auto",d:"Accident, collision, theft, vandalism"},{l:"Travel Insurance Claim",v:"travel",d:"Emergency medical, trip cancellation, baggage"},{l:"Life / CI / Disability Claim",v:"life",d:"Death benefit, critical illness, disability"},{l:"Mortgage Protection Claim",v:"mortgage",d:"Creditor life, disability, critical illness"},{l:"Commercial Insurance Claim",v:"commercial",d:"Business property, liability, business interruption"}].map((t,i)=>
-        <Clickable key={i} onClick={()=>{setClaimType(t.v);setStep(1)}} style={{background:claimType===t.v?`${C.accentText}08`:"#fff",border:claimType===t.v?`2px solid ${C.accent}`:"1px solid #eee",borderRadius:16,padding:"24px",cursor:"pointer",transition:"all 0.3s"}}>
-          <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 4px",fontWeight:700}}>{t.l}</h4>
-          <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:0}}>{t.d}</p>
-        </Clickable>
-      )}
-    </div>},
-    {title:"Provide Details",content:<div>
-      <div style={{marginBottom:16}}><label htmlFor="claim-policy" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Policy Number</label><input id="claim-policy" value={policy} onChange={e=>setPolicy(e.target.value)} placeholder="Enter your policy number" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-      <div style={{marginBottom:16}}><label htmlFor="claim-date" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Date of Incident</label><input type="date" id="claim-date" value={incidentDate} onChange={e=>setIncidentDate(e.target.value)} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/></div>
-      <div style={{marginBottom:16}}><label htmlFor="claim-details" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Description of Claim</label><textarea id="claim-details" rows={4} value={details} onChange={e=>setDetails(e.target.value)} placeholder="Please describe what happened..." style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",resize:"vertical",boxSizing:"border-box"}}/></div>
-      <div className="grid-2-1" style={{gap:16,marginBottom:16}}>
-        <div><label htmlFor="booking-name" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Your Name</label><input id="booking-name" value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
-        <div><label htmlFor="booking-phone" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Phone</label><input id="booking-phone" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="416-XXX-XXXX" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
-      </div>
-      <div style={{marginBottom:16}}><label htmlFor="booking-email" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Email</label><input id="booking-email" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none"}}/></div>
-      <div style={{background:`${C.amber}08`,borderRadius:12,padding:"14px 18px",marginBottom:16,borderLeft:`4px solid ${C.amber}`}}>
-        <p style={{fontFamily:fs,fontSize:13,color:"#666",margin:0,lineHeight:1.6}}>Have photos, receipts, or a police report ready. Documents are not uploaded through this form &mdash; the adjuster will tell you where to send them when they call.</p>
-      </div>
-      <><ConsentNotice id="claim-consent" checked={consent} onChange={setConsent} purpose="so it can be passed to the insurer to open my claim" extra="Claim details may include information about my health or property."/>
-      {error&&<div style={errBox}>{error}</div>}
-      <div style={{display:"flex",gap:12}}><Btn outline onClick={()=>setStep(0)}>Back</Btn><Btn color={sending||!canSubmit?"#ccc":C.accent} onClick={sending||!canSubmit?undefined:submit}>{sending?"Sending...":"Submit Claim Request"}</Btn></div></>
-    </div>},
-    {title:"Request Sent",content:<div id="claim-confirmation" style={{textAlign:"center",padding:"40px 0"}}>
-      <div style={{width:80,height:80,borderRadius:"50%",background:`${C.greenFill}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div>
-      <h3 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 12px"}}>Claim Request Sent</h3>
-      <p style={{fontFamily:fs,fontSize:15,color:"#666",lineHeight:1.7,maxWidth:500,margin:"0 auto 8px"}}>We have passed your details to the insurer. Your claim number is issued by them, not by us, and comes with their first call.</p>
-      <p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",lineHeight:1.7,maxWidth:500,margin:"0 auto 24px"}}>A claims adjuster will contact you within 1-2 business days. You can track your claim status through the Insurance Dashboard in your online banking.</p>
-      <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
-        <Btn onClick={()=>exportToPDF("claim-confirmation","Claim Request")} color={C.accentText}>&#128190; Download Request (PDF)</Btn>
-        <Btn outline onClick={()=>{setStep(0);setClaimType("");setPolicy("");setDetails("")}}>File Another Claim</Btn>
-      </div>
-    </div>},
-  ];
+// ============ CLAIMS: WHO TO CALL ============
+// This used to be a claim-filing wizard that took a policy number, the
+// incident and health details, then said the insurer had been told and an
+// adjuster would call within two days. None of that was true: the demo
+// discards what it is sent, and Northern Birch refers members to insurers --
+// it does not hold their policies or open claims. What a member mid-claim
+// actually needs is the right number, so that is what this page gives.
+//
+// Numbers come from content/facts.json. Where the insurer's own claims number
+// is not recorded there, the page says where to find it rather than guessing.
+const PHONE = Object.fromEntries(facts.phones.map((p) => [p.id, p.number]));
+const tel = (n) => `tel:+1${n.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "")}`;
+
+const TYPES = [
+  {v:"card",l:"Insurance on my Collabria card",d:"Purchase protection, extended warranty, mobile device, rental car, trip cancellation, baggage",
+   who:"Collabria cardholder service",phone:PHONE.collabria,
+   say:"Call Collabria, or the number on the back of your card. They will send the claim to the insurer named in your card's certificate of insurance."},
+  {v:"travel",l:"Travel insurance",d:"Medical emergency, trip cancellation or interruption, baggage",
+   who:"Allianz Global Assistance",phone:null,
+   say:"Travel insurance bought through a Northern Birch referral is underwritten by Allianz Global Assistance. Call the claims or assistance number on your Allianz policy documents. In a medical emergency abroad, call them as soon as you can, before treatment where possible."},
+  {v:"own",l:"Home, auto, tenant, life, critical illness or disability",d:"A policy you hold with an insurer",
+   who:"Your insurer",phone:null,
+   say:"Call the claims number on your policy documents. Northern Birch does not hold your policy and cannot open a claim for you. If you are not sure which insurer you are with, call Northern Birch and we will help you find out."},
+  {v:"creditor",l:"Insurance on a Northern Birch loan or mortgage",d:"Life or disability cover tied to a balance",
+   who:"Your branch",phone:PHONE["latvian-centre"],
+   say:"Mortgage and loan protection through Northern Birch is proposed and not available yet. If you already have cover on a Northern Birch loan, your branch can tell you who provides it."},
+];
+
+export default function ClaimsPage({setPage}){
+  const[type,setType]=useState(null);
+  const t=TYPES.find((x)=>x.v===type);
   return(
     <section className="sec" style={{background:C.cream,}}>
-      <div style={{maxWidth:800,margin:"0 auto"}}>
-        <SH tag="Claims Centre" tagColor={C.redText} title="File an insurance claim" desc="Start your claim online. We'll guide you through the process step by step."/>
-        <div style={{display:"flex",gap:0,marginBottom:32}}>
-          {steps.map((s,i)=><div key={i} style={{flex:1,display:"flex",alignItems:"center"}}>
-            <div style={{width:32,height:32,borderRadius:"50%",background:i<=step?C.accentText:"#ddd",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:fs,fontSize:13,color:"#fff",fontWeight:700}}>{i+1}</span></div>
-            <div style={{fontFamily:fs,fontSize:12,color:i<=step?C.navy:"#707070",marginLeft:8,fontWeight:i===step?700:400}}>{s.title}</div>
-            {i<steps.length-1&&<div style={{flex:1,height:2,background:i<step?C.accentText:"#eee",margin:"0 12px"}}/>}
-          </div>)}
-        </div>
-        <div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>{steps[step].content}</div>
-        <div style={{marginTop:32,background:`${C.amber}08`,borderRadius:16,padding:"24px 28px",borderLeft:`4px solid ${C.amber}`}}>
-          <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 8px",fontWeight:700}}>Who to call about a claim</h4>
-          {/* This block used to print claims lines for three insurers. None of
-              them is a current Northern Birch partner, so
-              every one of those numbers would have sent a member mid-claim to
-              a company that has never heard of them -- the worst thing a page
-              like this can do. Nothing replaces them until a real partner and
-              a real number are confirmed. */}
-          <div className="grid-3-2-1" style={{gap:16}}>
-            {[{n:"Northern Birch Credit Union",p:"416-465-4659",d:"Start here. They will tell you which insurer holds your policy and how to reach them."}].map((c2,i)=><div key={i}><div style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:600}}>{c2.n}</div><div style={{fontFamily:fs,fontSize:14,color:C.accentText,fontWeight:700}}><a href={`tel:+1${c2.p.replace(/[^0-9]/g,"")}`} style={{color:C.accentText}}>{c2.p}</a></div><div style={{fontFamily:fs,fontSize:12,color:"#666",lineHeight:1.6,marginTop:4}}>{c2.d}</div></div>)}
+      <div style={{maxWidth:820,margin:"0 auto"}}>
+        <SH tag="Claims" tagColor={C.redText} title="Who to call about a claim" desc="Claims are made to the insurer, not to Northern Birch. Choose what the claim is about and we will tell you who to call."/>
+        {!t?<div className="grid-2-1" style={{gap:16}}>
+          {TYPES.map((x)=><Clickable key={x.v} onClick={()=>setType(x.v)} style={{background:"#fff",border:"1px solid #eee",borderRadius:16,padding:"22px 24px",cursor:"pointer"}}>
+            <h3 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 4px",fontWeight:700}}>{x.l}</h3>
+            <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",margin:0,lineHeight:1.55}}>{x.d}</p>
+          </Clickable>)}
+        </div>:<div role="region" aria-labelledby="claim-who" style={{background:"#fff",borderRadius:24,padding:"32px 36px",border:"1px solid #eee"}}>
+          <div style={{fontFamily:fs,fontSize:12,fontWeight:700,letterSpacing:1.2,textTransform:"uppercase",color:C.redText,marginBottom:6}}>{t.l}</div>
+          <h3 id="claim-who" style={{fontFamily:ff,fontSize:26,color:C.navy,margin:"0 0 10px"}}>Call {t.who}</h3>
+          {t.phone&&<a href={tel(t.phone)} style={{display:"inline-block",fontFamily:ff,fontSize:28,color:C.accentText,fontWeight:700,textDecoration:"none",margin:"0 0 12px"}}>{t.phone}</a>}
+          <p style={{fontFamily:fs,fontSize:15,color:"#555",lineHeight:1.75,margin:"0 0 22px"}}>{t.say}</p>
+          <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+            <Btn outline onClick={()=>setType(null)}>Choose a different claim</Btn>
+            {t.v==="card"&&<Btn onClick={()=>setPage("cards")}>What my card covers</Btn>}
           </div>
+        </div>}
+        <div style={{marginTop:28,background:`${C.amber}08`,borderRadius:16,padding:"20px 24px",borderLeft:`4px solid ${C.amber}`}}>
+          <p style={{fontFamily:fs,fontSize:14,color:"#555",margin:0,lineHeight:1.7}}>
+            Not sure who to call? Northern Birch can help you work out which insurer holds your policy: <a href={tel(PHONE["latvian-centre"])} style={{color:C.accentText,fontWeight:700}}>{PHONE["latvian-centre"]}</a> or toll-free <a href={tel(PHONE["toll-free"])} style={{color:C.accentText,fontWeight:700}}>{PHONE["toll-free"]}</a>.
+            {" "}If a member has died, see <button onClick={()=>setPage("estate")} style={{background:"none",border:"none",padding:0,color:C.accentText,fontWeight:700,fontFamily:fs,fontSize:14,cursor:"pointer",textDecoration:"underline"}}>Estates</button>.
+          </p>
         </div>
       </div>
     </section>
   );
 }
-
-// ============ CALCULATORS ============

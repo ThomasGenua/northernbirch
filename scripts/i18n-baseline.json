@@ -4,13 +4,14 @@
     "Northern Birch is a full-service credit union. Open a chequing account, finance a home, carry a card, save in a GIC or TFSA, and invest -- all in one membership."
   ],
   "src/pages/MortgagesPage.jsx": [
-    "5-year closed fixed",
+    "3-year closed",
     "A mortgage from people you can meet",
     "Choose the structure that fits",
     "Fixed, variable, and high-ratio mortgages -- plus co-op apartment financing most lenders will not touch. Decisions are made in Toronto, by the same advisor who takes your call.",
     "How it works",
     "Payment Calculator",
-    "Rates are subject to change without notice and are subject to credit approval. Special offers including C$3,500 cash back on mortgages may be available -- ask your advisor. Call 416-465-4659 for today's rate."
+    "Rates are subject to change without notice and are subject to credit approval. Special offers including C$3,500 cash back on mortgages may be available -- ask your advisor. Call 416-465-4659 for today's rate.",
+    "Rates marked illustrative have not been checked against Northern Birch's posted rates."
   ],
   "src/pages/CardsPage.jsx": [
     "Collabria Mastercard cards issued for Northern Birch members -- cash back for everyday spending, a low rate if you carry a balance, and travel rewards if you do not.",

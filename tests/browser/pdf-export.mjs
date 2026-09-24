@@ -34,7 +34,7 @@ const go=async(r)=>{const p=await ctx.newPage();await p.goto(BASE+r,{waitUntil:'
   const p=await go('/quote');
   const [popup]=await Promise.all([
     p.waitForEvent('popup',{timeout:8000}).catch(()=>null),
-    p.locator('main button',{hasText:'Download Quote'}).first().click(),
+    p.locator('main button',{hasText:'Download summary'}).first().click(),
   ]);
   check(!!popup,'quote: the PDF export opens a window');
   if(popup){

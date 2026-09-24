@@ -10,8 +10,8 @@ export default function ComplaintsPage(){
         <div style={{display:"flex",flexDirection:"column",gap:16,marginBottom:32}}>
           {[
             {step:"1",title:"Contact Your Branch",desc:"Start by speaking with a staff member at your branch or calling us at 416-465-4659. Most concerns can be resolved at this level. Our team is trained to listen, investigate, and find solutions.",color:C.accentText},
-            {step:"2",title:"Escalate to Management",desc:"If you're not satisfied with the branch resolution, ask to speak with the Branch Manager or contact our CEO, Anita Saar, at asaar@northernbirchcu.com. Management will review your concern and respond within 10 business days.",color:C.amberText},
-            {step:"3",title:"Contact Our Ombudsperson",desc:"If the matter remains unresolved, you may contact the Ombudsman for Banking Services and Investments (OBSI) -- an independent organization that investigates complaints about financial services providers in Canada. OBSI services are free to consumers.",color:C.redText},
+            {step:"2",title:"Escalate to Management",desc:"If you're not satisfied with the branch resolution, ask to speak with the Branch Manager, or ask the branch to pass your complaint to senior management. Management will review your concern and respond.",color:C.amberText},
+            {step:"3",title:"Contact an Independent Ombudsman",desc:"If the matter remains unresolved, you may contact the Ombudsman for Banking Services and Investments (OBSI) -- an independent organization that investigates complaints about financial services providers in Canada. OBSI services are free to consumers.",color:C.redText},
           ].map((s,i)=>(
             <div key={i} style={{background:"#fff",borderRadius:20,padding:"28px 32px",border:"1px solid #eee",display:"flex",gap:20,alignItems:"flex-start"}}>
               <div style={{width:44,height:44,borderRadius:"50%",background:s.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:fs,fontSize:18,color:"#fff",fontWeight:800}}>{s.step}</span></div>

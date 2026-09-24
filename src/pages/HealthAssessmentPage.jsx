@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Btn, C, callAI, exportToPDF, Fade, ff, fs, useMob } from '../ui.jsx';
+import { AI_UNAVAILABLE, AIUnavailable, Btn, C, callAI, exportToPDF, Fade, ff, fs, useMob } from '../ui.jsx';
 
 export default function HealthAssessmentPage({setPage}){
   const mob=useMob();
@@ -33,7 +33,7 @@ export default function HealthAssessmentPage({setPage}){
       const summary=Object.entries(allAnswers).map(([k,v])=>{const q=questions.find(x=>x.id===k);return `${q.q} ${v}`;}).join("\n");
       const data=await callAI("healthcheck",[{role:"user",content:`Here are my financial health quiz answers:\n\n${summary}`}]);
       setResult(data.content?.[0]?.text||"Unable to generate report.");
-    }catch(e){setResult("Having trouble connecting. Please call 416-465-4659.");}
+    }catch(e){setResult(AI_UNAVAILABLE);}
     setLoading(false);
   };
 
@@ -53,6 +53,7 @@ export default function HealthAssessmentPage({setPage}){
     </section>
   );
 
+  if(result===AI_UNAVAILABLE)return <section className="sec" style={{background:C.cream}}><div style={{maxWidth:900,margin:"0 auto"}}><h2 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 16px"}}>Your Financial Health Check</h2><AIUnavailable/><Btn outline onClick={()=>{setResult(null);setStep(0);setAnswers({})}}>Start again</Btn></div></section>;
   if(result)return(
     <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
@@ -69,7 +70,7 @@ export default function HealthAssessmentPage({setPage}){
         <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
           <Btn onClick={()=>exportToPDF("health-assessment-result","Financial Health Report")} color={C.accentText}>&#128190; Download Report (PDF)</Btn>
           <Btn onClick={()=>setPage("booking")}>Book Advisor to Close Gaps</Btn>
-          <Btn color={C.greenFill} onClick={()=>setPage("quote")}>Get Insurance Quotes</Btn>
+          <Btn color={C.greenFill} onClick={()=>setPage("quote")}>Explore your coverage</Btn>
           <Btn color={C.purple} onClick={()=>setPage("analyzer")}>Analyze Existing Coverage</Btn>
           <Btn outline onClick={()=>{setResult(null);setStep(0);setAnswers({})}}>Retake Assessment</Btn>
         </div>

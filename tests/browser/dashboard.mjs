@@ -9,7 +9,7 @@ const go=async(r)=>{const p=await ctx.newPage();await p.goto(BASE+r,{waitUntil:'
   await p.locator('button',{hasText:'Essential only'}).click().catch(()=>{});await p.waitForTimeout(250);return p};
 
 // the six quick actions that route
-for(const [label,want] of [['Get Insurance Quote','/quote'],['File Insurance Claim','/claims'],['Book Advisor Meeting','/booking'],['Update Beneficiaries','/booking'],['Apply for Credit Card','/cards']]){
+for(const [label,want] of [['Explore Coverage','/quote'],['File Insurance Claim','/claims'],['Book Advisor Meeting','/booking'],['Update Beneficiaries','/booking'],['Apply for Credit Card','/cards']]){
   const p=await go('/dashboard');
   await p.locator('main button',{hasText:label}).first().click(); await p.waitForTimeout(600);
   check(new URL(p.url()).pathname===want,`quick action "${label}" -> ${new URL(p.url()).pathname} (want ${want})`);

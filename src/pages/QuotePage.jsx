@@ -120,7 +120,7 @@ export default function QuotePage({setPage}){
                 </div>}
               </div>
               <button onClick={()=>setPage("booking")} style={{width:"100%",background:activeType.c,border:"none",borderRadius:12,padding:"14px",cursor:"pointer",fontFamily:fs,fontSize:14,color:"#fff",fontWeight:700,marginBottom:8}}>Book an Advisor Appointment</button>
-              <button onClick={()=>exportToPDF("quote-result-panel",`${activeType.l} — what I am looking for`)} style={{width:"100%",background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:12,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600,marginBottom:8}}>&#128190; Download Quote (PDF)</button>
+              <button onClick={()=>exportToPDF("quote-result-panel",`${activeType.l} — what I am looking for`)} style={{width:"100%",background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:12,padding:"12px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600,marginBottom:8}}>&#128190; Download summary (PDF)</button>
               <button onClick={()=>setPage("compare")} style={{width:"100%",background:"rgba(255,255,255,0.08)",border:"none",borderRadius:12,padding:"14px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.6)",fontWeight:500}}>Compare Coverage Options</button>
               <p style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:"16px 0 0",lineHeight:1.6}}>Not a quote and not an offer. Northern Birch refers members to insurers; the insurer sets eligibility, coverage and price.</p>
             </div>

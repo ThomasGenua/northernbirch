@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Btn, C, callAI, Fade, ff, fs, useMob } from '../ui.jsx';
+import { AI_CHAT_UNAVAILABLE, Btn, C, callAI, Fade, ff, fs, useMob } from '../ui.jsx';
 
 export default function AIAdvisorPage({setPage}){
   const mob=useMob();
@@ -19,10 +19,10 @@ export default function AIAdvisorPage({setPage}){
     try{
       const history=newMsgs.map(x=>({role:x.from==="user"?"user":"assistant",content:x.text}));
       const data=await callAI("insurance-advisor",history);
-      const reply=data.content?.[0]?.text||"I'm having trouble right now. Please call 416-465-4659 for personalized advice.";
+      const reply=data.error?AI_CHAT_UNAVAILABLE:data.content[0].text;
       setMsgs(p=>[...p,{from:"bot",text:reply}]);
     }catch(e){
-      setMsgs(p=>[...p,{from:"bot",text:"I'm having trouble connecting. Please call 416-465-4659 for personalized insurance advice."}]);
+      setMsgs(p=>[...p,{from:"bot",text:AI_CHAT_UNAVAILABLE}]);
     }
     setLoading(false);
   };
@@ -38,7 +38,7 @@ export default function AIAdvisorPage({setPage}){
         <Fade>
           <div style={{width:80,height:80,borderRadius:24,background:`linear-gradient(135deg,${C.accent},${C.purple})`,margin:"0 auto 24px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:"#fff"}}>&#9889;</span></div>
           <h1 style={{fontFamily:ff,fontSize:mob?28:42,color:"#fff",margin:"0 0 16px"}}>AI Insurance Advisor</h1>
-          <p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.6)",maxWidth:500,margin:"0 auto 48px",lineHeight:1.7}}>Tell me about your life situation and I'll recommend the right insurance products for you. Powered by Claude AI -- available 24/7 in English, Estonian, and Latvian.</p>
+          <p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.6)",maxWidth:500,margin:"0 auto 48px",lineHeight:1.7}}>Tell me about your situation and I'll explain the kinds of cover people in it usually look at, and how Northern Birch can connect you with an insurer. Powered by Claude AI -- available 24/7 in English, Estonian, and Latvian.</p>
         </Fade>
         <Fade delay={0.15}>
           <p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.6)",marginBottom:20}}>Choose a scenario or type your own question:</p>
@@ -98,7 +98,7 @@ export default function AIAdvisorPage({setPage}){
             <button onClick={()=>send()} disabled={loading} style={{background:loading?"#ddd":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:12,padding:"14px 24px",cursor:loading?"default":"pointer",color:"#fff",fontFamily:fs,fontSize:14,fontWeight:600}}>Send</button>
           </div>
           <div style={{display:"flex",justifyContent:"space-between",marginTop:8}}>
-            <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>AI recommendations are for informational purposes. Book an advisor for personalized quotes.</span>
+            <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>General information, not advice. Northern Birch does not quote or sell insurance; an advisor can refer you to an insurer who does.</span>
             <button onClick={()=>{setStarted(false);setMsgs([])}} style={{background:"none",border:"none",fontFamily:fs,fontSize:11,color:C.accentText,cursor:"pointer"}}>Start Over</button>
           </div>
         </div>

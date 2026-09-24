@@ -6,20 +6,18 @@ export default function MobileAppPage({setPage}){
   return(
     <section className="sec" style={{background:C.dark,minHeight:"100vh"}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
-        <SH dark tag="Mobile Banking" tagColor={C.accentOnDark} title="Northern Birch in your pocket" desc="Download the Northern Birch mobile app for full-service banking, insurance management, international transfers, and more -- 24/7 from anywhere."/>
+        <SH dark tag="Mobile Banking" tagColor={C.accentOnDark} title="Northern Birch in your pocket" desc="Download the Northern Birch mobile app for everyday banking, bill payments, cheque deposits, e-Transfers and more -- 24/7 from anywhere."/>
         <div className="grid-2-1" style={{gap:32}}>
           <div>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
               {[
                 {title:"Full Account Management",desc:"View balances, transaction history, transfer between accounts, and pay bills."},
                 {title:"Deposit Cheques",desc:"Snap a photo of your cheque and deposit it instantly from your phone."},
-                {title:"Insurance Dashboard",desc:"View all policies, coverage details, and file claims directly from the app."},
-                {title:"Insurance Quotes",desc:"Get home, auto, tenant, or travel insurance quotes in under 2 minutes."},
                 {title:"International Transfers",desc:"International wires are sent in branch. Euro and US dollar cash can be ordered in advance for pickup."},
                 {title:"Interac e-Transfer",desc:"Send and receive money instantly to any Canadian bank account."},
                 {title:"Branch & ATM Locator",desc:"Find your nearest branch or surcharge-free ATM using GPS."},
                 {title:"Biometric Login",desc:"Sign in securely with Face ID, Touch ID, or fingerprint."},
-                {title:"Real-Time Notifications",desc:"Get alerts for transactions, payments, transfers, and insurance renewals."},
+                {title:"Real-Time Notifications",desc:"Get alerts for transactions, payments and transfers."},
                 {title:"Apple Pay & Google Pay",desc:"Add your Northern Birch debit and credit cards to your mobile wallet."},
               ].map((f,i)=><div key={i} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:14,padding:"16px 20px",display:"flex",gap:14,alignItems:"flex-start"}}>
                 <div style={{width:28,height:28,borderRadius:8,background:`${C.accentText}20`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}><span style={{fontFamily:fs,fontSize:11,color:C.accentOnDark,fontWeight:800}}>{String(i+1).padStart(2,"0")}</span></div>

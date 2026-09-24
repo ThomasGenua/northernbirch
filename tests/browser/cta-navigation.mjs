@@ -12,11 +12,11 @@ const CASES=[
   ['/rates','Compare accounts','/accounts'],
   ['/rates','Compare credit cards','/cards'],
   ['/travel','How travel cover works','/insurance'],   // was 'Get a travel quote': Northern Birch refers to Allianz, it does not quote
-  ['/travel','See the mobile app','/mobile-app'],
+  ['/travel','Book a wire appointment','/booking'],
   ['/travel','Find a branch','/contact'],
-  ['/business','Estate & succession','/estate'],
+  ['/business','Business succession','/advice'],
   ['/business','Book a business advisor','/booking'],
-  ['/digital','Insurance Dashboard','/dashboard'],
+  ['/digital','Member Dashboard','/dashboard'],
   ['/digital','Life Event Intelligence','/life-event-simulator'],
   ['/digital','Business Hub','/business'],
   ['/community','Meet our board','/leadership'],
@@ -45,7 +45,7 @@ for(const [from,label,to] of CASES){
 }
 
 // linkified legal pages: hrefs are well-formed and text is not mangled
-for(const [route,needles] of [['/privacy',['privacy@northernbirchcu.com','1-800-282-1376','www.priv.gc.ca']],['/complaints',['1-888-451-4519','asaar@northernbirchcu.com']],['/accessibility',['accessibility@northernbirchcu.com']]]){
+for(const [route,needles] of [['/privacy',['privacy@northernbirchcu.com','1-800-282-1376','www.priv.gc.ca']],['/complaints',['1-888-451-4519','416-250-7250','www.obsi.ca']],['/accessibility',['accessibility@northernbirchcu.com']]]){
   const page=await ctx.newPage();
   await page.goto(BASE+route,{waitUntil:'domcontentloaded'}); await page.waitForTimeout(900);
   const links=await page.locator('main a[href]').evaluateAll(a=>a.map(x=>[x.getAttribute('href'),x.textContent]));

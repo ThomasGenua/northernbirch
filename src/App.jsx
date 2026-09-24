@@ -43,7 +43,7 @@ const MortgagesPage = lazy(() => import('./pages/MortgagesPage.jsx'));
 const CardsPage = lazy(() => import('./pages/CardsPage.jsx'));
 const AccountsPage = lazy(() => import('./pages/AccountsPage.jsx'));
 const HomePage = lazy(() => import('./pages/HomePage.jsx'));
-import { applyMeta, C, callAI, Clickable, Cornflower, Daisy, ErrorBoundary, ff, FlagStripe, FolkBorder, fs, initMeasurement, LANG_TAG, MEASUREMENT_DOMAIN, pageFromPath, RATE, ROUTES, t, track, trackPageview, TRANSLATED_PAGES, useBreakpoint, useCookiePref, useFocusTrap, useLang, useMob, useW, writeCookiePref, writeLang } from './ui.jsx';
+import { AI_CHAT_UNAVAILABLE, applyMeta, C, callAI, Clickable, Cornflower, Daisy, ErrorBoundary, ff, FlagStripe, FolkBorder, fs, initMeasurement, LANG_TAG, MEASUREMENT_DOMAIN, pageFromPath, RATE, ROUTES, t, track, trackPageview, TRANSLATED_PAGES, useBreakpoint, useCookiePref, useFocusTrap, useLang, useMob, useW, writeCookiePref, writeLang } from './ui.jsx';
 
 // ============ SEARCH OVERLAY ============
 function SearchOverlay({open,onClose,setPage}){const mob=useMob();
@@ -59,7 +59,7 @@ function SearchOverlay({open,onClose,setPage}){const mob=useMob();
     {title:"Travel Insurance",page:"travel",cat:"Travel"},{title:"International Transfers",page:"travel",cat:"Travel"},{title:"Foreign Exchange",page:"travel",cat:"Travel"},
     {title:"Group Health & Dental Benefits",page:"business",cat:"Business"},{title:"Commercial Insurance",page:"business",cat:"Business"},{title:"Key Person Insurance",page:"business",cat:"Business"},
     {title:"Business Succession Planning",page:"business",cat:"Business"},{title:"Payroll & HR",page:"business",cat:"Business"},
-    {title:"Insurance Dashboard",page:"dashboard",cat:"Digital"},{title:"Coverage Explorer",page:"quote",cat:"Digital"},{title:"Financial Planning Tools",page:"calculators",cat:"Digital"},{title:"Digital Banking",page:"digital",cat:"Digital",kw:"digital online tools hub"},
+    {title:"Coverage Explorer",page:"quote",cat:"Digital"},{title:"Financial Planning Tools",page:"calculators",cat:"Digital"},{title:"Digital Banking",page:"digital",cat:"Digital",kw:"digital online tools hub"},
     {title:"Mobile Banking App",page:"mobileapp",cat:"Digital"},{title:"Estates",page:"estate",cat:"Planning"},{title:"Apply Online",page:"apply",cat:"Apply",kw:"apply application open an account join membership become a member sign up start pre-approval preapproval new account"},{title:"Open an Account",page:"apply",cat:"Apply",kw:"open account new chequing savings join membership"},{title:"Financial Advice",page:"advice",cat:"Planning",kw:"advice advisory adviser advisor financial planning wealth management retirement planning investment advice check-up"},{title:"Financial Planning",page:"advice",cat:"Planning",kw:"plan planning retirement wealth advisor"},{title:"Retirement Planning",page:"advice",cat:"Planning",kw:"retirement rrsp rrif pension retire income"},{title:"Wealth Management",page:"advice",cat:"Planning",kw:"wealth invest portfolio aviso qtrade virtualwealth mutual funds managed"},{title:"Financial Check-Up",page:"advice",cat:"Planning",kw:"check up checkup review free advisor heili"},{title:"KESKUS Branch",page:"community",cat:"Community"},
     {title:"Scholarships",page:"community",cat:"Community"},
     {title:"Chequing Accounts",page:"accounts",cat:"Banking",kw:"chequing checking everyday banking debit e-transfer no fee student senior us dollar"},
@@ -72,11 +72,11 @@ function SearchOverlay({open,onClose,setPage}){const mob=useMob();
     {title:"KESKUS Branch",page:"keskus",cat:"About",kw:"keskus new branch flagship estonian centre madison opening"},
     {title:"Registered Accounts (TFSA, RRSP, FHSA, RESP)",page:"accounts",cat:"Banking",kw:"tfsa rrsp fhsa resp rdsp rrif registered retirement first home education tax free"},
     {title:"Compare Accounts",page:"accounts",cat:"Banking",kw:"compare accounts chequing savings fees"},
-    {title:"Messages",page:"messages",cat:"Member"},{title:"Contact & Branches",page:"contact",cat:"About"},{title:"Insurance Coverage Explorer",page:"quote",cat:"Tools"},{title:"AI Insurance Advisor",page:"aiadvisor",cat:"AI"},{title:"AI Coverage Analyzer",page:"analyzer",cat:"AI"},{title:"Financial Health Check",page:"healthcheck",cat:"AI"},{title:"Life Event Simulator",page:"lifesim",cat:"AI"},{title:"Policy Document Reader",page:"docreader",cat:"AI"},{title:"Tax & Savings Optimizer",page:"tax",cat:"AI"},{title:"Claims Centre",page:"claims",cat:"Tools"},{title:"Coverage Comparison",page:"compare",cat:"Tools"},
+    {title:"Messages",page:"messages",cat:"Member"},{title:"Contact & Branches",page:"contact",cat:"About"},{title:"Insurance Coverage Explorer",page:"quote",cat:"Tools"},{title:"AI Insurance Advisor",page:"aiadvisor",cat:"AI"},{title:"AI Coverage Analyzer",page:"analyzer",cat:"AI"},{title:"Financial Health Check",page:"healthcheck",cat:"AI"},{title:"Life Event Simulator",page:"lifesim",cat:"AI"},{title:"Policy Document Reader",page:"docreader",cat:"AI"},{title:"Tax & Savings Optimizer",page:"tax",cat:"AI"},{title:"Claims: Who to Call",page:"claims",cat:"Tools",kw:"claim claims file a claim insurer adjuster"},{title:"Coverage Comparison",page:"compare",cat:"Tools"},
     {title:"Mortgage Calculator",page:"calculators",cat:"Tools"},{title:"Insurance Needs Calculator",page:"calculators",cat:"Tools"},{title:"Retirement Calculator",page:"calculators",cat:"Tools"},{title:"Book an Appointment",page:"booking",cat:"Tools"},
     {title:"Referral Program",page:"referrals",cat:"Rewards"},{title:"Rates",page:"rates",cat:"Banking"},{title:"Insurance Glossary",page:"glossary",cat:"Education"},
     {title:"Blog & News",page:"blog",cat:"Education"},
-    {title:"Member Dashboard",page:"dashboard",cat:"Banking"},
+    {title:"Member Dashboard",page:"dashboard",cat:"Banking",kw:"member dashboard demo accounts balances policies insurance dashboard"},
     {title:"Privacy Policy",page:"privacy",cat:"Legal"},{title:"Accessibility (AODA)",page:"accessibility",cat:"Legal"},
     {title:"Complaint Resolution",page:"complaints",cat:"Legal"},{title:"Terms of Use",page:"terms",cat:"Legal"},{title:"Business Case (For Leadership)",page:"leadership",cat:"Leadership"},
   ];
@@ -154,10 +154,10 @@ function ChatWidget({bottomInset=0}){const mob=useMob();
       const history=msgs.filter(x=>x.from!=="system").map(x=>({role:x.from==="user"?"user":"assistant",content:x.text}));
       history.push({role:"user",content:m});
       const data=await callAI("chat",history);
-      const reply=data.content?.[0]?.text||"I'm having trouble connecting right now. Please call us at 416-465-4659 or try again in a moment.";
+      const reply=data.error?AI_CHAT_UNAVAILABLE:data.content[0].text;
       setMsgs(p=>[...p,{from:"bot",text:reply}]);
     }catch(e){
-      setMsgs(p=>[...p,{from:"bot",text:"I'm having trouble connecting right now. Please call us at 416-465-4659 for immediate assistance."}]);
+      setMsgs(p=>[...p,{from:"bot",text:AI_CHAT_UNAVAILABLE}]);
     }
     setLoading(false);
   };
@@ -194,34 +194,27 @@ function ChatWidget({bottomInset=0}){const mob=useMob();
   </>);
 }
 
-// ============ MEMBER LOGIN MODAL ============
+// ============ DEMO MEMBER AREA ============
+// This used to be a "Member Sign In" box with member-number and password
+// fields. On a lookalike of a real credit union's site that is the shape of a
+// phishing page, and the demo has no accounts to sign in to anyway. It now
+// says what the member area is and opens it.
 function LoginModal({open,onClose,setPage}){const mob=useMob();
   const trapRef=useFocusTrap(open,onClose);
-  const[tab,setTab]=useState(0);
   if(!open)return null;
+  const go=(p)=>{setPage(p);onClose()};
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(6px)",zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center"}}>
-      <div ref={trapRef} role="dialog" aria-modal="true" aria-label="Member sign in" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:mob?"calc(100vw - 32px)":420,overflow:"hidden"}}>
-        <div style={{background:C.navy,padding:"28px 32px",textAlign:"center"}}>
+      <div ref={trapRef} role="dialog" aria-modal="true" aria-labelledby="demo-area-title" onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:24,width:mob?"calc(100vw - 32px)":440,overflow:"hidden"}}>
+        <div style={{background:C.navy,padding:"26px 32px",textAlign:"center"}}>
           <div style={{width:48,height:48,borderRadius:"50%",background:`linear-gradient(135deg,${C.birch},${C.accent})`,margin:"0 auto 12px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,fontWeight:800,color:"#fff"}}>NB</span></div>
-          <h3 style={{fontFamily:ff,fontSize:22,color:"#fff",margin:0}}>Member Sign In</h3>
+          <h3 id="demo-area-title" style={{fontFamily:ff,fontSize:22,color:"#fff",margin:0}}>Demo member area</h3>
         </div>
-        <div style={{display:"flex",borderBottom:"1px solid #eee"}}>
-          {["Online Banking","Insurance Portal"].map((t,i)=><button key={i} onClick={()=>setTab(i)} style={{flex:1,background:"none",border:"none",padding:"14px",fontFamily:fs,fontSize:13,fontWeight:tab===i?700:400,color:tab===i?C.accentText:"#6B6B6B",borderBottom:tab===i?`2px solid ${C.accentText}`:"2px solid transparent",cursor:"pointer"}}>{t}</button>)}
-        </div>
-        <div style={{padding:"28px 32px"}}>
-          <div style={{marginBottom:16}}>
-            <label htmlFor="login-id" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>{tab===0?"Member Number":"Policy Number"}</label>
-            <input id="login-id" name="username" autoComplete="username" placeholder={tab===0?"Enter your member number":"Enter your policy number"} style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/>
-          </div>
-          <div style={{marginBottom:20}}>
-            <label htmlFor="login-password" style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",display:"block",marginBottom:6}}>Password</label>
-            <input id="login-password" name="password" autoComplete="current-password" type="password" placeholder="Enter your password" style={{width:"100%",border:"1px solid #ddd",borderRadius:10,padding:"12px 16px",fontFamily:fs,fontSize:14,outline:"none",boxSizing:"border-box"}}/>
-          </div>
-          <button onClick={()=>{setPage("dashboard");onClose()}} style={{width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,cursor:"pointer",marginBottom:16}}>Access demo</button>
-          <div style={{display:"flex",justifyContent:"flex-start"}}>
-            <button style={{background:"none",border:"none",fontFamily:fs,fontSize:12,color:C.accentText,cursor:"pointer"}}>Forgot Password?</button>
-          </div>
+        <div style={{padding:"24px 32px 28px"}}>
+          <p style={{fontFamily:fs,fontSize:14,color:"#444",lineHeight:1.7,margin:"0 0 12px"}}>There is no sign-in on this demonstration. The dashboard and messages show a made-up member, Maria, so you can see how online banking and advisor messaging could look. Nothing there is real, and nothing you do there is saved.</p>
+          <p style={{fontFamily:fs,fontSize:13,color:"#6B6B6B",lineHeight:1.6,margin:"0 0 20px"}}>Northern Birch members: never type your real member number or password into this site. Sign in to online banking only from Northern Birch's own website.</p>
+          <button onClick={()=>go("dashboard")} style={{width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,cursor:"pointer",marginBottom:10}}>Open the demo dashboard</button>
+          <button onClick={()=>go("messages")} style={{width:"100%",background:"#fff",border:`1px solid ${C.accentText}`,borderRadius:12,padding:"12px",fontFamily:fs,fontSize:14,color:C.accentText,fontWeight:700,cursor:"pointer"}}>Open demo messages</button>
         </div>
       </div>
     </div>
@@ -318,7 +311,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
   if(page!==lastPage){setLastPage(page);setMobileMenu(false);setMenu(null)}
   const isDark=page==="home"&&!sc;
   // Banking leads: chequing, savings, mortgages and cards are what most visitors arrive looking for.
-  const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Borrowing",p:"borrowing",d:"Mortgages, loans, lines of credit, co-ops & cards"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Advice",p:"advice"},{l:"Apply",p:"apply"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"quote"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
+  const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Borrowing",p:"borrowing",d:"Mortgages, loans, lines of credit, co-ops & cards"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Advice",p:"advice"},{l:"Apply",p:"apply"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"calculators"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
   const langLabels={en:"EN",est:"EST",lat:"LAT"};
   const langFull={en:"English",est:"Eesti",lat:"Latviesu"};
   return(<>
@@ -450,11 +443,11 @@ function Footer({setPage}){const mob=useMob();
           </div>
         </div>
         {[
-          {t:"Insurance",items:[["Life Insurance","insurance"],["Home Insurance","insurance"],["Auto Insurance","insurance"],["Travel Insurance","travel"],["Claims Centre","claims"],["Coverage Explorer","quote"]]},
-          {t:"Tools",items:[["Compare Plans","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["Refer a Friend","referrals"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
+          {t:"Insurance",items:[["Insurance by Referral","insurance"],["Card Insurance","cards"],["Travel Insurance","travel"],["Claims: Who to Call","claims"],["Coverage Explorer","quote"]]},
+          {t:"Tools",items:[["Compare Cover","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["Refer a Friend","referrals"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
           {t:"Banking",items:[["Apply Online","apply"],["Chequing & Savings","accounts"],["Borrowing","borrowing"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
           {t:"Advice",items:[["Financial Advice","advice"],["Financial Check-Up","advice"],["Retirement Planning","advice"],["Estates","estate"],["Tax Planning","tax"],["Book an Advisor","booking"]]},
-          {t:"About",items:[["Community","community"],["Blog & News","blog"],["Glossary","glossary"],["Contact & Branches","contact"],["Careers","contact"],["KESKUS Branch","community"]]},
+          {t:"About",items:[["Community","community"],["Blog & News","blog"],["Glossary","glossary"],["Contact & Branches","contact"],["KESKUS Branch","keskus"]]},
         ].map((col,i)=><div key={i}><h4 style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:"0 0 10px",textTransform:"uppercase",letterSpacing:1}}>{col.t}</h4>{col.items.map(([l,p],ii)=><div key={ii}><button onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.6)",fontFamily:fs,fontSize:12,padding:"2px 0",cursor:"pointer",display:"block"}}>{l}</button></div>)}</div>)}
       </div>
       {/* Canadian Legal Links */}
@@ -577,7 +570,7 @@ export default function App({ssrPath}){
     home:<HomePage setPage={setPage} lang={lang}/>,insurance:<InsurancePage setPage={setPage} lang={lang}/>,advice:<AdvicePage setPage={setPage}/>,apply:<ApplyPage setPage={setPage} lang={lang}/>,travel:<TravelPage setPage={setPage} lang={lang}/>,business:<BusinessPage setPage={setPage} lang={lang}/>,digital:<DigitalPage setPage={setPage} lang={lang}/>,
     estate:<EstatePage setPage={setPage} lang={lang}/>,community:<CommunityPage setPage={setPage} lang={lang}/>,personal:<PersonalPage setPage={setPage} lang={lang}/>,contact:<ContactPage lang={lang}/>,
     mortgages:<MortgagesPage setPage={setPage} lang={lang}/>,cards:<CardsPage setPage={setPage} lang={lang}/>,accounts:<AccountsPage setPage={setPage} lang={lang}/>,
-    quote:<QuotePage setPage={setPage} lang={lang}/>,compare:<ComparePage setPage={setPage} lang={lang}/>,claims:<ClaimsPage lang={lang}/>,calculators:<CalculatorsPage setPage={setPage} lang={lang}/>,
+    quote:<QuotePage setPage={setPage} lang={lang}/>,compare:<ComparePage setPage={setPage} lang={lang}/>,claims:<ClaimsPage setPage={setPage}/>,calculators:<CalculatorsPage setPage={setPage} lang={lang}/>,
     booking:<BookingPage setPage={setPage} lang={lang}/>,rates:<RatesPage setPage={setPage} lang={lang}/>,referrals:<ReferralsPage lang={lang}/>,blog:<BlogPage setPage={setPage} lang={lang}/>,
     glossary:<GlossaryPage lang={lang}/>,mobileapp:<MobileAppPage setPage={setPage} lang={lang}/>,dashboard:<DashboardPage setPage={setPage} lang={lang}/>,aiadvisor:<AIAdvisorPage setPage={setPage} lang={lang}/>,
     analyzer:<PolicyAnalyzerPage setPage={setPage}/>,healthcheck:<HealthAssessmentPage setPage={setPage}/>,
