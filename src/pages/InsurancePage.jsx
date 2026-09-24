@@ -10,7 +10,7 @@ function InsuranceProductRow({p,color,setPage}){
   return(
               <Clickable onClick={()=>setOpen(!open)} style={{background:"#fff",borderRadius:20,padding:"28px 32px",border:open?`2px solid ${color}25`:"1px solid #eee",cursor:"pointer",transition:"all 0.3s"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-                  <div><h4 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{p.t} <span style={{fontFamily:fs,fontSize:11,fontWeight:700,verticalAlign:"middle",padding:"2px 8px",borderRadius:999,marginLeft:6,background:p.live?"#E6F4EC":"#FFF4DD",color:p.live?C.greenText:C.amberText}}>{p.live?"Available":"Proposed"}</span></h4><p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",margin:0,lineHeight:1.6}}>{p.d}</p></div>
+                  <div><h4 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:"0 0 6px",fontWeight:700}}>{p.t}{p.live!==undefined&&<span style={{fontFamily:fs,fontSize:11,fontWeight:700,verticalAlign:"middle",padding:"2px 8px",borderRadius:999,marginLeft:8,background:p.live?"#E6F4EC":"#FFF4DD",color:p.live?C.greenText:C.amberText}}>{p.live?"Available":"Proposed"}</span>}</h4><p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",margin:0,lineHeight:1.6}}>{p.d}</p></div>
                   <span style={{color:open?color:"#707070",fontSize:18,fontWeight:600,transform:open?"rotate(45deg)":"none",transition:"transform 0.3s",marginLeft:12}}>+</span>
                 </div>
                 {open&&<div className="grid-2-1" style={{marginTop:16,paddingTop:16,borderTop:"1px solid #f0f0f0",gap:8}}>
@@ -35,7 +35,7 @@ export default function InsurancePage({setPage}){const mob=useMob();
     ]},
     {name:"Home & Auto",color:C.greenText,products:[
       {t:"Home Insurance",live:false,d:"Cover for your home and belongings, and your liability. An insurer quotes and underwrites it; Northern Birch would refer you.",f:["Replacement cost or actual cash value?","What is the liability limit?","Is water damage covered?","What is the deductible?"]},
-      {t:"Co-op & Co-ownership",live:true,link:"mortgages",d:"Not insurance: Northern Birch's co-op offering is mortgage lending for co-op and co-ownership homes, which most lenders decline.",f:["Co-op mortgages","Co-ownership mortgages","See the mortgages page"]},
+      {t:"Co-op & Co-ownership",link:"mortgages",d:"Not insurance: Northern Birch's co-op offering is mortgage lending for co-op and co-ownership homes, which most lenders decline.",f:["Co-op mortgages","Co-ownership mortgages","See the mortgages page"]},
       {t:"Auto Insurance",live:false,d:"Ontario auto cover. An insurer quotes and underwrites it; Northern Birch would refer you.",f:["What is the liability limit?","Is collision included?","Is there accident forgiveness?","How are claims made?"]},
       {t:"Tenant Insurance",live:false,d:"Cover for a renter's belongings and liability. An insurer quotes and underwrites it; Northern Birch would refer you.",f:["What are my belongings worth?","What is the liability limit?","Are extra living costs covered?","What is the deductible?"]},
     ]},
