@@ -10,11 +10,11 @@ of that claim.
 
 ## Forms
 
-The four forms — application, booking, claim, referral — ask for a name, an
+The three forms — application, booking, referral — ask for a name, an
 email address, a phone number and free text.
 
 They post to `/api/demo-intake` (`netlify/functions/demo-intake.mjs`), which
-reads the *field names* only, checks that the form is one of the four and that
+reads the *field names* only, checks that the form is one of the three and that
 no forbidden field is present, and returns a success response. **The values are
 never read, never written, never forwarded and never logged.** The submission
 does not exist a millisecond after the response is sent.

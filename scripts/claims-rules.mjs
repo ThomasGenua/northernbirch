@@ -39,7 +39,7 @@ export const RULES = [
   // --- referral-only: no quoting, binding or advising -----------------------
   // Third-party insurance lines are referral-only under Ontario's Sale of
   // Insurance regulation. The verbs are "connect you with" and "refer you to".
-  { re: /get (?:a |an )?(?:instant |free )?quote|instant quote|quote calculator|get quoted|request a quote/gi,
+  { re: /get (?:a |an |your )?(?:instant |free |insurance )*quotes?\b|instant quote|quote (?:calculator|engine)|smart quotes?|download quote|get quoted|request a quote/gi,
     why: 'implies quoting; an unlicensed credit union may refer, not quote' },
   { re: /\bbind (?:coverage|a policy)|we (?:advise|recommend) (?:you|that)/gi,
     why: 'implies advising or binding' },
@@ -47,10 +47,18 @@ export const RULES = [
   // --- invented pricing, discounts and track records -------------------------
   // Found after the carriers moved into content/partners.json: the same claims
   // were still in page copy in phrasings the rules above did not cover.
-  { re: /\d{1,2}(?:-\d{1,2})?%\s*below market|\d{2}% renewal(?: rate)?/gi,
+  { re: /\d{1,2}(?:-\d{1,2})?%\s*below market|\d{2}% (?:policy )?renewal(?: rate)?|\d{3}\+ (?:organization|credit union) partnerships|exclusive (?:member )?rates/gi,
     why: 'invented discount or track record; no source for it' },
   { re: /(?:from|starting at(?: about)?|approximately) C?\$\d[\d,.]*\s*\/\s*(?:mo|month|year|yr)\b/gi,
     why: 'invented premium; Northern Birch does not quote insurance' },
+  { re: /recommend (?:the right |northern birch )?(?:insurance )?products|compare (?:it )?with northern birch rates/gi,
+    why: 'the assistant may not recommend a product or compare prices; it refers' },
+  { re: /(?:insurance|home|auto|travel),\s*co-?op\b/gi,
+    why: 'co-op is not an insurance line; the real co-op offering is mortgage lending' },
+  { re: /\b(?:Jumio|Celero)\b|partners like Wise/g,
+    why: 'names a vendor nobody has confirmed Northern Birch uses' },
+  { re: /encrypted end-to-end|stored in Canada/gi,
+    why: 'a data-handling claim the demo cannot make: AI messages are processed by Anthropic in the US' },
   { re: /(?:sign|click) (?:now|here) to activate coverage/gi,
     why: 'implies binding coverage' },
 ];

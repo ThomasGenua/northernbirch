@@ -99,7 +99,7 @@ const go = async (r) => {
   const html = readFileSync(new URL('../../dist/index.html', import.meta.url), 'utf8');
   check(!/<form[^>]+data-netlify/.test(html), 'the built HTML declares no Netlify form, so nothing can be stored');
   check(!/netlify-honeypot/.test(html), 'and no Netlify form attributes survive at all');
-  check(!/<form name="(application|booking|claim|referral)"/.test(html), 'none of the four forms is registered for capture');
+  check(!/<form name="(application|booking|claim|referral)"/.test(html), 'none of the forms is registered for capture');
 }
 
 

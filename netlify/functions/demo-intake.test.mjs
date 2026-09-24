@@ -13,8 +13,8 @@ let pass = 0, fail = 0;
 const check = (name, cond, detail = "") => { cond ? (pass++, console.log("  PASS", name)) : (fail++, console.log("  FAIL", name, detail)); };
 const REAL = { name: "Kadri Tamm", email: "kadri@example.com", phone: "416-555-0134", notes: "I earn 92000 and have 40k saved" };
 
-// --- it accepts the site's four forms -------------------------------------
-for (const form of ["application", "booking", "claim", "referral"]) {
+// --- it accepts the site's three forms -------------------------------------
+for (const form of ["application", "booking", "referral"]) {
   const res = await handler(post(form, REAL));
   const body = await res.json();
   check(`${form}: accepted`, res.status === 200 && body.ok === true, `${res.status}`);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Btn, C, callAI, exportToPDF, ff, fs, SH } from '../ui.jsx';
+import { AI_UNAVAILABLE, AIUnavailable, Btn, C, callAI, exportToPDF, ff, fs, SH } from '../ui.jsx';
 
 export default function LifeSimPage({setPage}){
   
@@ -25,7 +25,7 @@ export default function LifeSimPage({setPage}){
     try{
       const data=await callAI("life-event",[{role:"user",content:context}]);
       setResult(data.content?.[0]?.text||"Unable to analyze. Please try again.");
-    }catch(e){setResult("Having trouble connecting. Please call 416-465-4659.");}
+    }catch(e){setResult(AI_UNAVAILABLE);}
     setLoading(false);
   };
 
@@ -39,6 +39,7 @@ export default function LifeSimPage({setPage}){
     </section>
   );
 
+  if(result===AI_UNAVAILABLE)return <section className="sec" style={{background:C.cream}}><div style={{maxWidth:900,margin:"0 auto"}}><h2 style={{fontFamily:ff,fontSize:28,color:C.navy,margin:"0 0 16px"}}>Life Event: {event?.label}</h2><AIUnavailable onRetry={()=>run(event)}/><Btn outline onClick={()=>{setResult(null);setEvent(null)}}>Choose another event</Btn></div></section>;
   if(result)return(
     <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
@@ -52,7 +53,7 @@ export default function LifeSimPage({setPage}){
         </div><div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
           <Btn onClick={()=>exportToPDF("life-event-result","Life Event Action Plan - "+(event?.label||""))} color={C.accentText}>&#128190; Download Action Plan (PDF)</Btn>
           <Btn onClick={()=>setPage("booking")}>Book Advisor to Discuss</Btn>
-          <Btn color={C.greenFill} onClick={()=>setPage("quote")}>Get Insurance Quotes</Btn>
+          <Btn color={C.greenFill} onClick={()=>setPage("quote")}>Explore your coverage</Btn>
           <Btn color={C.purple} onClick={()=>setPage("healthcheck")}>Full Health Assessment</Btn>
           <Btn outline onClick={()=>{setResult(null);setEvent(null);setDetails("")}}>Try Another Event</Btn>
         </div>
@@ -63,7 +64,7 @@ export default function LifeSimPage({setPage}){
   return(
     <section className="sec" style={{background:`linear-gradient(170deg,${C.dark},${C.navy})`,minHeight:"100vh"}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
-        <SH dark tag="AI Life Event Simulator" tagColor={C.amberText} title="Life is changing. Are you protected?" desc="Select a life event and our AI will show you exactly how your insurance and financial needs change -- and what to do about it."/>
+        <SH dark tag="AI Life Event Simulator" tagColor={C.amberText} title="Life is changing. Are you protected?" desc="Select a life event and our AI will outline how your insurance and financial needs may change, and what to ask an advisor."/>
         <div className="grid-5-2" style={{gap:12,marginBottom:32}}>
           {events.map(ev=>(
             <button key={ev.id} onClick={()=>run(ev)} style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,padding:"20px 12px",cursor:"pointer",textAlign:"center",transition:"all 0.3s"}}>

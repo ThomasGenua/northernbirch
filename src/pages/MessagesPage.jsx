@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { C, callAI, Clickable, ff, fs, RATE, useMob } from '../ui.jsx';
+import { AI_CHAT_UNAVAILABLE, C, callAI, Clickable, ff, fs, RATE, useMob } from '../ui.jsx';
 
 export default function MessagesPage({setPage:_setPage}){
   const mob=useMob();
@@ -35,10 +35,13 @@ export default function MessagesPage({setPage:_setPage}){
       const history=messages[thread].slice(-4).map(m=>({role:m.from==="member"?"user":"assistant",content:m.text}));
       history.push({role:"user",content:input});
       const data=await callAI(advisorContext.feature,history);
-      const reply=data.content?.[0]?.text||"Thanks for your message. I'll get back to you shortly.";
-      setMessages(p=>({...p,[thread]:[...p[thread],{from:"advisor",author:advisorContext.name,role:advisorContext.role,text:reply,time:"Just now"}]}));
+      // A reply from the model is labelled as one; a failure is a notice, not
+      // words put in an advisor's mouth.
+      const next=data.error?{from:"advisor",author:"System",role:"Notice",text:AI_CHAT_UNAVAILABLE,time:"Just now"}
+        :{from:"advisor",author:advisorContext.name,role:`${advisorContext.role} (AI demo reply)`,text:data.content[0].text,time:"Just now"};
+      setMessages(p=>({...p,[thread]:[...p[thread],next]}));
     }catch(e){
-      setMessages(p=>({...p,[thread]:[...p[thread],{from:"advisor",author:"System",role:"Notice",text:"I'm offline right now -- I'll respond by end of business day.",time:"Just now"}]}));
+      setMessages(p=>({...p,[thread]:[...p[thread],{from:"advisor",author:"System",role:"Notice",text:AI_CHAT_UNAVAILABLE,time:"Just now"}]}));
     }
     setLoading(false);
   };
@@ -97,7 +100,7 @@ export default function MessagesPage({setPage:_setPage}){
           <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} aria-label="Type a message" placeholder="Type a message..." style={{flex:1,border:"1px solid #eee",borderRadius:20,padding:"10px 18px",fontFamily:fs,fontSize:13,outline:"none",background:"#f8f8f8"}} disabled={loading}/>
           <button onClick={send} disabled={loading||!input.trim()} style={{background:loading||!input.trim()?"#ddd":`linear-gradient(135deg,${C.accent},${C.purple})`,border:"none",borderRadius:20,padding:"10px 20px",cursor:loading?"default":"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Send</button>
         </div>
-        <p style={{fontFamily:fs,fontSize:10,color:"#707070",margin:0,padding:"0 16px 12px",textAlign:"center"}}>Messages are encrypted end-to-end. AI may assist advisors with replies during off-hours.</p>
+        <p style={{fontFamily:fs,fontSize:10,color:"#707070",margin:0,padding:"0 16px 12px",textAlign:"center"}}>A demo conversation with a made-up member. Any new reply here is written by AI, not by a person.</p>
       </div>}
     </div>
     <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>

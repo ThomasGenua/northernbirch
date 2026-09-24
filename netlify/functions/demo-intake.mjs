@@ -1,6 +1,6 @@
 // Where the demo's forms post. It deliberately keeps nothing.
 //
-// The four forms on this site -- application, booking, claim, referral -- ask
+// The three forms on this site -- application, booking, referral -- ask
 // for a name, an email, a phone number and free text. They used to post to
 // Netlify Forms, which stores every submission. On a site that wears a real
 // credit union's branding, behind a password people are given precisely
@@ -18,7 +18,7 @@
 // declared there is no form store for anything -- including a direct POST to
 // "/" -- to land in.
 
-const FORMS = new Set(["application", "booking", "claim", "referral"]);
+const FORMS = new Set(["application", "booking", "referral"]);
 
 // Fields no form on this site may ever ask for, checked here as well as in
 // scripts/check-routes.mjs: the build-time check stops us writing one, this

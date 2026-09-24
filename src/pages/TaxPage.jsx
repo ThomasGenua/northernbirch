@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Btn, C, callAI, exportToPDF, FAQ, ff, fs, SH, useMob } from '../ui.jsx';
+import { AI_UNAVAILABLE, AIUnavailable, Btn, C, callAI, exportToPDF, FAQ, ff, fs, SH, useMob } from '../ui.jsx';
 import facts from '../../content/facts.json';
 
 export default function TaxPage({setPage}){
@@ -20,16 +20,16 @@ export default function TaxPage({setPage}){
     try{
       const data=await callAI("tax",[{role:"user",content:input}]);
       setResult(data.content?.[0]?.text||"Unable to analyze.");
-    }catch(e){setResult("Having trouble connecting. Please call 416-465-4659.");}
+    }catch(e){setResult(AI_UNAVAILABLE);}
     setLoading(false);
   };
   const isMob=mob;
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>
       <div style={{maxWidth:1000,margin:"0 auto"}}>
-        <SH tag="AI Tax & Savings Optimizer" tagColor={C.greenText} title="Keep more of what you earn" desc="Canadian tax optimization strategies, RRSP/TFSA planning, and insurance tax benefits -- personalized for your situation."/>
+        <SH tag="AI Tax & Savings Optimizer" tagColor={C.greenText} title="Keep more of what you earn" desc="RRSP, TFSA, FHSA and RESP planning, and how insurance is taxed -- general information to bring to an advisor."/>
         <div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>
-          {[{l:"AI Tax Advisor",v:"optimizer"},{l:"RRSP/TFSA Calculator",v:"calculator"},{l:"Tax-Smart Insurance",v:"insurance"}].map(tab=><button key={tab.v} onClick={()=>{setMode(tab.v);setResult(null)}} style={{flex:1,minWidth:isMob?0:150,background:mode===tab.v?C.greenFill:"#fff",border:mode===tab.v?"none":"1px solid #ddd",borderRadius:12,padding:"14px 16px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:mode===tab.v?"#fff":C.navy}}>{tab.l}</button>)}
+          {[{l:"AI Tax Advisor",v:"optimizer"},{l:"RRSP/TFSA Calculator",v:"calculator"},{l:"How Insurance Is Taxed",v:"insurance"}].map(tab=><button key={tab.v} onClick={()=>{setMode(tab.v);setResult(null)}} style={{flex:1,minWidth:isMob?0:150,background:mode===tab.v?C.greenFill:"#fff",border:mode===tab.v?"none":"1px solid #ddd",borderRadius:12,padding:"14px 16px",cursor:"pointer",fontFamily:fs,fontSize:14,fontWeight:700,color:mode===tab.v?"#fff":C.navy}}>{tab.l}</button>)}
         </div>
 
         {mode==="optimizer"&&!result&&<div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
@@ -44,7 +44,8 @@ export default function TaxPage({setPage}){
           </div>
         </div>}
 
-        {mode==="optimizer"&&result&&<div>
+        {mode==="optimizer"&&result===AI_UNAVAILABLE&&<AIUnavailable onRetry={()=>setResult(null)}/>}
+        {mode==="optimizer"&&result&&result!==AI_UNAVAILABLE&&<div>
           <div id="tax-optimizer-result" style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee",marginBottom:24}}>
             <div style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{result}</div>
           </div>
@@ -96,15 +97,15 @@ export default function TaxPage({setPage}){
         </div>}
 
         {mode==="insurance"&&<div style={{background:"#fff",borderRadius:24,padding:isMob?24:40,border:"1px solid #eee"}}>
-          <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 8px"}}>Tax-Smart Insurance Strategies</h3>
-          <p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",marginBottom:24}}>Insurance isn't just protection -- it's one of the most powerful tax planning tools in Canada.</p>
+          <h3 style={{fontFamily:ff,fontSize:22,color:C.navy,margin:"0 0 8px"}}>How Insurance Is Taxed</h3>
+          <p style={{fontFamily:fs,fontSize:14,color:"#6B6B6B",marginBottom:24}}>How insurance is taxed in Canada, in general terms. How it applies to you is a question for an accountant.</p>
           {[
-            {title:"Life Insurance Proceeds Are Tax-Free",desc:"When you die, your life insurance death benefit passes to your beneficiaries completely tax-free. Unlike RRSPs (which trigger a full income tax bill at death) or investment accounts (which trigger capital gains), life insurance bypasses the estate entirely. This means no probate fees (1.5% in Ontario), no estate administration tax, and no income tax on the benefit.",product:"Term Life Insurance (by referral to an insurer)",color:C.accentText},
-            {title:"Critical Illness Benefits Are Tax-Free",desc:"If you're diagnosed with cancer, have a heart attack, or suffer a stroke, your critical illness insurance pays a tax-free lump sum. Use it however you want -- medical treatment, income replacement, mortgage payments, travel for care. Because you paid premiums with after-tax dollars, the CRA doesn't tax the benefit.",product:"Critical Illness Insurance (by referral to an insurer)",color:C.greenText},
-            {title:"Corporate-Owned Life Insurance",desc:"If you own a business through a corporation, the company can own a life insurance policy on you. Premiums aren't tax-deductible, but the death benefit flows into the Capital Dividend Account (CDA) and can be distributed to shareholders tax-free. Ask a lawyer or accountant whether it suits your situation.",product:"Key Person Insurance (by referral to an insurer)",color:C.purple},
+            {title:"Life Insurance Proceeds Are Tax-Free",desc:"When you die, your life insurance death benefit passes to your beneficiaries completely tax-free. Unlike RRSPs (which trigger a full income tax bill at death) or investment accounts (which trigger capital gains), life insurance bypasses the estate entirely. With a named beneficiary, the benefit is paid outside the estate, so no Ontario estate administration tax applies to it, and it is not taxed as income.",product:"Term Life Insurance (proposed referral to an insurer)",color:C.accentText},
+            {title:"Critical Illness Benefits Are Tax-Free",desc:"If you're diagnosed with cancer, have a heart attack, or suffer a stroke, your critical illness insurance pays a tax-free lump sum. Use it however you want -- medical treatment, income replacement, mortgage payments, travel for care. Because you paid premiums with after-tax dollars, the CRA doesn't tax the benefit.",product:"Critical Illness Insurance (proposed referral to an insurer)",color:C.greenText},
+            {title:"Corporate-Owned Life Insurance",desc:"If you own a business through a corporation, the company can own a life insurance policy on you. Premiums aren't tax-deductible, but the death benefit flows into the Capital Dividend Account (CDA) and can be distributed to shareholders tax-free. Ask a lawyer or accountant whether it suits your situation.",product:"Key Person Insurance (proposed referral to an insurer)",color:C.purple},
             {title:"Insurance Replaces Estate Tax Liability",desc:"Canada has no estate tax, but there's a deemed disposition at death that triggers capital gains on investments, rental properties, and cottages. Life insurance can be sized to cover this exact tax liability, ensuring your family inherits assets without selling them to pay the CRA.",product:"Talk to a lawyer or accountant",color:C.amberText},
-            {title:"Disability Insurance Premiums",desc:"If you pay disability insurance premiums personally (not through your employer), any benefits you receive are completely tax-free. This is important: employer-paid disability benefits are taxable income, but personally-paid benefits are not. Consider paying your own premiums for tax-free benefits.",product:"Disability Insurance (by referral to an insurer)",color:C.navy},
-            {title:"RESP + Insurance = Education Security",desc:"RESPs get a 20% government grant (CESG) on contributions up to $2,500/year per child. But what if you die before fully funding the RESP? Life insurance ensures your children's education fund is completed even if you're not here. The insurance proceeds are tax-free and can be contributed to the RESP by your surviving spouse.",product:"RESP at Northern Birch + Term Life (by referral to an insurer)",color:C.redText},
+            {title:"Disability Insurance Premiums",desc:"If you pay disability insurance premiums personally (not through your employer), any benefits you receive are completely tax-free. This is important: employer-paid disability benefits are taxable income, but personally-paid benefits are not. Who pays the premium changes how the benefit is taxed.",product:"Disability Insurance (proposed referral to an insurer)",color:C.navy},
+            {title:"RESP + Insurance = Education Security",desc:"RESPs get a 20% government grant (CESG) on contributions up to $2,500/year per child. But what if you die before fully funding the RESP? Life insurance ensures your children's education fund is completed even if you're not here. The insurance proceeds are tax-free and can be contributed to the RESP by your surviving spouse.",product:"RESP at Northern Birch + Term Life (proposed referral to an insurer)",color:C.redText},
           ].map((s,i)=>(
             <div key={i} style={{marginBottom:16,padding:"24px 28px",background:`${s.color}04`,borderRadius:16,borderLeft:`4px solid ${s.color}`}}>
               <h4 style={{fontFamily:fs,fontSize:16,color:C.navy,margin:"0 0 8px",fontWeight:700}}>{s.title}</h4>
@@ -113,8 +114,7 @@ export default function TaxPage({setPage}){
             </div>
           ))}
           <div style={{marginTop:8,display:"flex",gap:12,flexWrap:"wrap"}}>
-            <Btn onClick={()=>setPage("booking")} color={C.greenFill}>Book Tax-Smart Insurance Review</Btn>
-            <Btn onClick={()=>setPage("estate")} color={C.purple}>Estates</Btn>
+            <Btn onClick={()=>setPage("booking")} color={C.greenFill}>Talk to an advisor</Btn>
             <Btn onClick={()=>{setMode("optimizer");setResult(null)}} outline>Ask AI Tax Advisor</Btn>
           </div>
         </div>}

@@ -44,7 +44,7 @@ function BankingProducts({setPage,lang}){
 const ADVICE_HOME=[
   {t:"Financial Check-Up",d:"A no-cost review of your saving, borrowing, retirement and protection. You leave with a written plan.",c:C.greenOnDark,go:["booking","Book a Check-Up"]},
   {t:"Retirement & Investments",d:"RRSP, TFSA, FHSA and RESP planning, plus Aviso Wealth, Qtrade and VirtualWealth portfolios.",c:C.accentOnDark,go:["advice","See how it works"]},
-  {t:"Estate & Tax Planning",d:"Beneficiaries, wills, trusts and the contribution timing that keeps more of it in the family.",c:C.purpleOnDark,go:["estate","Plan ahead"]},
+  {t:"Beneficiaries & Tax",d:"Naming beneficiaries on registered plans, and the contribution timing that keeps more of it in the family.",c:C.purpleOnDark,go:["tax","Open the tax optimizer"]},
 ];
 
 function AdviceBand({setPage,lang}){
@@ -92,7 +92,7 @@ export default function HomePage({setPage,lang}){const mob=useMob();
         <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.6)",maxWidth:560,lineHeight:1.75,margin:"0 0 40px"}}>{T("Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus financial advice, investments, insurance and international transfers, all from one Toronto credit union.")}</p></Fade>
         <Fade delay={0.24}><div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
           {[["accounts","Compare Accounts",C.accentText,false],["mortgages","Explore Mortgages",C.greenFill,false],
-            ["cards","Apply for a Credit Card",C.purple,false],["quote","Get an Insurance Quote",undefined,true]]
+            ["cards","Apply for a Credit Card",C.purple,false],["insurance","Ask about insurance",undefined,true]]
             .map(([route,label,color,outline])=>
               <Btn key={route} color={color} outline={outline} onClick={()=>{track("hero_cta",{to:route});setPage(route)}}>{T(label)}</Btn>)}
         </div></Fade>
@@ -112,7 +112,7 @@ export default function HomePage({setPage,lang}){const mob=useMob();
     </div></section>
     <section style={{background:C.cream,padding:"0 24px 64px"}}><div style={{maxWidth:1320,margin:"0 auto"}}>
       <div className="grid-4-2-1" style={{gap:12}}>
-        {[{l:"Insurance",p:"insurance",d:"Life, home, auto, travel, co-op",c:C.accent},{l:"Financial Advice",p:"advice",d:"Planning, retirement, wealth, estate",c:C.greenText},{l:"Travel & FX",p:"travel",d:"Baltic travel, transfers, exchange",c:C.amber},{l:"Business",p:"business",d:"Benefits, commercial, succession",c:C.green},{l:"Digital Banking",p:"digital",d:"Dashboard, app, planning tools",c:C.accent},{l:"Estates",p:"estate",d:"Settling a member's accounts",c:C.purple},{l:"Rates",p:"rates",d:"Mortgage, GIC, lending rates",c:C.green},{l:"Blog & News",p:"blog",d:"Articles, education, updates",c:C.navy},{l:"Tax & Savings",p:"tax",d:"RRSP, TFSA, tax-smart insurance",c:C.green},{l:"Referral Program",p:"referrals",d:"Earn $50 per referral",c:C.amber}].map((s,i)=>
+        {[{l:"Insurance",p:"insurance",d:"Travel and card cover; more lines proposed",c:C.accent},{l:"Financial Advice",p:"advice",d:"Planning, retirement, wealth, beneficiaries",c:C.greenText},{l:"Travel & FX",p:"travel",d:"Travel cover, wires, foreign cash",c:C.amber},{l:"Business",p:"business",d:"Accounts, lending, proposed benefits",c:C.green},{l:"Digital Banking",p:"digital",d:"Dashboard, app, planning tools",c:C.accent},{l:"Estates",p:"estate",d:"Settling a member's accounts",c:C.purple},{l:"Rates",p:"rates",d:"Mortgage, GIC, lending rates",c:C.green},{l:"Blog & News",p:"blog",d:"Articles, education, updates",c:C.navy},{l:"Tax & Savings",p:"tax",d:"RRSP, TFSA, FHSA, RESP",c:C.green},{l:"Referral Program",p:"referrals",d:"Earn $50 per referral",c:C.amber}].map((s,i)=>
           <Fade key={i} delay={i*0.04}><Clickable onClick={()=>setPage(s.p)} style={{background:"#fff",borderRadius:16,padding:"24px",border:"1px solid #eee",cursor:"pointer",borderLeft:`4px solid ${s.c}`}}>
             <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 4px",fontWeight:700}}>{s.l}</h4>
             <p style={{fontFamily:fs,fontSize:12,color:"#6B6B6B",margin:0}}>{s.d}</p>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Btn, C, callAI, exportToPDF, fs, SH } from '../ui.jsx';
+import { AI_UNAVAILABLE, AIUnavailable, Btn, C, callAI, exportToPDF, fs, SH } from '../ui.jsx';
 
 export default function PolicyAnalyzerPage({setPage}){
   
@@ -12,13 +12,13 @@ export default function PolicyAnalyzerPage({setPage}){
     try{
       const data=await callAI("analyzer",[{role:"user",content:input}]);
       setResult(data.content?.[0]?.text||"Unable to analyze. Please try again.");
-    }catch(e){setResult("Having trouble connecting. Please call 416-465-4659 for a personalized coverage review.");}
+    }catch(e){setResult(AI_UNAVAILABLE);}
     setLoading(false);
   };
   return(
     <section className="sec" style={{background:C.cream,}}>
       <div style={{maxWidth:900,margin:"0 auto"}}>
-        <SH tag="AI-Powered Analysis" tagColor={C.purple} title="Coverage Gap Analyzer" desc="Describe your current insurance coverage and our AI will identify gaps and recommend Northern Birch products to fill them."/>
+        <SH tag="AI-Powered Analysis" tagColor={C.purple} title="Coverage Gap Analyzer" desc="Describe your current insurance coverage and our AI will point out possible gaps and the questions worth taking to an advisor."/>
         {!result?<div style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
             <div style={{width:40,height:40,borderRadius:12,background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:18,color:"#fff"}}>&#9889;</span></div>
@@ -34,7 +34,7 @@ export default function PolicyAnalyzerPage({setPage}){
               {["Young couple, first mortgage, no life insurance","Retiree, travelling to Estonia, no travel coverage","Small business owner, 8 employees, no group benefits","Renting downtown, no tenant insurance, drives to work"].map((s,i)=><button key={i} onClick={()=>setInput(s)} style={{background:`${C.accentText}06`,border:`1px solid ${C.accent}15`,borderRadius:8,padding:"8px 14px",cursor:"pointer",fontFamily:fs,fontSize:12,color:C.accentText}}>{s}</button>)}
             </div>
           </div>
-        </div>:
+        </div>:result===AI_UNAVAILABLE?<AIUnavailable onRetry={()=>setResult(null)}/>:
         <div>
           <div id="coverage-analysis-result" style={{background:"#fff",borderRadius:24,padding:40,border:"1px solid #eee",marginBottom:20}}>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
@@ -46,10 +46,10 @@ export default function PolicyAnalyzerPage({setPage}){
           <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
             <Btn onClick={()=>exportToPDF("coverage-analysis-result","Coverage Gap Analysis")} color={C.accentText}>&#128190; Download Analysis (PDF)</Btn>
             <Btn onClick={()=>setPage("booking")}>Book Advisor to Discuss</Btn>
-            <Btn onClick={()=>setPage("quote")} color={C.greenFill}>Talk to an advisor about these gaps</Btn>
+            <Btn onClick={()=>setPage("quote")} color={C.greenFill}>Explore your coverage</Btn>
             <Btn outline onClick={()=>{setResult(null);setInput("")}}>Analyze Again</Btn>
           </div>
-          <p style={{fontFamily:fs,fontSize:11,color:"#707070",marginTop:16}}>AI analysis is for informational purposes only. Book an advisor appointment for personalized quotes and binding coverage.</p>
+          <p style={{fontFamily:fs,fontSize:11,color:"#707070",marginTop:16}}>AI analysis is general information, not advice. Northern Birch does not quote or sell insurance; an advisor can refer you to an insurer who does.</p>
         </div>}
       </div>
     </section>

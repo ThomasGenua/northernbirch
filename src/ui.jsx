@@ -37,7 +37,7 @@ export const BANKING=[
   {k:"cards",t:"Credit Cards",p:"cards",c:C.purple,tc:C.purple,d:"Collabria Mastercard cards with cash back, low-rate, and travel rewards options.",rate:RATE.mcLow,rl:"Low Rate APR",b:["No-annual-fee options","Cash back up to 2%","Lock and unlock in the app"],cta:"Apply for a Credit Card",kw:"credit card mastercard collabria cash back rewards low rate apply"},
   {k:"chequing",t:"Chequing Accounts",p:"accounts",c:C.accent,tc:C.accentText,d:"No-fee everyday banking with unlimited e-Transfers and free member cheques.",rate:RATE.chq,rl:"Monthly fee",b:["$0 monthly fee for members","Unlimited e-Transfers","THE EXCHANGE ATM network"],cta:"Compare Accounts",kw:"chequing checking everyday banking debit e-transfer account fees student senior"},
   {k:"savings",t:"Savings & GICs",p:"accounts",c:C.amber,tc:C.amberText,d:"High-interest savings, GIC terms from 90 days to 5 years, and registered TFSA, RRSP, FHSA and RESP plans.",rate:RATE.gic1,rl:"1-year GIC",b:["No minimum balance","GIC terms from 90 days","TFSA, RRSP, FHSA, RESP eligible"],cta:"Compare Accounts",kw:"savings gic tfsa rrsp fhsa resp rdsp registered high interest term deposit"},
-  {k:"invest",t:"Investments",p:"personal",c:C.navy,tc:C.navy,d:"Mutual funds, Qtrade direct investing, and VirtualWealth portfolios inside your registered accounts.",rate:RATE.hisa,rl:"Savings rate",b:["Self-directed or advisor-managed","Held in TFSA, RRSP or cash","Aviso Wealth partnership"],cta:"Explore Investing",kw:"invest investments portfolio mutual funds qtrade virtualwealth etf stocks wealth retirement"},
+  {k:"invest",t:"Investments",p:"personal",c:C.navy,tc:C.navy,d:"Mutual funds, Qtrade direct investing, and VirtualWealth portfolios inside your registered accounts.",rate:"3",rl:"ways to invest, through Aviso Wealth",b:["Self-directed or advisor-managed","Held in TFSA, RRSP or cash","Aviso Wealth partnership"],cta:"Explore Investing",kw:"invest investments portfolio mutual funds qtrade virtualwealth etf stocks wealth retirement"},
 ];
 
 // ============ TRANSLATION SYSTEM ============
@@ -113,22 +113,22 @@ export const META={
   rates:["Current Rates | Northern Birch Credit Union","Today's posted mortgage, GIC, savings and lending rates at Northern Birch Credit Union."],
   apply:["Apply | Open an Account or Start a Mortgage | Northern Birch","Start an application for a chequing account, savings, GIC, mortgage pre-approval or credit card. An advisor calls you back within one business day."],
   advice:["Financial Advice & Planning | Northern Birch","Retirement, investment, tax and beneficiary advice from Northern Birch's wealth team, starting with a Financial Check-Up that costs members nothing."],
-  insurance:["Insurance | Northern Birch Credit Union","How Northern Birch refers members to insurers for life, home, auto and travel cover. Northern Birch does not quote or sell insurance."],
-  travel:["Travel & International Transfers | Northern Birch","Baltic travel insurance, international transfers to Estonia and Latvia, and competitive foreign exchange."],
-  business:["Business Solutions | Northern Birch Credit Union","Group benefits, commercial insurance, payroll and commercial lending for Ontario businesses."],
+  insurance:["Insurance | Northern Birch Credit Union","Travel insurance by referral to Allianz, the cover built into Collabria cards, and proposed referrals for life, home and auto. Northern Birch does not quote or sell insurance."],
+  travel:["Travel & International Transfers | Northern Birch","Travel insurance by referral to Allianz, international wires sent in branch, and euro and US dollar cash by advance order."],
+  business:["Business Solutions | Northern Birch Credit Union","Commercial lending for Ontario businesses, and proposed group benefits, commercial insurance and payroll."],
   booking:["Book an Appointment | Northern Birch Credit Union","Request a meeting with a Northern Birch advisor at any branch, for banking, mortgages, investments or insurance."],
-  claims:["Claims Centre | Northern Birch Credit Union","Start an insurance claim online, or reach your insurer's claims line directly."],
+  claims:["Claims: Who to Call | Northern Birch Credit Union","Claims are made to the insurer. Who to call for card insurance, travel insurance and other policies, and how Northern Birch can help you find out."],
   calculators:["Financial Calculators | Northern Birch","Mortgage, retirement and insurance-needs calculators for Northern Birch members."],
   contact:["Contact & Branches | Northern Birch Credit Union","Branch addresses, hours and phone numbers, including the KESKUS location."],
   community:["Our Community | Northern Birch Credit Union","Serving Toronto's Estonian and Latvian communities, with scholarships and cultural sponsorship."],
-  digital:["Digital Banking Tools | Northern Birch","Your insurance dashboard, quote engine, planning calculators and mobile banking, all in one place."],
+  digital:["Digital Banking Tools | Northern Birch","A demo member dashboard, a coverage explorer, planning calculators and mobile banking, all in one place."],
   estate:["Estates | Northern Birch Credit Union","How Northern Birch helps families and executors settle the accounts of a member who has died, and who to call first."],
-  quote:["Insurance Coverage Explorer | Northern Birch","Estimate a term life, home, auto or travel premium in under two minutes. No personal information required."],
+  quote:["Insurance Coverage Explorer | Northern Birch","Set out roughly what life, home, auto or travel cover you need, then bring it to an advisor. Not a quote; no personal information required."],
   compare:["Compare Coverage Options | Northern Birch","Compare the kinds of insurance cover side by side, then talk to an advisor who can refer you to an insurer."],
   referrals:["Member Referral Program | Northern Birch","Refer a friend to Northern Birch and you each earn $50 once they join and transact."],
   blog:["Blog & News | Northern Birch Credit Union","Financial insights, product updates and community news from Northern Birch Credit Union."],
   glossary:["Insurance Glossary | Northern Birch","Plain-language definitions of deductibles, riders, creditor insurance and other terms you will meet."],
-  mobileapp:["Mobile Banking App | Northern Birch","Deposit cheques, send Interac e-Transfers, manage policies and transfer to the Baltics from your phone."],
+  mobileapp:["Mobile Banking App | Northern Birch","Deposit cheques, send Interac e-Transfers, pay bills and check balances from your phone."],
   dashboard:["Member Dashboard | Northern Birch Credit Union","Balances, transactions, policies, documents and international transfers for Northern Birch members."],
   aiadvisor:["AI Insurance Advisor | Northern Birch","Ask about coverage and get a plain-language answer, then book a real advisor to confirm it."],
   analyzer:["Coverage Gap Analyzer | Northern Birch","Describe your current cover and see where the gaps are before you speak to an advisor."],
@@ -259,12 +259,25 @@ export const errBox={background:"#FDECEA",border:"1px solid #F5C6C2",borderRadiu
 
 // AI caller. The server owns the model, the system prompt, and the token budget;
 // we send only which feature is asking and the conversation so far.
+// When the call fails the reply is AI_UNAVAILABLE, and pages show
+// <AIUnavailable/> instead of dressing the failure up as a finished analysis
+// with a PDF to download.
+export const AI_UNAVAILABLE="The AI assistant isn't available right now, so nothing was analysed.";
 export async function callAI(feature,messages){
   try{
     const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({feature,messages})});
-    if(res.ok)return await res.json();
+    if(res.ok){const data=await res.json();if(data?.content?.[0]?.text)return data;}
   }catch(e){}
-  return {content:[{text:"I'm having trouble connecting. Please call 416-465-4659."}]};
+  return {error:true,content:[{text:AI_UNAVAILABLE}]};
+}
+// The same failure inside a conversation.
+export const AI_CHAT_UNAVAILABLE="The AI assistant isn't available right now. Try again in a moment, or call Northern Birch on 416-465-4659.";
+export function AIUnavailable({onRetry}){
+  return <div role="alert" style={{...errBox,padding:"20px 24px",fontSize:14}}>
+    <strong style={{display:"block",marginBottom:6}}>{AI_UNAVAILABLE}</strong>
+    You can try again in a moment, or talk to a person: call Northern Birch on <a href="tel:+14164654659" style={{color:"#8B2B22",fontWeight:700}}>416-465-4659</a>.
+    {onRetry&&<div style={{marginTop:12}}><button onClick={onRetry} style={{background:"#8B2B22",color:"#fff",border:"none",borderRadius:10,padding:"9px 18px",fontFamily:fs,fontSize:13,fontWeight:700,cursor:"pointer"}}>Try again</button></div>}
+  </div>;
 }
 
 // PDF export via browser print-to-PDF

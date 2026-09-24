@@ -152,7 +152,7 @@ export default function ApplyPage({ setPage }) {
           </div>
 
           <ConsentNotice id="apply-consent" checked={consent} onChange={setConsent}
-                         purpose="so an advisor can contact me about the product I selected"
+                         purpose="so an advisor could contact you about the product you selected"
                          extra="It is not a credit application and no credit check is run from this form." />
 
           <Btn color={C.greenFill} onClick={() => !sending && submit()}>

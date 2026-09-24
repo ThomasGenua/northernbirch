@@ -13,19 +13,14 @@ const newPage=async(route)=>{
   return p;
 };
 
-// ---------- 1. Claims wizard ----------
+// ---------- 1. Claims: who to call ----------
 {
   const p=await newPage('/claims');
   const before=await p.locator('main').innerText();
   await p.locator('main button').first().click(); await p.waitForTimeout(400);
   check((await p.locator('main').innerText())!==before,'claims: step 1 advances');
-  let steps=1;
-  for(let i=0;i<6;i++){
-    const nxt=p.locator('main button',{hasText:/Next|Continue|Submit|Send/i}).first();
-    if(await nxt.count()===0||await nxt.isDisabled().catch(()=>true))break;
-    await nxt.click(); await p.waitForTimeout(400); steps++;
-  }
-  check(steps>1,`claims: wizard advances through ${steps} steps`);
+  await p.locator('main button',{hasText:'Choose a different claim'}).click(); await p.waitForTimeout(300);
+  check((await p.locator('main').innerText())===before,'claims: "Choose a different claim" goes back to the list');
   await p.close();
 }
 
@@ -90,7 +85,7 @@ const newPage=async(route)=>{
   const amt=p.locator('input[aria-label="Transfer amount in Canadian dollars"]');
   check(await amt.count()===1,'dashboard: transfer amount input is labelled');
   await amt.fill('450'); await p.waitForTimeout(300);
-  const send=p.locator('main button',{hasText:/^Send C\$450/}).first();
+  const send=p.locator('main button',{hasText:/^Request a C\$450/}).first();
   check(await send.count()===1,'dashboard: send button reflects the typed amount');
   await send.click(); await p.waitForTimeout(500);
   const txt=await p.locator('main').innerText();

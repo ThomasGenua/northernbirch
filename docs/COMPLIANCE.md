@@ -115,6 +115,10 @@ These were corrected once, after the content review. `scripts/check-claims.mjs` 
 - Implies advising or binding
 - Invented discount or track record; no source for it
 - Invented premium; Northern Birch does not quote insurance
+- The assistant may not recommend a product or compare prices; it refers
+- Co-op is not an insurance line; the real co-op offering is mortgage lending
+- Names a vendor nobody has confirmed Northern Birch uses
+- A data-handling claim the demo cannot make: AI messages are processed by Anthropic in the US
 - Implies binding coverage
 
 ## Open items

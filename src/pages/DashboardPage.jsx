@@ -43,7 +43,7 @@ export default function DashboardPage({setPage}){
           </div>
           <div style={{background:`${C.accentText}08`,border:`1px solid ${C.accent}20`,borderRadius:14,padding:"12px 20px",display:"flex",alignItems:"center",gap:12}}>
             <span style={{fontSize:16}}>&#9997;</span>
-            <span style={{fontFamily:fs,fontSize:13,color:C.navy,flex:1}}>2 documents pending your electronic signature. Sign now to complete your insurance application.</span>
+            <span style={{fontFamily:fs,fontSize:13,color:C.navy,flex:1}}>2 documents are waiting for your signature.</span>
             <button onClick={scrollToDocs} style={{background:C.accentText,border:"none",borderRadius:8,padding:"6px 14px",cursor:"pointer",fontFamily:fs,fontSize:11,color:"#fff",fontWeight:600,whiteSpace:"nowrap"}}>Sign Now</button>
           </div>
         </div>
@@ -66,7 +66,7 @@ export default function DashboardPage({setPage}){
             <div style={{background:"#fff",borderRadius:20,padding:28,marginBottom:24}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
                 <h3 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:0,fontWeight:700}}>Credit Score</h3>
-                <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>Via Equifax -- Updated Mar 1, 2026</span>
+                <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>Proposed feature -- illustrative score</span>
               </div>
               <div style={{display:"flex",alignItems:isMob?"flex-start":"center",gap:24,flexDirection:isMob?"column":"row"}}>
                 <div style={{textAlign:"center"}}>
@@ -89,7 +89,7 @@ export default function DashboardPage({setPage}){
                       </div>
                     )}
                   </div>
-                  <p style={{fontFamily:fs,fontSize:11,color:"#707070",margin:"12px 0 0"}}>Your score has increased 12 points since January. Keep it up! Credit monitoring is free for all Northern Birch members.</p>
+                  <p style={{fontFamily:fs,fontSize:11,color:"#707070",margin:"12px 0 0"}}>Your score has increased 12 points since January. Keep it up!</p>
                 </div>
               </div>
             </div>
@@ -114,7 +114,7 @@ export default function DashboardPage({setPage}){
               </div>
               <div style={{background:`${C.accentText}06`,borderRadius:12,padding:"12px 16px",display:"flex",alignItems:"center",gap:8}}>
                 <span style={{fontSize:14}}>&#128161;</span>
-                <span style={{fontFamily:fs,fontSize:12,color:C.navy}}>You spent <strong>C$435</strong> on transportation this month -- 15% more than last month. Consider bundling auto insurance with home for savings.</span>
+                <span style={{fontFamily:fs,fontSize:12,color:C.navy}}>You spent <strong>C$435</strong> on transportation this month -- 15% more than last month.</span>
               </div>
             </div>
 
@@ -122,13 +122,13 @@ export default function DashboardPage({setPage}){
             <div style={{background:"#fff",borderRadius:20,padding:28,marginBottom:24}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
                 <h3 style={{fontFamily:fs,fontSize:17,color:C.navy,margin:0,fontWeight:700}}>My Insurance Policies</h3>
-                <span style={{fontFamily:fs,fontSize:12,color:C.accentText,fontWeight:600,cursor:"pointer"}}>View All Details</span>
+                <span style={{fontFamily:fs,fontSize:12,color:"#6B6B6B"}}>Held with each insurer</span>
               </div>
               {[
-                {type:"Home Insurance",provider:"Referred insurer (proposed)",policy:"HP-2024-88721",status:"Active",renewal:"Apr 15, 2026",premium:"C$142.50/mo",coverage:"C$650,000 Replacement Cost",c:C.green},
-                {type:"Auto Insurance",provider:"Referred insurer (proposed)",policy:"AP-2024-34219",status:"Active",renewal:"Jun 1, 2026",premium:"C$168.00/mo",coverage:"C$2M Liability + Collision + Ajusto",c:C.amber},
-                {type:"Term Life Insurance",provider:"Referred insurer (proposed)",policy:"TL-2025-11087",status:"Active",renewal:"Guaranteed 20yr",premium:"C$32.50/mo",coverage:"C$500,000 - 20 Year Term",c:C.accent},
-                {type:"Mortgage Protection",provider:"Referred insurer (proposed)",policy:"MP-2024-55432",status:"Active",renewal:"Tied to Mortgage",premium:"Included",coverage:"Life + Disability on Mortgage",c:C.navy},
+                {type:"Home Insurance",provider:"Insurer (by referral)",policy:"HP-2024-88721",status:"Active",renewal:"Apr 15, 2026",premium:"C$142.50/mo",coverage:"C$650,000 Replacement Cost",c:C.green},
+                {type:"Auto Insurance",provider:"Insurer (by referral)",policy:"AP-2024-34219",status:"Active",renewal:"Jun 1, 2026",premium:"C$168.00/mo",coverage:"C$2M Liability + Collision + Ajusto",c:C.amber},
+                {type:"Term Life Insurance",provider:"Insurer (by referral)",policy:"TL-2025-11087",status:"Active",renewal:"Guaranteed 20yr",premium:"C$32.50/mo",coverage:"C$500,000 - 20 Year Term",c:C.accent},
+                {type:"Mortgage Protection",provider:"Insurer (by referral)",policy:"MP-2024-55432",status:"Active",renewal:"Tied to Mortgage",premium:"Included",coverage:"Life + Disability on Mortgage",c:C.navy},
               ].map((p,i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:16,padding:"14px 0",borderBottom:i<3?"1px solid #f5f5f5":"none"}}>
                   <div style={{width:40,height:40,borderRadius:10,background:`${p.c}10`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
@@ -152,9 +152,9 @@ export default function DashboardPage({setPage}){
                 <span style={{background:C.redText,color:"#fff",fontFamily:fs,fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:10}}>2 Pending</span>
               </div>
               {[
-                {name:"Critical Illness Insurance Application",provider:"Referred insurer (proposed)",date:"Mar 15, 2026",status:"pending",type:"Insurance"},
+                {name:"Consent to share details with an insurer (critical illness)",provider:"Northern Birch",date:"Mar 15, 2026",status:"pending",type:"Insurance"},
                 {name:"TFSA Beneficiary Designation Update",provider:"Northern Birch",date:"Mar 12, 2026",status:"pending",type:"Account"},
-                {name:"Home Insurance Policy Renewal",provider:"Referred insurer (proposed)",date:"Feb 28, 2026",status:"signed",type:"Insurance"},
+                {name:"Consent to share details with an insurer (home)",provider:"Northern Birch",date:"Feb 28, 2026",status:"signed",type:"Insurance"},
                 {name:"Mortgage Renewal Agreement",provider:"Northern Birch",date:"Jan 15, 2026",status:"signed",type:"Mortgage"},
               ].map((doc,i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:16,padding:"14px 0",borderBottom:i<3?"1px solid #f5f5f5":"none"}}>
@@ -171,7 +171,7 @@ export default function DashboardPage({setPage}){
                   }
                 </div>
               ))}
-              <p style={{fontFamily:fs,fontSize:11,color:"#707070",margin:"12px 0 0"}}>E-signatures are legally binding under Canada's Electronic Commerce Act. Documents are encrypted and stored securely.</p>
+              <p style={{fontFamily:fs,fontSize:11,color:"#707070",margin:"12px 0 0"}}>In this demo nothing is signed, sent or stored.</p>
             </div>
 
             {/* Recent Transactions */}
@@ -207,7 +207,8 @@ export default function DashboardPage({setPage}){
           <div>
             {/* Quick International Transfer */}
             <div id="dash-transfer" style={{background:`linear-gradient(135deg,${C.navy},#2a4a6a)`,borderRadius:20,padding:24,marginBottom:24}}>
-              <h3 style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.7)",margin:"0 0 16px",fontWeight:700}}>&#127757; Quick Transfer to Baltics</h3>
+              <h3 style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.7)",margin:"0 0 16px",fontWeight:700}}>&#127757; Request a wire to the Baltics</h3>
+              <p style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.75)",lineHeight:1.6,margin:"-8px 0 14px"}}>International wires are sent in branch, not online. This sends the request to your branch, which calls you to confirm before anything is sent.</p>
               {!transferSent?<>
                 <div style={{marginBottom:12}}>
                   <label htmlFor="sel-5" style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",display:"block",marginBottom:4}}>To</label>
@@ -224,18 +225,18 @@ export default function DashboardPage({setPage}){
                   {transferAmt!==""&&!transferOk&&<div role="alert" style={{fontFamily:fs,fontSize:11,color:C.redOnDark,marginTop:6}}>Enter an amount between C$1 and C$25,000.</div>}
                 </div>
                 <div style={{background:"rgba(255,255,255,0.05)",borderRadius:10,padding:"10px 14px",marginBottom:12}}>
-                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Exchange Rate</span><span style={{fontFamily:fs,fontSize:12,color:"#fff"}}>1 CAD = 0.6821 EUR</span></div>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Exchange Rate (illustrative)</span><span style={{fontFamily:fs,fontSize:12,color:"#fff"}}>1 CAD = 0.6821 EUR</span></div>
                   <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Recipient Gets</span><span style={{fontFamily:fs,fontSize:14,color:C.greenOnDark,fontWeight:700}}>{"\u20AC"}{transferOk?money(transferNum*0.6821):"--"}</span></div>
-                  <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Fee</span><span style={{fontFamily:fs,fontSize:12,color:"#fff"}}>C$4.99</span></div>
+                  <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)"}}>Fee</span><span style={{fontFamily:fs,fontSize:12,color:"#fff"}}>Your branch confirms it</span></div>
                 </div>
-                <button onClick={()=>setTransferSent(true)} disabled={!transferOk} style={{width:"100%",background:transferOk?C.greenFill:"rgba(255,255,255,0.12)",border:"none",borderRadius:10,padding:"12px",cursor:transferOk?"pointer":"not-allowed",fontFamily:fs,fontSize:14,color:transferOk?"#fff":"rgba(255,255,255,0.5)",fontWeight:700}}>{transferOk?`Send C$${money(transferNum)} to ${transferTo.split(" - ")[0]}`:"Enter an amount to send"}</button>
+                <button onClick={()=>setTransferSent(true)} disabled={!transferOk} style={{width:"100%",background:transferOk?C.greenFill:"rgba(255,255,255,0.12)",border:"none",borderRadius:10,padding:"12px",cursor:transferOk?"pointer":"not-allowed",fontFamily:fs,fontSize:14,color:transferOk?"#fff":"rgba(255,255,255,0.5)",fontWeight:700}}>{transferOk?`Request a C$${money(transferNum)} wire to ${transferTo.split(" - ")[0]}`:"Enter an amount to request"}</button>
               </>:<div style={{textAlign:"center",padding:"12px 0"}}>
                 <div style={{fontSize:32,marginBottom:8}}>&#9989;</div>
-                <div style={{fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>Transfer Sent!</div>
-                <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:4}}>C${money(transferNum)} to {transferTo}</div>
-                <div style={{fontFamily:fs,fontSize:12,color:C.greenOnDark,marginTop:2}}>Estimated arrival: 1-2 business days</div>
-                <div style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:8}}>Tracking ID: {transferRef}</div>
-                <button onClick={()=>setTransferSent(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"8px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:12}}>Send Another</button>
+                <div style={{fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>Request sent to your branch</div>
+                <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:4}}>Wire of C${money(transferNum)} to {transferTo}</div>
+                <div style={{fontFamily:fs,fontSize:12,color:C.greenOnDark,marginTop:2}}>Your branch will call to confirm. Nothing is sent until you do.</div>
+                <div style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:8}}>Request reference: {transferRef}</div>
+                <button onClick={()=>setTransferSent(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"8px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:12}}>Request another</button>
               </div>}
             </div>
 
@@ -247,7 +248,7 @@ export default function DashboardPage({setPage}){
                   online-banking functions this site does not implement, so
                   they are listed rather than dressed up as working buttons. */}
               {[
-                {l:"Get Insurance Quote",c:C.accent,go:"quote"},
+                {l:"Explore Coverage",c:C.accent,go:"quote"},
                 {l:"Send International Transfer",c:C.green,go:"transfer"},
                 {l:"File Insurance Claim",c:C.red,go:"claims"},
                 {l:"Book Advisor Meeting",c:C.amber,go:"booking"},
@@ -296,7 +297,7 @@ export default function DashboardPage({setPage}){
             {/* Digital ID Verification Status */}
             <div style={{background:"#fff",borderRadius:20,padding:24,marginBottom:24}}>
               <h3 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 16px",fontWeight:700}}>Identity Verification</h3>
-              {[{l:"Photo ID Verified",s:true,d:"Ontario Driver's Licence -- Verified Feb 2024"},{l:"Address Verified",s:true,d:"4 Credit Union Dr, North York"},{l:"KYC / AML Compliant",s:true,d:"FINTRAC compliant -- Next review: Feb 2027"},{l:"Biometric Login",s:true,d:"Face ID enabled on iPhone"}].map((v,i)=>(
+              {[{l:"Photo ID Verified",s:true,d:"Ontario Driver's Licence -- Verified Feb 2024"},{l:"Address Verified",s:true,d:"Toronto, Ontario"},{l:"KYC / AML Compliant",s:true,d:"FINTRAC compliant -- Next review: Feb 2027"},{l:"Biometric Login",s:true,d:"Face ID enabled on iPhone"}].map((v,i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:i<3?"1px solid #f8f8f8":"none"}}>
                   <span style={{fontSize:14,color:C.greenText}}>&#9989;</span>
                   <div>
@@ -305,7 +306,7 @@ export default function DashboardPage({setPage}){
                   </div>
                 </div>
               ))}
-              <p style={{fontFamily:fs,fontSize:10,color:"#707070",margin:"10px 0 0"}}>Identity verification powered by Jumio. Compliant with FINTRAC and FSRA requirements.</p>
+              <p style={{fontFamily:fs,fontSize:10,color:"#707070",margin:"10px 0 0"}}>Illustrative. Identity checks would follow Northern Birch's existing process.</p>
             </div>
 
             {/* Coverage Score */}
