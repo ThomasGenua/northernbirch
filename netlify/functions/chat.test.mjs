@@ -34,6 +34,25 @@ check("injected max_tokens ignored", lastUpstream.body.max_tokens === 300);
 check("injected tools not forwarded", lastUpstream.body.tools === undefined);
 check("only known keys forwarded", Object.keys(lastUpstream.body).sort().join() === "max_tokens,messages,model,system");
 
+// 2b. the first turn upstream is always the user's
+// The widget opens with the assistant's greeting and the Messages threads with
+// earlier advisor turns; the Messages API rejects a conversation that starts
+// with the assistant, so the proxy drops them.
+lastUpstream = null;
+r = await handler(req({ feature: "chat", messages: [
+  { role: "assistant", content: "Hello! I'm the assistant." },
+  { role: "assistant", content: "Anything else?" },
+  { role: "user", content: "What are your hours?" },
+  { role: "assistant", content: "Mon-Fri." },
+  { role: "user", content: "And Saturday?" },
+] }, { origin: "https://northernbirchcu.com", ip: "5.5.5.5" }));
+check("leading assistant turns: request still succeeds", r.status === 200, r.status);
+check("leading assistant turns: upstream starts with the user", lastUpstream.body.messages[0].role === "user" && lastUpstream.body.messages[0].content === "What are your hours?");
+check("leading assistant turns: the rest of the conversation is kept in order", lastUpstream.body.messages.map((m) => m.role).join() === "user,assistant,user");
+lastUpstream = null;
+r = await handler(req({ feature: "chat", messages: [{ role: "assistant", content: "Hello!" }] }, { origin: "https://northernbirchcu.com", ip: "5.5.5.5" }));
+check("no user turn at all -> 400, nothing sent upstream", r.status === 400 && lastUpstream === null, r.status);
+
 // 3. cross-origin rejected
 r = await handler(req({ feature: "chat", messages: [{ role: "user", content: "hi" }] }, { origin: "https://evil.example", ip: "9.9.9.1" }));
 check("disallowed origin -> 403", r.status === 403, r.status);

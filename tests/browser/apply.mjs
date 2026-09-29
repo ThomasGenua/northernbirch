@@ -67,7 +67,7 @@ const go = async (r) => {
   const submitBtn = p.locator('main button', { hasText: /Submit application/ }).first();
   await submitBtn.click(); await p.waitForTimeout(500);
   let t2 = await p.locator('main').innerText();
-  check(!/Application started/.test(t2), 'an empty form does not submit');
+  check(!/Demo complete: application not sent/.test(t2), 'an empty form does not submit');
   check(/we still need what you are applying for/.test(t2), 'and says what is missing rather than greying out');
 
   await p.locator('#apply-product').selectOption('Credit card');
@@ -77,7 +77,7 @@ const go = async (r) => {
   await p.locator('#apply-phone').fill('416-555-0100');
   await submitBtn.click(); await p.waitForTimeout(500);
   t2 = await p.locator('main').innerText();
-  check(!/Application started/.test(t2), 'and neither does one without consent');
+  check(!/Demo complete: application not sent/.test(t2), 'and neither does one without consent');
   check(/your consent to be contacted/.test(t2), 'naming consent as the one thing left');
 
   // consent given, submission attempted -- the dev server has no form handler,
@@ -85,7 +85,7 @@ const go = async (r) => {
   await p.locator('#apply-consent').check();
   await submitBtn.click(); await p.waitForTimeout(1200);
   const after = await p.locator('main').innerText();
-  check(/could not send|Application started/.test(after), 'a complete form either submits or says plainly that it did not');
+  check(/could not send|Demo complete: application not sent/.test(after), 'a complete form either submits or says plainly that it did not');
   check(!/NaN|undefined|\$\{/.test(after), 'no NaN, undefined or un-interpolated placeholders');
   await p.close();
 }

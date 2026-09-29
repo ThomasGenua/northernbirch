@@ -4,7 +4,7 @@
 globalThis.Netlify = { env: { get: (k) => ({ SITE_PASSWORD: "s3cret" }[k]) } };
 
 const gate = await import("./password-gate.js");
-const { default: handler, sameSecret, sign, issue, valid, readCookie, safeNext, unlockPage } = gate;
+const { default: handler, sameSecret, sign, issue, valid, readCookie, safeNext, unlockPage, resetThrottle } = gate;
 
 const NEXT = { next: async () => new Response("the site", { status: 200 }) };
 const get = (path = "/", cookie) => new Request("https://x" + path, { headers: cookie ? { cookie } : {} });
@@ -123,6 +123,53 @@ check("sameSecret accepts a match", sameSecret("s3cret", "s3cret"));
     check("unconfigured: says why in the server log", errors.some((e) => /SITE_PASSWORD is not set/.test(e)));
     check("unconfigured: but not to the visitor", !/SITE_PASSWORD/.test(body));
   } finally { console.error = realError; globalThis.Netlify = saved; }
+}
+
+// --- an expired session must not look like success --------------------------
+// The site's forms and AI tools fetch /api/*. Answering those with the password
+// page and a 200 told a form its submission had gone through.
+{
+  const api = (path, method = "POST", cookie) => new Request("https://x" + path, { method, headers: cookie ? { cookie } : {}, body: method === "POST" ? "{}" : undefined });
+  for (const path of ["/api/demo-intake?form=application", "/api/chat"]) {
+    const res = await handler(api(path), NEXT);
+    const text = await res.text();
+    check(`${path}: no cookie is a 401, not a 200`, res.status === 401, `got ${res.status}`);
+    check(`${path}: the answer is JSON, not the password page`, (res.headers.get("content-type") || "").includes("application/json") && !/<form|<html/i.test(text));
+    let parsed = null; try { parsed = JSON.parse(text); } catch { /* left null */ }
+    check(`${path}: it says the session expired and never claims ok`, parsed && parsed.ok !== true && /session expired/i.test(parsed.error || ""));
+    check(`${path}: it is not cacheable`, res.headers.get("cache-control") === "no-store");
+  }
+  const cookie = cookieFrom(await handler(post("s3cret"), NEXT));
+  const through = await handler(api("/api/demo-intake?form=booking", "POST", cookie), NEXT);
+  check("/api with a valid cookie still reaches the function", through.status === 200 && (await through.text()) === "the site");
+  const page = await handler(get("/mortgages"), NEXT);
+  check("a page without a cookie is still the password page, not JSON", page.status === 200 && (page.headers.get("content-type") || "").includes("text/html"));
+}
+
+// --- guessing is throttled ---------------------------------------------------
+{
+  const from = (ip, password) => { const r = post(password); r.headers.set("x-nf-client-connection-ip", ip); return r; };
+  resetThrottle();
+  let last;
+  for (let i = 0; i < 10; i++) last = await handler(from("203.0.113.7", "guess" + i), NEXT);
+  check("ten wrong guesses are each answered as wrong", last.status === 401, `got ${last.status}`);
+  const eleventh = await handler(from("203.0.113.7", "guess-again"), NEXT);
+  check("the eleventh is refused with 429", eleventh.status === 429, `got ${eleventh.status}`);
+  check("and says how long to wait", Number(eleventh.headers.get("retry-after")) >= 60);
+  check("and the page says too many attempts, not a wrong password", /too many attempts/i.test(await eleventh.text()));
+  const correctWhileLocked = await handler(from("203.0.113.7", "s3cret"), NEXT);
+  check("the RIGHT password does not get in while locked out", correctWhileLocked.status === 429 && !correctWhileLocked.headers.get("set-cookie"));
+  const other = await handler(from("198.51.100.9", "s3cret"), NEXT);
+  check("another address is unaffected", other.status === 303, `got ${other.status}`);
+  const realNow = Date.now;
+  Date.now = () => realNow() + 16 * 60 * 1000;
+  try {
+    const later = await handler(from("203.0.113.7", "s3cret"), NEXT);
+    check("after the lockout window the right password works again", later.status === 303, `got ${later.status}`);
+  } finally { Date.now = realNow; }
+  resetThrottle();
+  const fresh = await handler(from("203.0.113.7", "s3cret"), NEXT);
+  check("a successful unlock is not counted against anyone", fresh.status === 303);
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);

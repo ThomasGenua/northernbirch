@@ -141,7 +141,7 @@ function SearchOverlay({open,onClose,setPage}){const mob=useMob();
 // ============ AI CHAT WIDGET (Powered by Claude) ============
 function ChatWidget({bottomInset=0}){const mob=useMob();
   const[open,setOpen]=useState(false);
-  const[msgs,setMsgs]=useState([{from:"bot",text:"Hello! I'm Northern Birch's AI assistant, powered by Claude. I can help you with insurance questions, branch info, product recommendations, mortgage rates, travel services, and more. How can I help today?"}]);
+  const[msgs,setMsgs]=useState([{from:"bot",text:"Hello! I'm Northern Birch's AI assistant, powered by Claude. I can answer general questions about accounts, mortgages, cards, branches and travel, and explain how insurance referrals work. I can't give quotes, advice or today's rates. How can I help?"}]);
   const[input,setInput]=useState("");
   const[loading,setLoading]=useState(false);
   const bottomRef=useRef(null);
@@ -252,9 +252,9 @@ function NotificationsPanel({open,onClose,setPage}){const mob=useMob();
     {id:2,type:"signature",icon:"\u270D\uFE0F",title:"Document Awaiting Your Signature",desc:"The insurer you were referred to has been in touch about critical illness cover. Northern Birch does not sell or activate coverage; the insurer handles the application directly.",time:"5 hours ago",unread:true,action:"dashboard",actionLabel:"Sign Now",color:C.accentText},
     {id:3,type:"life-event",icon:"\uD83C\uDF89",title:"Life Event Reminder: Mortgage Anniversary",desc:"It's been one year since your mortgage with Northern Birch. Time for a coverage review -- your equity has likely increased.",time:"Yesterday",unread:true,action:"healthcheck",actionLabel:"Run Health Check",color:C.purple},
     {id:4,type:"advisor",icon:"\uD83D\uDCAC",title:"New Message from Heili Orav",desc:"Heili replied to your question about TFSA contribution room. \"You have C$22,500 of unused TFSA room from prior years...\"",time:"Yesterday",unread:false,action:"messages",actionLabel:"Read Message",color:C.greenText},
-    {id:5,type:"transfer",icon:"\u2705",title:"International Transfer Delivered",desc:"Your C$200 transfer to Maija in Riga has been received. Tracking ID: NB-TXN-487291.",time:"2 days ago",unread:false,action:"dashboard",actionLabel:"View Transfer",color:C.greenText},
+    {id:5,type:"travel",icon:"\uD83D\uDCB6",title:"Euro Cash Order Ready",desc:"Your advance order of \u20AC200 in euro banknotes is ready to pick up at the Latvian Centre branch.",time:"2 days ago",unread:false,action:"travel",actionLabel:"See Travel Services",color:C.greenText},
     {id:6,type:"rate-alert",icon:"\uD83D\uDCC8",title:"GIC Rates Updated",desc:`Our posted 5-year GIC rate is now ${RATE.gic5} and the 1-year is ${RATE.gic1}. See the full rate table for every term.`,time:"3 days ago",unread:false,action:"rates",actionLabel:"View Rates",color:C.accentText},
-    {id:7,type:"claim",icon:"\u2611\uFE0F",title:"Claim #CL-2024-3387 Approved",desc:"Your auto insurance claim for windshield damage has been approved. C$847 will be deposited within 3 business days.",time:"1 week ago",unread:false,action:"claims",actionLabel:"View Details",color:C.greenText},
+    {id:7,type:"card",icon:"\uD83D\uDCB3",title:"Your Card Includes Travel Cover",desc:"Eligible Collabria Mastercard cards include trip cancellation and baggage insurance. Check your card's certificate of insurance before you travel.",time:"1 week ago",unread:false,action:"cards",actionLabel:"See Card Benefits",color:C.greenText},
     {id:8,type:"appointment",icon:"\uD83D\uDCC5",title:"Upcoming: Insurance Review",desc:"Your insurance review with Heili Orav is scheduled for March 25 at 10:30 AM at the Latvian Centre Branch.",time:"1 week ago",unread:false,action:"booking",actionLabel:"View Appointment",color:C.amberText},
   ]);
   const unreadCount=notes.filter(n=>n.unread).length;

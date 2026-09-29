@@ -12,7 +12,6 @@ export default function DashboardPage({setPage}){
   const transferNum=/^\d{1,7}(\.\d{1,2})?$/.test(transferAmt.trim())?parseFloat(transferAmt.trim()):NaN;
   const transferOk=Number.isFinite(transferNum)&&transferNum>=1&&transferNum<=25000;
   const[transferTo,setTransferTo]=useState("Grandmother Maija - Riga, Latvia");
-  const[transferRef]=useState(()=>"NB-TXN-"+Math.floor(Math.random()*900000+100000));
   const[transferSent,setTransferSent]=useState(false);
   const[signedDocs,setSignedDocs]=useState({});
   // Spending data
@@ -208,7 +207,7 @@ export default function DashboardPage({setPage}){
             {/* Quick International Transfer */}
             <div id="dash-transfer" style={{background:`linear-gradient(135deg,${C.navy},#2a4a6a)`,borderRadius:20,padding:24,marginBottom:24}}>
               <h3 style={{fontFamily:fs,fontSize:15,color:"rgba(255,255,255,0.7)",margin:"0 0 16px",fontWeight:700}}>&#127757; Request a wire to the Baltics</h3>
-              <p style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.75)",lineHeight:1.6,margin:"-8px 0 14px"}}>International wires are sent in branch, not online. This sends the request to your branch, which calls you to confirm before anything is sent.</p>
+              <p style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.75)",lineHeight:1.6,margin:"-8px 0 14px"}}>International wires are sent in branch, not online. In this demo nothing is sent to a branch; on the live service a branch would call you to confirm before anything moved.</p>
               {!transferSent?<>
                 <div style={{marginBottom:12}}>
                   <label htmlFor="sel-5" style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",display:"block",marginBottom:4}}>To</label>
@@ -232,11 +231,10 @@ export default function DashboardPage({setPage}){
                 <button onClick={()=>setTransferSent(true)} disabled={!transferOk} style={{width:"100%",background:transferOk?C.greenFill:"rgba(255,255,255,0.12)",border:"none",borderRadius:10,padding:"12px",cursor:transferOk?"pointer":"not-allowed",fontFamily:fs,fontSize:14,color:transferOk?"#fff":"rgba(255,255,255,0.5)",fontWeight:700}}>{transferOk?`Request a C$${money(transferNum)} wire to ${transferTo.split(" - ")[0]}`:"Enter an amount to request"}</button>
               </>:<div style={{textAlign:"center",padding:"12px 0"}}>
                 <div style={{fontSize:32,marginBottom:8}}>&#9989;</div>
-                <div style={{fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>Request sent to your branch</div>
+                <div style={{fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>Demo only: no request was sent</div>
                 <div style={{fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:4}}>Wire of C${money(transferNum)} to {transferTo}</div>
-                <div style={{fontFamily:fs,fontSize:12,color:C.greenOnDark,marginTop:2}}>Your branch will call to confirm. Nothing is sent until you do.</div>
-                <div style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",marginTop:8}}>Request reference: {transferRef}</div>
-                <button onClick={()=>setTransferSent(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"8px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:12}}>Request another</button>
+                <div style={{fontFamily:fs,fontSize:12,color:C.greenOnDark,marginTop:2}}>Nothing was sent to a branch, and nobody will call. To send a wire, visit or call a branch.</div>
+                <button onClick={()=>setTransferSent(false)} style={{background:"rgba(255,255,255,0.1)",border:"none",borderRadius:8,padding:"8px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:12}}>Try another amount</button>
               </div>}
             </div>
 

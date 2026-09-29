@@ -52,12 +52,12 @@ export default function LeadershipPage({setPage}){
               {[
                 {item:"Oodler Technology & Consulting",y1:"C$0",y2:"C$0",y3:"C$0",total:"C$0 (pro bono)",highlight:true},
                 {item:"Insurance partners (proposed: CUMIS, The Personal)",y1:"C$0",y2:"C$0",y3:"C$0",total:"C$0",highlight:true},
-                {item:"RIBO Licensing (if subsidiary route)",y1:"C$3,000",y2:"C$2,000",y3:"C$2,000",total:"C$7,000"},
+                {item:"RIBO licensing (phase two only; Oodler estimate, TO CONFIRM)",y1:"C$3,000",y2:"C$2,000",y3:"C$2,000",total:"C$7,000"},
                 {item:"One-Time Legal Counsel",y1:"C$5,000",y2:"-",y3:"-",total:"C$5,000"},
                 {item:"Optional KESKUS Launch Marketing",y1:"C$5,000",y2:"C$3,000",y3:"C$3,000",total:"C$11,000"},
-                {item:"E&O Insurance (subsidiary)",y1:"-",y2:"C$2,500",y3:"C$2,500",total:"C$5,000"},
+                {item:"E&O insurance (phase two only; Oodler estimate, TO CONFIRM)",y1:"-",y2:"C$2,500",y3:"C$2,500",total:"C$5,000"},
                 {item:"Staff Time (opportunity cost)",y1:"C$8,000",y2:"C$10,000",y3:"C$10,000",total:"C$28,000"},
-                {item:"TOTAL",y1:"C$21,000",y2:"C$17,500",y3:"C$17,500",total:"C$56,000",bold:true},
+                {item:"TOTAL (includes the phase-two estimates)",y1:"C$21,000",y2:"C$17,500",y3:"C$17,500",total:"C$56,000",bold:true},
               ].map((row,i)=>(
                 <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",padding:"12px 20px",background:row.highlight?`${C.greenFill}06`:row.bold?`${C.navy}06`:i%2===0?"#fff":"#fafafa",borderBottom:"1px solid #f0f0f0"}}>
                   <span style={{fontFamily:fs,fontSize:13,color:C.navy,fontWeight:row.bold||row.highlight?700:400}}>{row.item}</span>

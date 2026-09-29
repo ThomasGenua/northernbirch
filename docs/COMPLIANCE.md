@@ -119,6 +119,9 @@ These were corrected once, after the content review. `scripts/check-claims.mjs` 
 - Co-op is not an insurance line; the real co-op offering is mortgage lending
 - Names a vendor nobody has confirmed Northern Birch uses
 - A data-handling claim the demo cannot make: AI messages are processed by Anthropic in the US
+- Northern Birch does not handle or approve claims; the insurer does
+- International wires are sent in branch; nothing here is delivered or sent online
+- A promise the demo cannot keep: the assistant does not recommend, and no email is sent or call made
 - Implies binding coverage
 
 ## Open items

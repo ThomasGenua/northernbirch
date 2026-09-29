@@ -54,6 +54,21 @@ so it cannot be forged by someone who does not already know the password and
 cannot have its expiry edited. `next=` is restricted to same-site paths, so the
 form cannot be turned into an open redirect.
 
+## Expired sessions and the API
+
+A request to `/api/*` without a valid cookie is answered `401` with a JSON body
+(`{"error":"Session expired..."}`), not the password page. The site's forms and
+AI tools call those endpoints; the password page with a `200` made an expired
+session look like a successful submission. The forms now also require the
+intake's own `{"ok":true}` before showing anything.
+
+## Guessing
+
+After 10 wrong passwords from one address the gate answers `429` (with
+`Retry-After`) for 15 minutes, and refuses the right password too while it
+does. It is held in each edge instance's memory, so it bounds a guesser rather
+than stopping a determined one; a shared store would be needed for that.
+
 ## Turning it off
 
 Delete `netlify/edge-functions/password-gate.js` and its test, and remove the

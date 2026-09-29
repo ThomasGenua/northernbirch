@@ -22,6 +22,30 @@ const COOKIE = "nb_demo_access";
 const UNLOCK_PATH = "/__unlock";
 const MAX_AGE = 60 * 60 * 12;            // a working day, then ask again
 
+// One shared password is only as strong as the rate at which it can be guessed,
+// and nothing used to limit that. After MAX_FAILURES wrong guesses from one
+// address the gate refuses everything from it -- the right password included,
+// otherwise a lockout would only slow a guesser down by one request -- until
+// LOCKOUT_MS has passed. Best-effort: an edge function keeps this per instance,
+// so it bounds a guesser rather than stopping a determined one; durable
+// limiting needs a shared store.
+const MAX_FAILURES = 10;
+const LOCKOUT_MS = 15 * 60 * 1000;
+const failures = new Map();
+export function resetThrottle() { failures.clear(); }
+function lockedOut(ip, now) {
+  const f = failures.get(ip);
+  if (!f) return false;
+  if (now - f.start > LOCKOUT_MS) { failures.delete(ip); return false; }
+  return f.count >= MAX_FAILURES;
+}
+function recordFailure(ip, now) {
+  const f = failures.get(ip);
+  if (!f || now - f.start > LOCKOUT_MS) failures.set(ip, { start: now, count: 1 });
+  else f.count += 1;
+  if (failures.size > 5000) for (const [k, v] of failures) if (now - v.start > LOCKOUT_MS) failures.delete(k);
+}
+
 // === crypto ================================================================
 
 // Comparing with === leaks how much of the input was right through how long it
@@ -80,7 +104,7 @@ export function safeNext(value) {
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-export function unlockPage({ next = "/", error = false, configured = true } = {}) {
+export function unlockPage({ next = "/", error = false, configured = true, locked = false } = {}) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
@@ -140,7 +164,7 @@ export function unlockPage({ next = "/", error = false, configured = true } = {}
       <label for="pw">Password</label>
       <input id="pw" name="password" type="password" autocomplete="current-password"
              autofocus required ${error ? 'aria-describedby="err" aria-invalid="true"' : ""}>
-      ${error ? '<p class="err" id="err" role="alert">That password is not correct. Please try again.</p>' : ""}
+      ${locked ? '<p class="err" id="err" role="alert">Too many attempts. Please wait a few minutes and try again.</p>' : error ? '<p class="err" id="err" role="alert">That password is not correct. Please try again.</p>' : ""}
       <button type="submit">View the demo</button>
     </form>` : `<p class="err" role="alert">This demo is not available right now. Please contact whoever shared the link.</p>`}
 
@@ -173,9 +197,29 @@ export default async (request, context) => {
   // Already unlocked.
   if (await valid(readCookie(request.headers.get("cookie"), COOKIE), secret)) return context.next();
 
+  // Not unlocked, and the request is a script talking to the API rather than a
+  // person looking at a page (the site's own fetches to /api/chat and
+  // /api/demo-intake). Answering those with the password page and a 200 made
+  // an expired session look like success: a form saw "200 OK" and told the
+  // visitor their request had gone through. Say plainly that it did not.
+  if (url.pathname.startsWith("/api/")) {
+    return new Response(JSON.stringify({ error: "Session expired. Reload the page and sign in again." }), {
+      status: 401,
+      headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" },
+    });
+  }
+
   // Someone submitting the form.
   if (url.pathname === UNLOCK_PATH && request.method === "POST") {
     let supplied = "", next = "/";
+    const ip = context?.ip || request.headers.get("x-nf-client-connection-ip") || "unknown";
+    const now = Date.now();
+    if (lockedOut(ip, now)) {
+      return new Response(unlockPage({ next, locked: true }), {
+        status: 429,
+        headers: { ...HEADERS, "Retry-After": String(Math.ceil(LOCKOUT_MS / 1000)) },
+      });
+    }
     try {
       const form = await request.formData();
       supplied = String(form.get("password") ?? "");
@@ -193,6 +237,7 @@ export default async (request, context) => {
         },
       });
     }
+    recordFailure(ip, now);
     return new Response(unlockPage({ next, error: true }), { status: 401, headers: HEADERS });
   }
 

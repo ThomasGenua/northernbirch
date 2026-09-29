@@ -18,7 +18,7 @@ let pass=0,fail=0; const check=(c,m)=>{c?pass++:fail++;console.log((c?'PASS ':'F
   await p.locator('#referral-consent').check(); await p.waitForTimeout(300);
   await p.locator('main button',{hasText:'Send Referral'}).click(); await p.waitForTimeout(1200);
   const t=await p.locator('main').innerText();
-  check(!/Referral Sent/i.test(t),'referral: a 500 does NOT show "Referral Sent"');
+  check(!/Demo complete/i.test(t),'referral: a 500 does NOT show the demo-complete screen');
   check(/could not send|try again|416-465-4659/i.test(t),`referral: shows a real error instead (${JSON.stringify(t.match(/We could not[^\n]*/)?.[0]||'').slice(0,70)})`);
   check(await p.locator('#ref-your-name').inputValue()==='Maria Ozols','referral: keeps what you typed so you can retry');
   await ctx.close();
