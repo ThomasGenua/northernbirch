@@ -56,7 +56,7 @@ const newPage=async(r)=>{const p=await ctx.newPage();await p.goto(BASE+r,{waitUn
     check(posts[0].ct.includes('x-www-form-urlencoded'),'referral: urlencoded content-type the endpoint expects');
   }
   const txt=await p.locator('main').innerText();
-  check(/Referral Sent/i.test(txt),'referral: confirmation only after a successful POST');
+  check(/Demo complete: referral not sent/i.test(txt),'referral: confirmation only after a successful POST');
   await p.close();
 }
 
@@ -91,7 +91,7 @@ const newPage=async(r)=>{const p=await ctx.newPage();await p.goto(BASE+r,{waitUn
     check(!!f.branch&&!!f.service&&f.date==='2026-09-15'&&!!f.time,`booking: appointment details arrive (${f.branch} / ${f.service} / ${f.date} ${f.time})`);
     check(f.consent==='yes'&&!!f.consentVersion,`booking: consent recorded (${f.consentVersion})`);
   }
-  check(/confirm|request/i.test(await p.locator('main').innerText()),'booking: confirmation shown after the POST');
+  check(/Demo complete: appointment not requested/i.test(await p.locator('main').innerText()),'booking: confirmation shown after the POST');
   await p.close();
 }
 

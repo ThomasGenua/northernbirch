@@ -49,7 +49,7 @@ export default function ApplyPage({ setPage }) {
     const ok = await submitForm("application", { product, member, branch, name, email, phone, reach, notes, consent: "yes", consentVersion: CONSENT_VERSION });
     setSending(false);
     if (ok) setSubmitted(true);
-    else setError("We could not send your application just now. Nothing has been submitted. Please try again, or call 416-465-4659 and we will take it over the phone.");
+    else setError("We could not send your application just now. Nothing has been submitted. Please try again (if you have had this page open for hours, reload it and sign in again), or call 416-465-4659 and we will take it over the phone.");
   };
 
   if (submitted) return (
@@ -58,19 +58,19 @@ export default function ApplyPage({ setPage }) {
         <div id="application-confirmation">
           <div style={{ textAlign: "center" }}>
             <div style={{ width: 80, height: 80, borderRadius: "50%", background: `${C.greenFill}12`, margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 36, color: C.greenText }}>&#10003;</span></div>
-            <h2 style={{ fontFamily: ff, fontSize: 32, color: C.navy, margin: "0 0 12px" }}>Application started</h2>
+            <h2 style={{ fontFamily: ff, fontSize: 32, color: C.navy, margin: "0 0 12px" }}>Demo complete: application not sent</h2>
             <p style={{ fontFamily: fs, fontSize: 16, color: "#666", lineHeight: 1.7, margin: "0 0 24px" }}>
-              We have your request for a {product.toLowerCase()}{branch && branch !== "No preference" ? `, for the ${branch.split(" -- ")[0]} branch` : ""}. Nothing is open yet -- an advisor picks it up from here.
+              This is a demonstration, so your request for a {product.toLowerCase()}{branch && branch !== "No preference" ? `, for the ${branch.split(" -- ")[0]} branch` : ""} was not sent to anyone and nobody will call you. To apply for real, call Northern Birch on 416-465-4659. This is how it would go on the live service:
             </p>
           </div>
           <ol style={{ fontFamily: fs, fontSize: 14, color: "#555", lineHeight: 1.8, textAlign: "left", margin: 0, paddingLeft: 20 }}>
-            <li>A Northern Birch advisor calls you, normally within one business day.</li>
+            <li>A Northern Birch advisor would call you, normally within one business day.</li>
             <li>They confirm what you need and what to bring.</li>
             <li>You finish in branch or by video, where your identity is verified and the account is opened.</li>
           </ol>
         </div>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
-          <Btn onClick={() => exportToPDF("application-confirmation", "Application Request")} color={C.accentText}>&#128190; Download a copy (PDF)</Btn>
+          <Btn onClick={() => exportToPDF("application-confirmation", "Application Request")} color={C.accentText}>&#128190; Download this demo summary (PDF)</Btn>
           <Btn outline color={C.navy} onClick={() => { setSubmitted(false); setProduct(""); setNotes(""); }}>Apply for something else</Btn>
         </div>
       </div>
@@ -81,7 +81,7 @@ export default function ApplyPage({ setPage }) {
     <section className="sec" style={{ background: C.cream, }}>
       <div style={{ maxWidth: 720, margin: "0 auto" }}>
         <SH tag="Apply" tagColor={C.greenText} title="Start your application"
-            desc="Tell us what you need and an advisor calls you back, normally within one business day. Takes about two minutes." />
+            desc="A demonstration: nothing you enter is sent. On the live service you would tell us what you need and an advisor would call you back, normally within one business day." />
 
         {/* A form that asks for a SIN is indistinguishable from a phishing page.
             This one does not, and says so where people can see it. */}

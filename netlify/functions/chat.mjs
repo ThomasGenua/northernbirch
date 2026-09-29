@@ -132,13 +132,21 @@ export default async (req) => {
   const invalid = validateMessages(body?.messages);
   if (invalid) return json({ error: invalid }, 400, origin, req.url);
 
+  // The Messages API wants the first turn to come from the user. The site's
+  // own callers open with the assistant's greeting (the chat widget) or with
+  // earlier advisor messages (the Messages threads), so drop any leading
+  // assistant turns rather than let the whole request be refused upstream.
+  const firstUser = body.messages.findIndex((m) => m.role === "user");
+  if (firstUser === -1) return json({ error: "messages must include a user message" }, 400, origin, req.url);
+  const turns = body.messages.slice(firstUser);
+
   // Build the upstream request from our own values only — nothing else from the
   // caller's body is forwarded.
   const payload = {
     model: "claude-opus-4-6",
     max_tokens: feature.maxTokens,
     system: feature.system,
-    messages: body.messages.map((m) => ({ role: m.role, content: m.content })),
+    messages: turns.map((m) => ({ role: m.role, content: m.content })),
   };
 
   try {

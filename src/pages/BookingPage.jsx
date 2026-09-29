@@ -13,18 +13,18 @@ export default function BookingPage({setPage}){
     const ok=await submitForm("booking",{branch,service,date,time,name,email,phone,consent:"yes",consentVersion:CONSENT_VERSION});
     setSending(false);
     if(ok)setSubmitted(true);
-    else setError("We could not send your request just now. Nothing has been booked. Please try again, or call us at 416-465-4659 and we will book it for you.");
+    else setError("We could not send your request just now. Nothing has been booked. Please try again (if you have had this page open for hours, reload it and sign in again), or call us at 416-465-4659 and we will book it for you.");
   };
   if(submitted)return(
     <section className="sec" style={{background:C.cream,}}><div style={{maxWidth:600,margin:"0 auto"}}>
       <div id="booking-confirmation" style={{textAlign:"center"}}>
         <div style={{width:80,height:80,borderRadius:"50%",background:`${C.greenFill}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div>
-        <h2 style={{fontFamily:ff,fontSize:32,color:C.navy}}>Appointment Requested</h2>
-        <p style={{fontFamily:fs,fontSize:16,color:"#666",lineHeight:1.7}}>We have received your request for the {branch} branch for {service}{date?` for ${date}`:""}{time?` at ${time}`:""}. You'll receive a confirmation email shortly. If you need to reschedule, call us at 416-465-4659.</p>
+        <h2 style={{fontFamily:ff,fontSize:32,color:C.navy}}>Demo complete: appointment not requested</h2>
+        <p style={{fontFamily:fs,fontSize:16,color:"#666",lineHeight:1.7}}>This is a demonstration, so nothing was sent to the {branch} branch and no confirmation email is coming. Your request was for {service}{date?` on ${date}`:""}{time?` at ${time}`:""}. To book for real, call Northern Birch on 416-465-4659.</p>
       </div>
       <div style={{display:"flex",gap:12,justifyContent:"center",marginTop:24,flexWrap:"wrap"}}>
-        <Btn onClick={()=>exportToPDF("booking-confirmation","Appointment Request")} color={C.accentText}>&#128190; Download Confirmation (PDF)</Btn>
-        <Btn outline onClick={()=>setSubmitted(false)}>Book Another Appointment</Btn>
+        <Btn onClick={()=>exportToPDF("booking-confirmation","Appointment Request")} color={C.accentText}>&#128190; Download this demo summary (PDF)</Btn>
+        <Btn outline onClick={()=>setSubmitted(false)}>Try another request</Btn>
       </div>
     </div></section>
   );

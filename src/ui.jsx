@@ -111,7 +111,7 @@ export const META={
   cards:["Credit Cards | Northern Birch Credit Union","Collabria Mastercard cards for members: cash back, low rate and travel rewards, with no-annual-fee options."],
   personal:["Personal Banking | Northern Birch Credit Union","Everyday accounts, borrowing and investing for Northern Birch members."],
   rates:["Current Rates | Northern Birch Credit Union","Today's posted mortgage, GIC, savings and lending rates at Northern Birch Credit Union."],
-  apply:["Apply | Open an Account or Start a Mortgage | Northern Birch","Start an application for a chequing account, savings, GIC, mortgage pre-approval or credit card. An advisor calls you back within one business day."],
+  apply:["Apply | Open an Account or Start a Mortgage | Northern Birch","Start an application for a chequing account, savings, GIC, mortgage pre-approval or credit card."],
   advice:["Financial Advice & Planning | Northern Birch","Retirement, investment, tax and beneficiary advice from Northern Birch's wealth team, starting with a Financial Check-Up that costs members nothing."],
   insurance:["Insurance | Northern Birch Credit Union","Travel insurance by referral to Allianz, the cover built into Collabria cards, and proposed referrals for life, home and auto. Northern Birch does not quote or sell insurance."],
   travel:["Travel & International Transfers | Northern Birch","Travel insurance by referral to Allianz, international wires sent in branch, and euro and US dollar cash by advance order."],
@@ -222,9 +222,14 @@ export async function submitForm(formName,fields){
   const body=new URLSearchParams({"bot-field":"",...fields});
   try{
     const res=await fetch(`/api/demo-intake?form=${encodeURIComponent(formName)}`,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:body.toString()});
+    // A 200 is not enough. When the password session has expired the gate
+    // answers every request, /api/* included, with its password page and a 200,
+    // which used to read as success. Only the intake's own {ok:true} counts.
+    let accepted=false;
+    if(res.ok){try{accepted=(await res.json())?.ok===true}catch(e){}}
     // which form, and whether it went through -- never any of the fields
-    track("form_submit",{form:formName,result:res.ok?"ok":"failed"});
-    return res.ok;
+    track("form_submit",{form:formName,result:accepted?"ok":"failed"});
+    return accepted;
   }catch(e){track("form_submit",{form:formName,result:"failed"});return false}
 }
 

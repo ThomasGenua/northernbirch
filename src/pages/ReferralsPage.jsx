@@ -14,7 +14,7 @@ export default function ReferralsPage(){
     const ok=await submitForm("referral",{yourName,memberNo,friendName,friendEmail,consent:"yes",consentVersion:CONSENT_VERSION});
     setSending(false);
     if(ok)setSubmitted(true);
-    else setError("We could not send that referral. Please try again, or call us at 416-465-4659.");
+    else setError("We could not send that referral. Please try again (if you have had this page open for hours, reload it and sign in again), or call us at 416-465-4659.");
   };
   return(
     <section className="sec" style={{background:C.birchLight,}}>
@@ -40,7 +40,7 @@ export default function ReferralsPage(){
           <ConsentNotice id="referral-consent" checked={consent} onChange={setConsent} purpose="so Northern Birch could contact the person you are referring" extra="You would also confirm you have their permission to share their name and email."/>
           {error&&<div style={errBox}>{error}</div>}
           <button onClick={submit} disabled={sending||!canSubmit} style={{width:"100%",background:(sending||!canSubmit)?"#ccc":C.amber,border:"none",borderRadius:12,padding:"16px",cursor:(sending||!canSubmit)?"default":"pointer",fontFamily:fs,fontSize:16,color:"#fff",fontWeight:700}}>{sending?"Sending...":"Send Referral"}</button>
-        </div>:<div style={{textAlign:"center",padding:40}}><div style={{width:80,height:80,borderRadius:"50%",background:`${C.greenFill}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div><h3 style={{fontFamily:ff,fontSize:28,color:C.navy}}>Referral Sent!</h3><p style={{fontFamily:fs,fontSize:15,color:"#666"}}>Your friend will receive an invitation email. Once they join and complete a qualifying transaction, you'll both earn $50.</p><Btn onClick={()=>setSubmitted(false)}>Refer Another Friend</Btn></div>}
+        </div>:<div style={{textAlign:"center",padding:40}}><div style={{width:80,height:80,borderRadius:"50%",background:`${C.greenFill}12`,margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:36,color:C.greenText}}>&#10003;</span></div><h3 style={{fontFamily:ff,fontSize:28,color:C.navy}}>Demo complete: referral not sent</h3><p style={{fontFamily:fs,fontSize:15,color:"#666"}}>This is a demonstration, so nothing was sent to your friend and no invitation email is coming. To refer someone for real, ask any Northern Birch branch or call 416-465-4659.</p><Btn onClick={()=>setSubmitted(false)}>Try another referral</Btn></div>}
       </div>
     </section>
   );

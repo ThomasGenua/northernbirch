@@ -59,6 +59,12 @@ export const RULES = [
     why: 'names a vendor nobody has confirmed Northern Birch uses' },
   { re: /encrypted end-to-end|stored in Canada/gi,
     why: 'a data-handling claim the demo cannot make: AI messages are processed by Anthropic in the US' },
+  { re: /claim #[A-Z]{2,}-\d|claim (?:has been )?approved|will be deposited/gi,
+    why: 'Northern Birch does not handle or approve claims; the insurer does' },
+  { re: /(?:international )?transfer (?:to [\w ]+ )?(?:has been )?(?:delivered|received)|transfer sent!/gi,
+    why: 'international wires are sent in branch; nothing here is delivered or sent online' },
+  { re: /product recommendations|(?:will|can) receive an? (?:invitation|confirmation) email|advisor calls you|(?:you\u2019|you')ll receive a confirmation/gi,
+    why: 'a promise the demo cannot keep: the assistant does not recommend, and no email is sent or call made' },
   { re: /(?:sign|click) (?:now|here) to activate coverage/gi,
     why: 'implies binding coverage' },
 ];
