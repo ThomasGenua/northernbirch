@@ -3,7 +3,7 @@
 // A review of the landing page found three things the other suites could not
 // see, because they measure what exists rather than what a person can use:
 //   - on a phone the menu button was navy on the navy hero: present in the DOM,
-//     invisible on screen, and "Access demo" lives inside that menu;
+//     invisible on screen, and "Try the demo" lives inside that menu;
 //   - the 163px cookie bar covered all four hero buttons, and the round chat
 //     button sat on top of the hero paragraph;
 //   - the outlined hero button was #1F6FA5 on navy, about 2.8:1.
@@ -86,14 +86,22 @@ for (const [label, vp] of [['iPhone 14 (390x844)', { width: 390, height: 844 }],
     return new Set([...range.getClientRects()].map((r) => Math.round(r.top))).size;   // one entry per rendered line
   });
   check(badgeLines <= 1, `${label}: the "since 1954" badge stays on one line (${badgeLines})`);
-  const introPara = await p.evaluate(() => { const r = [...document.querySelectorAll('main p')][0].getBoundingClientRect(); return { top: r.top, bottom: r.bottom, left: r.left, right: r.right }; });
-  check(g.launcher && !overlap(introPara, g.launcher), `${label}: nor on the hero paragraph`);
+  // text lines, not the paragraph's box: the hero text keeps a right-hand gutter for the chat button
+  const textLines = await p.evaluate(() => {
+    const out = [];
+    for (const e of [...document.querySelectorAll('main section p')].slice(0, 2)) {
+      const r = document.createRange(); r.selectNodeContents(e);
+      for (const c of r.getClientRects()) out.push({ top: c.top, bottom: c.bottom, left: c.left, right: c.right });
+    }
+    return out;
+  });
+  check(g.launcher && textLines.every((l) => !overlap(l, g.launcher)), `${label}: nor on any line of the hero text (${textLines.length} lines checked)`);
 
-  // the menu still works, and it is where "Access demo" is
+  // the menu still works, and it is where "Try the demo" is
   await p.locator('button', { hasText: 'Essential only' }).click();
   await menu.click();
   await p.waitForTimeout(400);
-  check(await p.locator('button:visible', { hasText: 'Access demo' }).first().isVisible(), `${label}: opening the menu shows Access demo`);
+  check(await p.locator('button:visible', { hasText: 'Try the demo' }).first().isVisible(), `${label}: opening the menu shows Try the demo`);
   await ctx.close();
 }
 {

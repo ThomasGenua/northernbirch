@@ -39,7 +39,6 @@
     "Tools": "Rīki",
     "Rates": "Likmes",
     "Community": "Kopiena",
-    "Access demo": "Atvērt demo",
     "Credit Union": "Krājaizdevu sabiedrība",
     "Your whole financial life.": "Visa jūsu finanšu dzīve.",
     "Under one Birch.": "Zem viena bērza.",
@@ -108,6 +107,10 @@
     "Send": "Sūtīt",
     "Book Appointment": "Rezervēt tikšanos",
     "Coming Soon": "Drīzumā",
-    "Parts of this site are still only in English. Call us and we will serve you in your language.": "Daļa šīs vietnes pašlaik ir pieejama tikai angļu valodā. Zvaniet mums, un mēs jūs apkalposim latviešu valodā."
+    "Parts of this site are still only in English. Call us and we will serve you in your language.": "Daļa šīs vietnes pašlaik ir pieejama tikai angļu valodā. Zvaniet mums, un mēs jūs apkalposim latviešu valodā.",
+    "Try the demo": "Izmēģiniet demo",
+    "Questions? Call": "Jautājumi? Zvaniet",
+    "or": "vai",
+    "find a branch": "atrodiet filiāli"
   }
 }

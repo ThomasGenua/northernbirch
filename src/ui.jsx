@@ -24,6 +24,8 @@ export const RATE_TABLES=ratesData.tables;
 // northernbirchcu.com. /rates marks every other row illustrative.
 const CONFIRMED_RATES=new Set(Object.keys(ratesData.verified).filter(k=>!k.startsWith("_")));
 export const rateConfirmed=(table,term)=>CONFIRMED_RATES.has(ratesData.links[table]?.[term]);
+// The same question for a named rate (the home page cards quote m3, mcLow, chq, gic1).
+export const rateKeyConfirmed=(key)=>CONFIRMED_RATES.has(key);
 // "1 September 2026" -- the date members see beside the rates.
 export function ratesEffectiveLabel(){
   const d=new Date(`${RATES_EFFECTIVE}T00:00:00`);
@@ -33,10 +35,10 @@ export function ratesEffectiveLabel(){
 
 // ============ CORE BANKING PRODUCTS (homepage cards, nav, search) ============
 export const BANKING=[
-  {k:"mortgages",t:"Mortgages",p:"mortgages",c:C.green,tc:C.greenText,d:"Fixed, variable, and high-ratio mortgages -- including co-op apartment financing few lenders offer.",rate:RATE.m3,rl:"3-year closed",b:[`Free pre-approval, ${ratesData.guarantee}`,"Co-op and multi-unit financing","C$3,500 cash back offer available"],cta:"Explore Mortgages",kw:"mortgage home loan pre-approval renewal refinance fixed variable high ratio co-op heloc"},
-  {k:"cards",t:"Credit Cards",p:"cards",c:C.purple,tc:C.purple,d:"Collabria Mastercard cards with cash back, low-rate, and travel rewards options.",rate:RATE.mcLow,rl:"Low Rate APR",b:["No-annual-fee options","Cash back up to 2%","Lock and unlock in the app"],cta:"Apply for a Credit Card",kw:"credit card mastercard collabria cash back rewards low rate apply"},
-  {k:"chequing",t:"Chequing Accounts",p:"accounts",c:C.accent,tc:C.accentText,d:"No-fee everyday banking with unlimited e-Transfers and free member cheques.",rate:RATE.chq,rl:"Monthly fee",b:["$0 monthly fee for members","Unlimited e-Transfers","THE EXCHANGE ATM network"],cta:"Compare Accounts",kw:"chequing checking everyday banking debit e-transfer account fees student senior"},
-  {k:"savings",t:"Savings & GICs",p:"accounts",c:C.amber,tc:C.amberText,d:"High-interest savings, GIC terms from 90 days to 5 years, and registered TFSA, RRSP, FHSA and RESP plans.",rate:RATE.gic1,rl:"1-year GIC",b:["No minimum balance","GIC terms from 90 days","TFSA, RRSP, FHSA, RESP eligible"],cta:"Compare Accounts",kw:"savings gic tfsa rrsp fhsa resp rdsp registered high interest term deposit"},
+  {k:"mortgages",t:"Mortgages",p:"mortgages",c:C.green,tc:C.greenText,d:"Fixed, variable, and high-ratio mortgages -- including co-op apartment financing few lenders offer.",rk:"m3",rate:RATE.m3,rl:"3-year closed",b:[`Free pre-approval, ${ratesData.guarantee}`,"Co-op and multi-unit financing","C$3,500 cash back offer available"],cta:"Explore Mortgages",kw:"mortgage home loan pre-approval renewal refinance fixed variable high ratio co-op heloc"},
+  {k:"cards",t:"Credit Cards",p:"cards",c:C.purple,tc:C.purple,d:"Collabria Mastercard cards with cash back, low-rate, and travel rewards options.",rk:"mcLow",rate:RATE.mcLow,rl:"Low Rate APR",b:["No-annual-fee options","Cash back up to 2%","Lock and unlock in the app"],cta:"Apply for a Credit Card",kw:"credit card mastercard collabria cash back rewards low rate apply"},
+  {k:"chequing",t:"Chequing Accounts",p:"accounts",c:C.accent,tc:C.accentText,d:"No-fee everyday banking with unlimited e-Transfers and free member cheques.",rk:"chq",rate:RATE.chq,rl:"Monthly fee",b:["$0 monthly fee for members","Unlimited e-Transfers","THE EXCHANGE ATM network"],cta:"Compare Accounts",kw:"chequing checking everyday banking debit e-transfer account fees student senior"},
+  {k:"savings",t:"Savings & GICs",p:"accounts",c:C.amber,tc:C.amberText,d:"High-interest savings, GIC terms from 90 days to 5 years, and registered TFSA, RRSP, FHSA and RESP plans.",rk:"gic1",rate:RATE.gic1,rl:"1-year GIC",b:["No minimum balance","GIC terms from 90 days","TFSA, RRSP, FHSA, RESP eligible"],cta:"Compare Accounts",kw:"savings gic tfsa rrsp fhsa resp rdsp registered high interest term deposit"},
   {k:"invest",t:"Investments",p:"personal",c:C.navy,tc:C.navy,d:"Mutual funds, Qtrade direct investing, and VirtualWealth portfolios inside your registered accounts.",rate:"3",rl:"ways to invest, through Aviso Wealth",b:["Self-directed or advisor-managed","Held in TFSA, RRSP or cash","Aviso Wealth partnership"],cta:"Explore Investing",kw:"invest investments portfolio mutual funds qtrade virtualwealth etf stocks wealth retirement"},
 ];
 
@@ -84,7 +86,7 @@ export const ROUTES={
   aiadvisor:"/ai-advisor",analyzer:"/coverage-analyzer",healthcheck:"/financial-health-check",
   lifesim:"/life-event-simulator",docreader:"/policy-document-reader",tax:"/tax-optimizer",
   messages:"/messages",privacy:"/privacy",accessibility:"/accessibility",complaints:"/complaints",
-  terms:"/terms",leadership:"/leadership",underwriters:"/underwriters",
+  terms:"/terms",leadership:"/leadership",underwriters:"/underwriters",proposal:"/proposal",
   borrowing:"/borrowing",keskus:"/keskus",phasedask:"/phased-ask",
 };
 export const PATH_TO_PAGE=Object.fromEntries(Object.entries(ROUTES).map(([k,v])=>[v,k]));
@@ -145,6 +147,7 @@ export const META={
   borrowing:["Borrowing | Mortgages, Loans, Co-ops & Cards | Northern Birch","Mortgages, personal loans and lines of credit, co-op and co-ownership mortgages, and Collabria credit cards from a Toronto credit union."],
   keskus:["KESKUS Branch | Northern Birch Credit Union","Our new flagship branch at the KESKUS International Estonian Centre in Toronto: what we plan, and how to reach us until it opens."],
   phasedask:["Phased Ask | Northern Birch Credit Union proposal","Phase one: insurance by referral only, with no licensing spend. Phase two: licensing, only once referral volume justifies it. A discussion document for Northern Birch."],
+  proposal:["The Proposal | Northern Birch Credit Union proposal","The Oodler proposal for Northern Birch, in reading order: business case, who underwrites what, the phased ask, the KESKUS launch and the demo member area. A discussion document."],
   underwriters:["Underwriter Matrix | Northern Birch Credit Union proposal","Who underwrites each insurance line, who holds the licence, who bears the cost and whether it is live today or proposed. A discussion document for Northern Birch."],
 };
 export const META_DEFAULT=["Northern Birch Credit Union","A full-service Toronto credit union: everyday banking, mortgages, credit cards, investments and insurance."];
@@ -158,7 +161,7 @@ export const META_NOTFOUND=["Page not found | Northern Birch Credit Union","That
 // runs JavaScript reads what the app sets, and writing "index, follow" over
 // the prerendered noindex would undo it. check-routes.mjs asserts this stays
 // equal to the EXCLUDE list in scripts/generate-seo-files.mjs.
-export const NOINDEX_PAGES=new Set(["dashboard","messages","leadership","underwriters","phasedask"]);
+export const NOINDEX_PAGES=new Set(["dashboard","messages","leadership","underwriters","phasedask","proposal"]);
 
 // While this site is an Oodler proposal rather than a live service, no page on
 // it should be indexed under Northern Birch's name: a lookalike in search

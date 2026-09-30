@@ -132,7 +132,7 @@ for(const [route,label] of [['/ai-advisor','AI advisor'],['/coverage-analyzer','
 // ---------- 9. Login + notifications overlays ----------
 {
   const p=await newPage('/');
-  await p.locator('button',{hasText:/Access demo/i}).first().click(); await p.waitForTimeout(500);
+  await p.locator('button',{hasText:/Try the demo/i}).first().click(); await p.waitForTimeout(500);
   check(await p.locator('[role="dialog"]').count()>=1,'login: opens a dialog');
   await p.keyboard.press('Escape'); await p.waitForTimeout(400);
   check(await p.locator('[role="dialog"]').count()===0,'login: Escape closes it');

@@ -41,6 +41,7 @@ export default function UnderwritersPage({setPage}){
 
   return <section className="sec" style={{background:C.cream}}>
     <div style={{maxWidth:1200,margin:"0 auto"}}>
+      <button onClick={()=>setPage("proposal")} style={{background:"none",border:"none",padding:"8px 0",minHeight:36,margin:"0 0 6px",cursor:"pointer",fontFamily:fs,fontSize:13,fontWeight:700,color:C.accentText}}>&larr; The proposal, in reading order</button>
       <SH tag="For discussion" tagColor={C.purple} title="Underwriter matrix"
           desc={`Who underwrites each insurance line, who holds the licence, who pays, and what Northern Birch earns. ${live.length} live today, ${proposed.length} proposed by Oodler. Reviewed ${data.reviewed}.`}/>
 
