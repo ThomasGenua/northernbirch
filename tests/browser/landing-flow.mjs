@@ -111,5 +111,23 @@ for (const [w, label] of [[1100, 'laptop 1100'], [1280, 'desktop 1280'], [1440, 
   await ctx.close();
 }
 
+// ---------- the lower half of the page explains itself and tiles evenly ----------
+{
+  const { ctx, p } = await open('/', { width: 1440, height: 900 });
+  const info = await p.evaluate(() => {
+    const sections = [...document.querySelectorAll('main section')];
+    const sec = (title) => sections.find((x) => [...x.querySelectorAll('h2')].some((h) => h.innerText.trim() === title));
+    const rows = (x) => { const tops = {}; for (const b of x.querySelectorAll('button')) { const t = Math.round(b.getBoundingClientRect().top); tops[t] = (tops[t] || 0) + 1; } return Object.values(tops); };
+    const tools = sec('Try the tools'), more = sec('More from Northern Birch');
+    const invest = [...document.querySelectorAll('main h3')].find((h) => h.innerText.trim() === 'Investments')?.closest('button');
+    return { tools: tools ? { rows: rows(tools), blurb: tools.querySelector('p')?.innerText } : null, more: more ? { rows: rows(more) } : null, invest: invest?.innerText.replace(/\s+/g, ' ') };
+  });
+  check(info.tools && info.tools.rows.length === 1 && info.tools.rows[0] === 6, `the six tool tiles have a heading and sit in one row (${JSON.stringify(info.tools?.rows)})`);
+  check(/General information, not advice/.test(info.tools?.blurb || ''), 'and the heading says what they are (free, general information, not advice)');
+  check(info.more && info.more.rows.length === 2 && info.more.rows.every((n) => n === 5), `the ten directory tiles fill two rows of five, none left alone (${JSON.stringify(info.more?.rows)})`);
+  check(info.invest && !/\b3 ways to invest/.test(info.invest) && /Aviso Wealth/.test(info.invest), `the Investments card no longer leads with a lone "3" (${info.invest?.slice(0, 90)})`);
+  await ctx.close();
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 await br.close();

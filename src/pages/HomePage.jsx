@@ -125,6 +125,9 @@ export default function HomePage({setPage,lang}){const mob=useMob();
     <BankingProducts setPage={setPage} lang={lang}/>
     <AdviceBand setPage={setPage} lang={lang}/>
     <section style={{background:C.cream,padding:"64px 24px"}}><div style={{maxWidth:1320,margin:"0 auto"}}>
+      {/* The six tiles below had no heading, so a visitor could not tell they were free tools. */}
+      <h2 style={{fontFamily:ff,fontSize:mob?24:28,color:C.navy,margin:"0 0 6px"}}>{T("Try the tools")}</h2>
+      <p style={{fontFamily:fs,fontSize:14,color:"#555",lineHeight:1.7,margin:"0 0 20px",maxWidth:640}}>{T("Plain-language tools that work from what you tell them. General information, not advice.")}</p>
       <div className="grid-6-3-2" style={{gap:12}}>
         {[{l:"AI Insurance Advisor",p:"aiadvisor",c:C.purple},{l:"Life Event Simulator",p:"lifesim",c:C.amber},{l:"Coverage Analyzer",p:"analyzer",c:C.accent},{l:"Health Check",p:"healthcheck",c:C.green},{l:"Document Reader",p:"docreader",c:C.navy},{l:"My Dashboard",p:"dashboard",c:C.red}].map((qi,i)=>
           <Fade key={i} delay={i*0.05}><Clickable onClick={()=>setPage(qi.p)} style={{background:"#fff",borderRadius:16,padding:"24px 20px",border:"1px solid #eee",cursor:"pointer",textAlign:"center",transition:"all 0.3s",borderTop:`3px solid ${qi.c}`}}>
@@ -134,7 +137,9 @@ export default function HomePage({setPage,lang}){const mob=useMob();
       </div>
     </div></section>
     <section style={{background:C.cream,padding:"0 24px 64px"}}><div style={{maxWidth:1320,margin:"0 auto"}}>
-      <div className="grid-4-2-1" style={{gap:12}}>
+      <h2 style={{fontFamily:ff,fontSize:mob?24:28,color:C.navy,margin:"0 0 16px"}}>{T("More from Northern Birch")}</h2>
+      {/* ten tiles: five across gives two full rows, where four across left two alone on the third */}
+      <div className="grid-5-2-1" style={{gap:12}}>
         {[{l:"Insurance",p:"insurance",d:"Travel and card cover; more lines proposed",c:C.accent},{l:"Financial Advice",p:"advice",d:"Planning, retirement, wealth, beneficiaries",c:C.greenText},{l:"Travel & FX",p:"travel",d:"Travel cover, wires, foreign cash",c:C.amber},{l:"Business",p:"business",d:"Accounts, lending, proposed benefits",c:C.green},{l:"Digital Banking",p:"digital",d:"Dashboard, app, planning tools",c:C.accent},{l:"Estates",p:"estate",d:"Settling a member's accounts",c:C.purple},{l:"Rates",p:"rates",d:"Mortgage, GIC, lending rates",c:C.green},{l:"Blog & News",p:"blog",d:"Articles, education, updates",c:C.navy},{l:"Tax & Savings",p:"tax",d:"RRSP, TFSA, FHSA, RESP",c:C.green},{l:"Referral Program",p:"referrals",d:"Earn $50 per referral",c:C.amber}].map((s,i)=>
           <Fade key={i} delay={i*0.04}><Clickable onClick={()=>setPage(s.p)} style={{background:"#fff",borderRadius:16,padding:"24px",border:"1px solid #eee",cursor:"pointer",borderLeft:`4px solid ${s.c}`}}>
             <h4 style={{fontFamily:fs,fontSize:15,color:C.navy,margin:"0 0 4px",fontWeight:700}}>{s.l}</h4>
