@@ -9,7 +9,8 @@ export default function LeadershipPage({setPage}){
   return(
     <section style={{background:C.cream,padding:isMob?"60px 16px":"80px 24px",paddingTop:isMob?80:100}}>
       <div style={{maxWidth:1100,margin:"0 auto"}}>
-        <SH tag="For Northern Birch Leadership" tagColor={C.navy} title="The business case for digital transformation" desc="Everything Anita Saar and the Board need to evaluate this partnership. Costs, legal framework, value proposition, and implementation plan."/>
+        <button onClick={()=>setPage("proposal")} style={{background:"none",border:"none",padding:"8px 0",minHeight:36,margin:"0 0 6px",cursor:"pointer",fontFamily:fs,fontSize:13,fontWeight:700,color:C.accentText}}>&larr; The proposal, in reading order</button>
+      <SH tag="For Northern Birch Leadership" tagColor={C.navy} title="The business case for digital transformation" desc="Everything Anita Saar and the Board need to evaluate this partnership. Costs, legal framework, value proposition, and implementation plan."/>
         <div style={{display:"flex",gap:6,marginBottom:32,flexWrap:"wrap"}}>
           {tabs.map(tb=><button key={tb.v} onClick={()=>setTab(tb.v)} style={{background:tab===tb.v?C.navy:"#fff",border:tab===tb.v?"none":"1px solid #ddd",borderRadius:10,padding:isMob?"10px 14px":"12px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,fontWeight:tab===tb.v?700:500,color:tab===tb.v?"#fff":C.navy,transition:"all 0.3s"}}>{tb.l}</button>)}
         </div>

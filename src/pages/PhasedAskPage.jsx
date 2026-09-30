@@ -29,6 +29,7 @@ const cell = (v) => v===TBC ? <em style={{color:C.amberText}}>{v}</em> : v;
 export default function PhasedAskPage({setPage}){
   return <section className="sec" style={{background:C.cream}}>
     <div style={{maxWidth:1100,margin:"0 auto"}}>
+      <button onClick={()=>setPage("proposal")} style={{background:"none",border:"none",padding:"8px 0",minHeight:36,margin:"0 0 6px",cursor:"pointer",fontFamily:fs,fontSize:13,fontWeight:700,color:C.accentText}}>&larr; The proposal, in reading order</button>
       <SH tag="For discussion" tagColor={C.purple} title="The ask, in two phases"
           desc="Phase one is referral only and costs Northern Birch nothing in licensing. Phase two, licensing, happens only if the referral volume from phase one justifies it."/>
       <div style={{display:"grid",gap:20}}>

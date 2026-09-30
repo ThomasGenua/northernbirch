@@ -91,7 +91,7 @@ for (const [label, answer] of BAD_ANSWERS) {
 // ---------- 3. the member area: no credentials asked for ----------
 {
   const { ctx, p } = await newPage('/');
-  await p.locator('button', { hasText: 'Access demo' }).first().click();
+  await p.locator('button', { hasText: 'Try the demo' }).first().click();
   await p.waitForTimeout(500);
   const d = p.locator('[role="dialog"]');
   const dt = (await d.innerText()).replace(/\s+/g, ' ');

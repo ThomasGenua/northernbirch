@@ -28,6 +28,7 @@ const UnderwritersPage = lazy(() => import('./pages/UnderwritersPage.jsx'));
 const BorrowingPage = lazy(() => import('./pages/BorrowingPage.jsx'));
 const KeskusPage = lazy(() => import('./pages/KeskusPage.jsx'));
 const PhasedAskPage = lazy(() => import('./pages/PhasedAskPage.jsx'));
+const ProposalPage = lazy(() => import('./pages/ProposalPage.jsx'));
 const RatesPage = lazy(() => import('./pages/RatesPage.jsx'));
 const BlogPage = lazy(() => import('./pages/BlogPage.jsx'));
 const MobileAppPage = lazy(() => import('./pages/MobileAppPage.jsx'));
@@ -78,7 +79,7 @@ function SearchOverlay({open,onClose,setPage}){const mob=useMob();
     {title:"Blog & News",page:"blog",cat:"Education"},
     {title:"Member Dashboard",page:"dashboard",cat:"Banking",kw:"member dashboard demo accounts balances policies insurance dashboard"},
     {title:"Privacy Policy",page:"privacy",cat:"Legal"},{title:"Accessibility (AODA)",page:"accessibility",cat:"Legal"},
-    {title:"Complaint Resolution",page:"complaints",cat:"Legal"},{title:"Terms of Use",page:"terms",cat:"Legal"},{title:"Business Case (For Leadership)",page:"leadership",cat:"Leadership"},
+    {title:"Complaint Resolution",page:"complaints",cat:"Legal"},{title:"Terms of Use",page:"terms",cat:"Legal"},{title:"Business Case (For Leadership)",page:"leadership",cat:"Leadership"},{title:"The Proposal (reading order)",page:"proposal",cat:"Leadership",kw:"proposal oodler pitch for northern birch leadership reading order"},{title:"Underwriter Matrix",page:"underwriters",cat:"Leadership",kw:"underwriter matrix carrier licence who underwrites proposed live"},{title:"The Phased Ask",page:"phasedask",cat:"Leadership",kw:"phased ask phase one referral phase two licensing"},
   ];
   // Rank by how the query matched, not by index order: typing "mortgage" used
   // to put "Mortgage Protection" (an insurance page) above "Mortgages".
@@ -311,7 +312,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
   if(page!==lastPage){setLastPage(page);setMobileMenu(false);setMenu(null)}
   const isDark=page==="home"&&!sc;
   // Banking leads: chequing, savings, mortgages and cards are what most visitors arrive looking for.
-  const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Borrowing",p:"borrowing",d:"Mortgages, loans, lines of credit, co-ops & cards"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Advice",p:"advice"},{l:"Apply",p:"apply"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"calculators"},{l:"Rates",p:"rates"},{l:"Community",p:"community"}];
+  const nav=[{l:"Banking",p:"personal",kids:[{l:"Chequing & Savings",p:"accounts",d:"No-fee everyday accounts, GICs, TFSA & RRSP"},{l:"Borrowing",p:"borrowing",d:"Mortgages, loans, lines of credit, co-ops & cards"},{l:"Mortgages",p:"mortgages",d:"Fixed, variable, high-ratio & co-op financing"},{l:"Credit Cards",p:"cards",d:"Collabria cash back, low rate & travel rewards"},{l:"Personal Banking",p:"personal",d:"The full member line-up in one place"},{l:"Rates",p:"rates",d:"Today's mortgage, GIC and lending rates"}]},{l:"Insurance",p:"insurance"},{l:"Advice",p:"advice"},{l:"Apply",p:"apply"},{l:"Travel",p:"travel"},{l:"Business",p:"business"},{l:"Digital",p:"digital"},{l:"Tools",p:"calculators"},{l:"Rates",p:"rates"},{l:"Community",p:"community"},{l:"Contact",p:"contact"}];
   const langLabels={en:"EN",est:"EST",lat:"LAT"};
   const langFull={en:"English",est:"Eesti",lat:"Latviesu"};
   return(<>
@@ -354,7 +355,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
           </div>
           <button onClick={onSearch} aria-label="Search Northern Birch" style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:isDark?"rgba(255,255,255,0.6)":"#6B6B6B"}}><span aria-hidden="true">&#128269;</span></button>
           <button onClick={onNotifications} aria-label="Notifications" style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:isDark?"rgba(255,255,255,0.6)":"#6B6B6B",position:"relative"}}><span aria-hidden="true">&#128276;</span><span aria-hidden="true" style={{position:"absolute",top:4,right:4,width:8,height:8,borderRadius:"50%",background:C.red,border:"2px solid "+(isDark?C.dark:"#fdfbf7")}}/></button>
-          <button onClick={onLogin} style={{background:C.accentText,border:"none",borderRadius:8,padding:"7px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#fff",fontWeight:600}}>{t("Access demo",lang)}</button>
+          <button onClick={onLogin} style={{background:C.accentText,border:"none",borderRadius:8,padding:"7px 16px",cursor:"pointer",fontFamily:fs,fontSize:12,color:"#fff",fontWeight:600}}>{t("Try the demo",lang)}</button>
         </div>
         <div className="nav-narrow">
           <div style={{position:"relative"}}>
@@ -385,7 +386,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
         {(n.kids||[]).map(k=><button key={k.l} onClick={()=>setPage(k.p)} style={{display:"block",width:"100%",textAlign:"left",background:page===k.p?`${C.accentText}10`:"transparent",border:"none",padding:"14px 20px",borderRadius:12,fontFamily:fs,fontSize:15,color:page===k.p?C.accent:C.navy,fontWeight:page===k.p?700:500,marginBottom:4}}>{t(k.l,lang)}</button>)}
       </div>)}
       <div style={{borderTop:"1px solid #eee",marginTop:12,paddingTop:12}}>
-        <button onClick={()=>{onLogin();setMobileMenu(false)}} style={{display:"block",width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,marginBottom:8}}>{t("Access demo",lang)}</button>
+        <button onClick={()=>{onLogin();setMobileMenu(false)}} style={{display:"block",width:"100%",background:C.accentText,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700,marginBottom:8}}>{t("Try the demo",lang)}</button>
         <button onClick={()=>setPage("booking")} style={{display:"block",width:"100%",background:C.navy,border:"none",borderRadius:12,padding:"14px",fontFamily:fs,fontSize:15,color:"#fff",fontWeight:700}}>{t("Book Appointment",lang)}</button>
       </div>
     </div>}
@@ -410,7 +411,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
 //
 // Remove this, PROPOSAL_NOINDEX in ui.jsx, and the password gate together --
 // and only with written permission to use the marks.
-function ProposalBanner(){
+function ProposalBanner({setPage}){
   // Dark on purpose. The nav is position:fixed and renders white and
   // transparent over the dark heroes, so it floats on top of this band's
   // background -- a light band made the nav's own text invisible (13 axe
@@ -423,6 +424,7 @@ function ProposalBanner(){
         Not a live Northern Birch Credit Union service. Nothing here is an offer,
         a quote, or advice, and no product shown can be bought or bound on this site.
       </span>
+      {" "}<button onClick={()=>setPage("proposal")} style={{background:"none",border:"none",padding:0,margin:0,cursor:"pointer",font:"inherit",fontWeight:700,color:"#fff",textDecoration:"underline",textUnderlineOffset:3}}>Read the proposal &rarr;</button>
     </p>
   </div>;
 }
@@ -447,7 +449,7 @@ function Footer({setPage}){const mob=useMob();
           {t:"Tools",items:[["Compare Cover","compare"],["Mortgage Calc","calculators"],["Insurance Needs","calculators"],["Book Appointment","booking"],["Refer a Friend","referrals"],["My Dashboard","dashboard"],["Mobile App","mobileapp"]]},
           {t:"Banking",items:[["Apply Online","apply"],["Chequing & Savings","accounts"],["Borrowing","borrowing"],["Mortgages","mortgages"],["Credit Cards","cards"],["GICs & Registered","accounts"],["Investments","personal"],["Rates","rates"]]},
           {t:"Advice",items:[["Financial Advice","advice"],["Financial Check-Up","advice"],["Retirement Planning","advice"],["Estates","estate"],["Tax Planning","tax"],["Book an Advisor","booking"]]},
-          {t:"About",items:[["Community","community"],["Blog & News","blog"],["Glossary","glossary"],["Contact & Branches","contact"],["KESKUS Branch","keskus"]]},
+          {t:"About",items:[["Community","community"],["Blog & News","blog"],["Glossary","glossary"],["Contact & Branches","contact"],["KESKUS Branch","keskus"],["The Proposal","proposal"]]},
         ].map((col,i)=><div key={i}><h4 style={{fontFamily:fs,fontSize:11,color:"rgba(255,255,255,0.6)",margin:"0 0 10px",textTransform:"uppercase",letterSpacing:1}}>{col.t}</h4>{col.items.map(([l,p],ii)=><div key={ii}><button onClick={()=>setPage(p)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.6)",fontFamily:fs,fontSize:12,padding:"2px 0",cursor:"pointer",display:"block"}}>{l}</button></div>)}</div>)}
       </div>
       {/* Canadian Legal Links */}
@@ -578,7 +580,7 @@ export default function App({ssrPath}){
     lifesim:<LifeSimPage setPage={setPage}/>,docreader:<DocReaderPage setPage={setPage}/>,
     tax:<TaxPage setPage={setPage}/>,messages:<MessagesPage setPage={setPage}/>,
     privacy:<PrivacyPage lang={lang}/>,accessibility:<AccessibilityPage lang={lang}/>,complaints:<ComplaintsPage lang={lang}/>,terms:<TermsPage lang={lang}/>,leadership:<LeadershipPage setPage={setPage}/>,underwriters:<UnderwritersPage setPage={setPage}/>,
-    borrowing:<BorrowingPage setPage={setPage} lang={lang}/>,keskus:<KeskusPage setPage={setPage} lang={lang}/>,phasedask:<PhasedAskPage setPage={setPage}/>,
+    borrowing:<BorrowingPage setPage={setPage} lang={lang}/>,keskus:<KeskusPage setPage={setPage} lang={lang}/>,phasedask:<PhasedAskPage setPage={setPage}/>,proposal:<ProposalPage setPage={setPage}/>,
     // Has no route on purpose: pageFromPath returns it for any URL that is not
     // in ROUTES.
     notfound:<NotFoundPage setPage={setPage}/>,
@@ -588,7 +590,7 @@ export default function App({ssrPath}){
       <div style={{background:C.cream,minHeight:"100vh"}}>
         <a href="#main" className="skip-link">Skip to main content</a>
         <Nav page={page} setPage={setPage} onSearch={()=>setSearch(true)} onLogin={()=>setLogin(true)} onNotifications={()=>setNotifs(true)} lang={lang} setLang={setLang}/>
-        <ProposalBanner/>
+        <ProposalBanner setPage={setPage}/>
         {/* The banner above already clears the fixed nav, so this no longer
             needs the 72px of top padding it used to carry. */}
         {lang!=="en"&&<div style={{background:C.birchLight,borderBottom:`1px solid ${C.birch}`,padding:"12px 24px"}}>

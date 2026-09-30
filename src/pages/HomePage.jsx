@@ -1,5 +1,6 @@
 import React from "react";
-import { BANKING, BirchTrees, Btn, C, Clickable, Cornflower, Daisy, Fade, FlagStripe, SH, ff, fs, ratesEffectiveLabel, t, track, useMob, useW } from '../ui.jsx';
+import facts from '../../content/facts.json';
+import { BANKING, rateKeyConfirmed, BirchTrees, Btn, C, Clickable, Cornflower, Daisy, Fade, FlagStripe, SH, ff, fs, ratesEffectiveLabel, t, track, useMob, useW } from '../ui.jsx';
 
 
 // ============ BANKING PRODUCTS (homepage) ============
@@ -14,9 +15,10 @@ function BankingProducts({setPage,lang}){
           <Clickable onClick={()=>{track("product_card",{product:b.k,from:"home"});setPage(b.p)}} style={{background:"#fff",borderRadius:20,padding:24,border:"1px solid #EDE7D8",borderTop:`3px solid ${b.c}`,cursor:"pointer",height:"100%",display:"flex",flexDirection:"column"}}>
             <h3 style={{fontFamily:ff,fontSize:21,color:C.navy,margin:"0 0 8px"}}>{T(b.t)}</h3>
             <p style={{fontFamily:fs,fontSize:13,color:"#666",lineHeight:1.65,margin:"0 0 16px"}}>{b.d}</p>
-            <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:16}}>
+            <div style={{display:"flex",alignItems:"baseline",gap:"2px 6px",marginBottom:16,flexWrap:"wrap"}}>
               <span style={{fontFamily:ff,fontSize:28,color:b.tc||b.c,fontWeight:700}}>{b.rate}</span>
-              <span style={{fontFamily:fs,fontSize:11,color:"#707070"}}>{b.rl}</span>
+              <span style={{fontFamily:fs,fontSize:11,color:"#707070",whiteSpace:"nowrap"}}>{b.rl}</span>
+              {b.rk&&!rateKeyConfirmed(b.rk)&&<span style={{fontFamily:fs,fontSize:10.5,fontWeight:600,color:"#6b5a2a",background:"#FFF4DD",border:"1px solid #EBD49A",borderRadius:999,padding:"1px 7px",marginLeft:2}}>illustrative</span>}
             </div>
             <div style={{flex:1,marginBottom:18}}>
               {b.b.map((x,xi)=><div key={xi} style={{display:"flex",gap:8,alignItems:"flex-start",marginBottom:8}}>
@@ -33,7 +35,7 @@ function BankingProducts({setPage,lang}){
         <Btn outline color={C.navy} onClick={()=>setPage("booking")}>{T("Book an Appointment")}</Btn>
       </div></Fade>
       {/* #666 not #707070: this sits on the birch background, where the lighter grey is 4.36:1 */}
-      <p style={{fontFamily:fs,fontSize:12,color:"#666",margin:"16px 0 0"}}>Rates effective {ratesEffectiveLabel()} and subject to change.</p>
+      <p style={{fontFamily:fs,fontSize:12,color:"#666",margin:"16px 0 0"}}>Rates effective {ratesEffectiveLabel()} and subject to change. Figures marked illustrative have not been confirmed against Northern Birch's posted rates, and the offers shown are examples.</p>
     </div>
   </section>;
 }
@@ -72,18 +74,28 @@ function AdviceBand({setPage,lang}){
 
 export default function HomePage({setPage,lang}){const mob=useMob();
   const T=(k)=>t(k,lang);
-  // The four hero actions and the intro paragraph. On a phone the buttons come
-  // first, because the paragraph is six lines and pushed them under the cookie bar.
+  // The four hero actions, the phone line and the intro paragraph. On a phone the
+  // buttons come first, because the paragraph is long and pushed them under the
+  // cookie bar, and the text keeps a 64px gutter on the right for the round chat
+  // button, which sits there while the cookie bar is up.
   const ctas=(
         <Fade delay={0.24}><div style={mob?{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}:{display:"flex",gap:12,flexWrap:"wrap"}}>
-          {[["accounts","Compare Accounts",C.accentText,false],["mortgages","Explore Mortgages",C.greenFill,false],
-            ["cards","Apply for a Credit Card",C.purple,false],["insurance","Ask about insurance",C.birch,true]]
+          {[["accounts","Compare Accounts",C.accentText,false],["mortgages","Explore Mortgages",C.birch,true],
+            ["cards","Apply for a Credit Card",C.birch,true],["insurance","Ask about insurance",C.birch,true]]
             .map(([route,label,color,outline])=>
               <Btn key={route} color={color} outline={outline} onClick={()=>{track("hero_cta",{to:route});setPage(route)}}>{T(label)}</Btn>)}
         </div></Fade>
   );
+  // A visitor should not have to reach the footer to find a phone number.
+  const PHONE=facts.phones.find((p)=>p.id==="latvian-centre").number;
+  const contact=(
+    <Fade delay={0.3}><p style={{fontFamily:fs,fontSize:14,color:"rgba(255,255,255,0.82)",lineHeight:1.6,margin:mob?"18px 0 0":"28px 0 0",paddingRight:mob?64:0}}>
+      {T("Questions? Call")} <a href={`tel:+1${PHONE.replace(/\D/g,"")}`} style={{color:C.birch,fontWeight:700}}>{PHONE}</a> {T("or")}{" "}
+      <button onClick={()=>setPage("contact")} style={{background:"none",border:"none",padding:0,margin:0,cursor:"pointer",font:"inherit",fontWeight:700,color:C.birch,textDecoration:"underline",textUnderlineOffset:3}}>{T("find a branch")}</button>.
+    </p></Fade>
+  );
   const intro=(
-        <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:mob?16:18,color:"rgba(255,255,255,0.72)",maxWidth:560,lineHeight:mob?1.65:1.75,margin:mob?"22px 0 0":"0 0 40px"}}>{T("Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus financial advice, investments, insurance and international transfers, all from one Toronto credit union.")}</p></Fade>
+        <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:mob?16:18,color:"rgba(255,255,255,0.72)",maxWidth:560,lineHeight:mob?1.65:1.75,margin:mob?"16px 0 0":"0 0 40px",paddingRight:mob?64:0}}>{T("Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus financial advice, investments, insurance and international transfers, all from one Toronto credit union.")}</p></Fade>
   );
   return <>
     {/* The nav and the demo banner already sit above <main>, so the hero does not
@@ -106,7 +118,7 @@ export default function HomePage({setPage,lang}){const mob=useMob();
           {!mob&&<Daisy size={14} color={C.birch} center="rgba(255,255,255,0.5)"/>}
         </div></Fade>
         <Fade delay={0.08}><h1 style={{fontFamily:ff,fontSize:"clamp(36px,5vw,64px)",color:"#fff",lineHeight:1.07,maxWidth:780,margin:mob?"0 0 18px":"0 0 24px"}}>{T("Your whole financial life.")}<br/><span style={{color:C.birch}}>{T("Under one Birch.")}</span></h1></Fade>
-        {mob?<>{ctas}{intro}</>:<>{intro}{ctas}</>}
+        {mob?<>{ctas}{contact}{intro}</>:<>{intro}{ctas}{contact}</>}
       </div>
     </section>
     <FlagStripe style={{margin:0}}/>
