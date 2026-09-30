@@ -371,7 +371,7 @@ function Nav({page,setPage,onSearch,onLogin,onNotifications,lang,setLang}){
           </div>
           <button onClick={onSearch} aria-label="Search Northern Birch" style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:"#6B6B6B"}}><span aria-hidden="true">&#128269;</span></button>
           <button onClick={onNotifications} aria-label="Notifications" style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:16,color:"#6B6B6B",position:"relative"}}><span aria-hidden="true">&#128276;</span><span aria-hidden="true" style={{position:"absolute",top:4,right:4,width:7,height:7,borderRadius:"50%",background:C.red,border:"2px solid #fdfbf7"}}/></button>
-          <button onClick={()=>setMobileMenu(!mobileMenu)} aria-label={mobileMenu?"Close menu":"Open menu"} aria-expanded={mobileMenu} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:20,color:C.navy}}>
+          <button onClick={()=>setMobileMenu(!mobileMenu)} aria-label={mobileMenu?"Close menu":"Open menu"} aria-expanded={mobileMenu} style={{background:"none",border:"none",cursor:"pointer",padding:"8px",fontSize:20,color:isDark&&!mobileMenu?"#fff":C.navy,transition:"color 0.3s"}}>
             <span aria-hidden="true">{mobileMenu?"\u2715":"\u2630"}</span>
           </button>
         </div>
@@ -517,16 +517,17 @@ function CookieBanner({onHeight}){const mob=useMob();
   if(!show)return null;
   const choose=(v)=>{writeCookiePref(v);setDismissed(true);if(v==="all")initMeasurement()};
   return(
-    <div ref={boxRef} role="region" aria-label="Cookie preferences" style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(15,24,41,0.97)",backdropFilter:"blur(10px)",padding:mob?"16px":"16px 24px",zIndex:1600,borderTop:"1px solid rgba(200,184,138,0.2)"}}>
-      <div style={{maxWidth:1320,margin:"0 auto",display:"flex",alignItems:mob?"flex-start":"center",gap:16,flexDirection:mob?"column":"row"}}>
-        <p style={{fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.75)",margin:0,flex:1,lineHeight:1.6}}>
+    <div ref={boxRef} role="region" aria-label="Cookie preferences" style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(15,24,41,0.97)",backdropFilter:"blur(10px)",padding:mob?"12px 16px 14px":"16px 24px",zIndex:1600,borderTop:"1px solid rgba(200,184,138,0.2)"}}>
+      <div style={{maxWidth:1320,margin:"0 auto",display:"flex",alignItems:mob?"stretch":"center",gap:mob?10:16,flexDirection:mob?"column":"row"}}>
+        <p style={{fontFamily:fs,fontSize:mob?12.5:13,color:"rgba(255,255,255,0.8)",margin:0,flex:1,lineHeight:mob?1.5:1.6}}>
           {MEASUREMENT_DOMAIN
             ?"This site uses only the storage it needs to work. With your permission we also count visits and which products get opened, using a service that sets no cookies and collects nothing personal -- never what you type or search for. Your preference is remembered on this device."
+            :mob?"This site uses only the storage it needs to work, and does not measure your visit today. Your choice here is remembered on this device."
             :"This site uses only the storage it needs to work, and does not measure your visit today. If we add measurement later, we will use the choice you make here. Your preference is remembered on this device."}
         </p>
         <div style={{display:"flex",gap:8,flexShrink:0}}>
-          <button ref={ref} onClick={()=>choose("all")} style={{background:C.accentText,border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Allow measurement</button>
-          <button onClick={()=>choose("essential")} style={{background:"rgba(255,255,255,0.12)",border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.85)"}}>Essential only</button>
+          <button ref={ref} onClick={()=>choose("all")} style={{flex:mob?1:"none",background:C.accentText,border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"#fff",fontWeight:600}}>Allow measurement</button>
+          <button onClick={()=>choose("essential")} style={{flex:mob?1:"none",background:"rgba(255,255,255,0.12)",border:"none",borderRadius:8,padding:"8px 20px",cursor:"pointer",fontFamily:fs,fontSize:13,color:"rgba(255,255,255,0.85)"}}>Essential only</button>
         </div>
       </div>
     </div>
