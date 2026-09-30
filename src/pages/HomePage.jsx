@@ -72,8 +72,25 @@ function AdviceBand({setPage,lang}){
 
 export default function HomePage({setPage,lang}){const mob=useMob();
   const T=(k)=>t(k,lang);
+  // The four hero actions and the intro paragraph. On a phone the buttons come
+  // first, because the paragraph is six lines and pushed them under the cookie bar.
+  const ctas=(
+        <Fade delay={0.24}><div style={mob?{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}:{display:"flex",gap:12,flexWrap:"wrap"}}>
+          {[["accounts","Compare Accounts",C.accentText,false],["mortgages","Explore Mortgages",C.greenFill,false],
+            ["cards","Apply for a Credit Card",C.purple,false],["insurance","Ask about insurance",C.birch,true]]
+            .map(([route,label,color,outline])=>
+              <Btn key={route} color={color} outline={outline} onClick={()=>{track("hero_cta",{to:route});setPage(route)}}>{T(label)}</Btn>)}
+        </div></Fade>
+  );
+  const intro=(
+        <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:mob?16:18,color:"rgba(255,255,255,0.72)",maxWidth:560,lineHeight:mob?1.65:1.75,margin:mob?"22px 0 0":"0 0 40px"}}>{T("Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus financial advice, investments, insurance and international transfers, all from one Toronto credit union.")}</p></Fade>
+  );
   return <>
-    <section style={{minHeight:"100vh",background:`linear-gradient(170deg,${C.dark} 0%,${C.navy} 45%,#1e4060 100%)`,position:"relative",overflow:"hidden",display:"flex",alignItems:"center"}}>
+    {/* The nav and the demo banner already sit above <main>, so the hero does not
+        need to clear them: it used to add 130px of padding on top of that and,
+        centred in a full-height box, left ~250px of empty navy above the badge
+        on a desktop and pushed the buttons under the cookie bar on a phone. */}
+    <section style={{minHeight:mob?"auto":"min(calc(100vh - 106px),640px)",background:`linear-gradient(170deg,${C.dark} 0%,${C.navy} 45%,#1e4060 100%)`,position:"relative",overflow:"hidden",display:"flex",alignItems:mob?"flex-start":"center"}}>
       <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 75% 25%,rgba(200,184,138,0.07) 0%,transparent 55%)"}}/>
       <BirchTrees side="right" opacity={0.05}/>
       <BirchTrees side="left" opacity={0.03}/>
@@ -82,20 +99,14 @@ export default function HomePage({setPage,lang}){const mob=useMob();
       <Cornflower size={14} color="rgba(46,134,193,0.08)" style={{position:"absolute",top:"45%",right:"12%"}}/>
       <Daisy size={16} color="rgba(255,255,255,0.06)" center="rgba(212,165,71,0.15)" style={{position:"absolute",top:"65%",right:"28%"}}/>
       <Cornflower size={12} color="rgba(46,134,193,0.06)" style={{position:"absolute",top:"75%",left:"8%"}}/>
-      <div style={{maxWidth:1320,margin:"0 auto",padding:mob?"100px 16px 60px":"130px 24px 90px",position:"relative",zIndex:2}}>
-        <Fade><div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(200,184,138,0.1)",border:"1px solid rgba(200,184,138,0.2)",borderRadius:40,padding:"7px 18px",marginBottom:36}}>
-          <Cornflower size={14} color={C.birch}/>
-          <span style={{fontFamily:fs,fontSize:11,color:C.birch,letterSpacing:3,textTransform:"uppercase",fontWeight:600}}>{T("A Full-Service Credit Union Since 1954")}</span>
-          <Daisy size={14} color={C.birch} center="rgba(255,255,255,0.5)"/>
+      <div style={{maxWidth:1320,margin:"0 auto",padding:mob?"28px 16px 44px":"64px 24px 88px",position:"relative",zIndex:2}}>
+        <Fade><div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(200,184,138,0.1)",border:"1px solid rgba(200,184,138,0.2)",borderRadius:40,padding:mob?"6px 14px":"7px 18px",marginBottom:mob?18:36}}>
+          {!mob&&<Cornflower size={14} color={C.birch}/>}
+          <span style={{fontFamily:fs,fontSize:mob?10:11,color:C.birch,letterSpacing:mob?1:3,textTransform:"uppercase",fontWeight:600}}>{T("A Full-Service Credit Union Since 1954")}</span>
+          {!mob&&<Daisy size={14} color={C.birch} center="rgba(255,255,255,0.5)"/>}
         </div></Fade>
-        <Fade delay={0.08}><h1 style={{fontFamily:ff,fontSize:"clamp(36px,5vw,64px)",color:"#fff",lineHeight:1.07,maxWidth:780,margin:"0 0 24px"}}>{T("Your whole financial life.")}<br/><span style={{color:C.birch}}>{T("Under one Birch.")}</span></h1></Fade>
-        <Fade delay={0.16}><p style={{fontFamily:fs,fontSize:18,color:"rgba(255,255,255,0.6)",maxWidth:560,lineHeight:1.75,margin:"0 0 40px"}}>{T("Chequing and savings. Mortgages and credit cards. GICs, TFSAs and RRSPs. Plus financial advice, investments, insurance and international transfers, all from one Toronto credit union.")}</p></Fade>
-        <Fade delay={0.24}><div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-          {[["accounts","Compare Accounts",C.accentText,false],["mortgages","Explore Mortgages",C.greenFill,false],
-            ["cards","Apply for a Credit Card",C.purple,false],["insurance","Ask about insurance",undefined,true]]
-            .map(([route,label,color,outline])=>
-              <Btn key={route} color={color} outline={outline} onClick={()=>{track("hero_cta",{to:route});setPage(route)}}>{T(label)}</Btn>)}
-        </div></Fade>
+        <Fade delay={0.08}><h1 style={{fontFamily:ff,fontSize:"clamp(36px,5vw,64px)",color:"#fff",lineHeight:1.07,maxWidth:780,margin:mob?"0 0 18px":"0 0 24px"}}>{T("Your whole financial life.")}<br/><span style={{color:C.birch}}>{T("Under one Birch.")}</span></h1></Fade>
+        {mob?<>{ctas}{intro}</>:<>{intro}{ctas}</>}
       </div>
     </section>
     <FlagStripe style={{margin:0}}/>
