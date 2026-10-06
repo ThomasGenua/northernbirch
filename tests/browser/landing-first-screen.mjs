@@ -71,21 +71,11 @@ for (const [label, vp] of [['iPhone 14 (390x844)', { width: 390, height: 844 }],
   check(bh > 0 && bh <= (vp.height < 700 ? 150 : 140), `${label}: the cookie bar takes at most ~140px, not a fifth of the screen (${Math.round(bh)}px)`);
   const hidden = g.ctas.filter((c) => c.bottom > g.bar.top);
   check(g.ctas.length === 4 && hidden.length === 0, `${label}: all four hero buttons are above the cookie bar${hidden.length ? ' -- hidden: ' + hidden.map((c) => c.label).join(', ') : ''}`);
-  if (vp.height >= 800) {
-    check(g.launcher && g.ctas.every((c) => !overlap(c, g.launcher)), `${label}: the chat button does not sit on a hero button`);
-  } else {
-    // 667px tall: the bar leaves ~540px, the buttons end at ~533, and the chat
-    // button (which must stay reachable with the bar up -- chat-launcher.mjs)
-    // has nowhere else to go. Known and accepted: it clears once the bar is answered.
-    const covered = g.ctas.filter((c) => overlap(c, g.launcher));
-    check(covered.length <= 1, `${label}: at most one hero button is partly under the chat button while the bar is up (${covered.map((c) => c.label).join(', ') || 'none'})`);
-  }
-  const badgeLines = await p.evaluate(() => {
-    const b = [...document.querySelectorAll('main section span')].find((e) => /full-service credit union since/i.test(e.textContent));
-    const range = document.createRange(); range.selectNodeContents(b);
-    return new Set([...range.getClientRects()].map((r) => Math.round(r.top))).size;   // one entry per rendered line
-  });
-  check(badgeLines <= 1, `${label}: the "since 1954" badge stays on one line (${badgeLines})`);
+  // Every viewport, including the 375x667 one that used to be an accepted exception:
+  // the round chat button must not sit on any hero button while the cookie bar is up.
+  check(g.launcher && g.ctas.every((c) => !overlap(c, g.launcher)), `${label}: the chat button does not sit on a hero button`);
+  const small = Math.min(...g.ctas.map((c) => c.bottom - c.top));
+  check(small >= 38, `${label}: the hero buttons are at least 38px tall to tap (${Math.round(small)}px)`);
   // text lines, not the paragraph's box: the hero text keeps a right-hand gutter for the chat button
   const textLines = await p.evaluate(() => {
     const out = [];

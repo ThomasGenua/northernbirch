@@ -80,9 +80,32 @@ work; they simply have no audience until the gate comes off.
 
 ## Tests
 
-`netlify/edge-functions/password-gate.test.mjs`, run by `npm test`. 50 assertions:
-that it serves a page rather than a browser dialog, that the page says it is a
-demo, unlocking and cookie flags, forged and expired cookies, open-redirect and
-markup-injection attempts, and the unconfigured case. The browser suites cannot reach this code — they run against a
-local static server, while this runs on Netlify's edge — so this file is the
-only thing standing behind it.
+Three layers, each answering a different question.
+
+- `netlify/edge-functions/password-gate.test.mjs`, run by `npm test`: the gate
+  logic on its own. It serves a page rather than a browser dialog, says it is a
+  demo, unlocks with the right flags on the cookie, rejects forged and expired
+  cookies, refuses open-redirect and markup-injection attempts, locks out after
+  repeated wrong guesses, and fails closed when no password is set.
+- `tests/browser/deployed-shape.mjs`: the gate, the cookie, the real form and
+  chat handlers and the built pages together, in Chromium, over HTTP. It uses
+  `tests/support/netlify-emulator.mjs`, a stand-in for Netlify with Anthropic
+  stubbed. **It is not Netlify**: it does not run on Netlify's runtime, read
+  Netlify's environment or call Anthropic, so a pass says the pieces fit, not
+  that the deployment works.
+- `scripts/smoke-live.mjs`: the only check against the real deployment. Run it
+  yourself after a deploy, because it needs the password and, with `--ai`, makes
+  one real call on your Anthropic key:
+
+  ```
+  SMOKE_URL=https://your-site.netlify.app SITE_PASSWORD=... node scripts/smoke-live.mjs
+  SMOKE_URL=... SITE_PASSWORD=... node scripts/smoke-live.mjs --ai
+  ```
+
+  It checks that the gate is in front of everything, the cookie flags, the
+  security headers, that pages and a real 404 come back as they should, that a
+  form post is accepted and discarded, and (with `--ai`) that
+  `ANTHROPIC_API_KEY` is set and the assistant answers. It never prints the
+  password. Exit code 0 means every check passed; 2 means the variables above
+  were not set. Ten wrong passwords from one address lock it out for 15
+  minutes, so do not run it with a guessed password.

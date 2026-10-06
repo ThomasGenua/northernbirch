@@ -46,7 +46,7 @@ export default function AdvicePage({ setPage }) {
     <section className="sec" style={{ background: C.cream, }}>
       <div style={{ maxWidth: 1320, margin: "0 auto" }}>
         <SH tag="Financial Advice" tagColor={C.greenText} title="Advice from people you can meet"
-            desc="Planning, retirement, investments, estate and tax advice from Northern Birch's wealth team — starting with a Financial Check-Up that costs you nothing." />
+            desc="Planning, retirement, investments and tax advice from Northern Birch's wealth team — starting with a Financial Check-Up that costs you nothing." />
 
         <div style={{ textAlign: "center", marginBottom: 40 }}>
           <Btn color={C.greenFill} onClick={() => setPage("booking")}>Book a Financial Check-Up &rarr;</Btn>

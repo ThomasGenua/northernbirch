@@ -54,7 +54,7 @@ function AdviceBand({setPage,lang}){
   const w=useW();
   return <section style={{background:C.navy,padding:w<=768?"56px 16px":"80px 24px"}}>
     <div style={{maxWidth:1320,margin:"0 auto"}}>
-      <SH dark tag={T("Financial Advice")} tagColor={C.birch} title={T("Advice from people you can meet")} desc={T("Planning, retirement, investments, estate and tax advice from Northern Birch's wealth team -- starting with a Financial Check-Up that costs members nothing.")}/>
+      <SH dark tag={T("Financial Advice")} tagColor={C.birch} title={T("Advice from people you can meet")} desc={T("Planning, retirement, investments and tax advice from Northern Birch's wealth team -- starting with a Financial Check-Up that costs members nothing.")}/>
       <div className="grid-3-2-1" style={{gap:16}}>
         {ADVICE_HOME.map((a,i)=><Fade key={a.t} delay={i*0.08}>
           <Clickable onClick={()=>{track("advice_card",{service:a.t});setPage(a.go[0])}} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:28,borderTop:`3px solid ${a.c}`,cursor:"pointer",height:"100%",display:"flex",flexDirection:"column"}}>
@@ -79,7 +79,7 @@ export default function HomePage({setPage,lang}){const mob=useMob();
   // cookie bar, and the text keeps a 64px gutter on the right for the round chat
   // button, which sits there while the cookie bar is up.
   const ctas=(
-        <Fade delay={0.24}><div style={mob?{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}:{display:"flex",gap:12,flexWrap:"wrap"}}>
+        <Fade delay={0.24}><div className="hero-ctas" style={mob?{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}:{display:"flex",gap:12,flexWrap:"wrap"}}>
           {[["accounts","Compare Accounts",C.accentText,false],["mortgages","Explore Mortgages",C.birch,true],
             ["cards","Apply for a Credit Card",C.birch,true],["insurance","Ask about insurance",C.birch,true]]
             .map(([route,label,color,outline])=>
@@ -111,13 +111,13 @@ export default function HomePage({setPage,lang}){const mob=useMob();
       <Cornflower size={14} color="rgba(46,134,193,0.08)" style={{position:"absolute",top:"45%",right:"12%"}}/>
       <Daisy size={16} color="rgba(255,255,255,0.06)" center="rgba(212,165,71,0.15)" style={{position:"absolute",top:"65%",right:"28%"}}/>
       <Cornflower size={12} color="rgba(46,134,193,0.06)" style={{position:"absolute",top:"75%",left:"8%"}}/>
-      <div style={{maxWidth:1320,margin:"0 auto",padding:mob?"28px 16px 44px":"64px 24px 88px",position:"relative",zIndex:2}}>
+      <div className="hero-inner" style={{maxWidth:1320,margin:"0 auto",padding:mob?"28px 16px 44px":"64px 24px 88px",position:"relative",zIndex:2}}>
         <Fade><div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(200,184,138,0.1)",border:"1px solid rgba(200,184,138,0.2)",borderRadius:40,padding:mob?"6px 14px":"7px 18px",marginBottom:mob?18:36}}>
           {!mob&&<Cornflower size={14} color={C.birch}/>}
           <span style={{fontFamily:fs,fontSize:mob?10:11,color:C.birch,letterSpacing:mob?1:3,textTransform:"uppercase",fontWeight:600}}>{T("A Full-Service Credit Union Since 1954")}</span>
           {!mob&&<Daisy size={14} color={C.birch} center="rgba(255,255,255,0.5)"/>}
         </div></Fade>
-        <Fade delay={0.08}><h1 style={{fontFamily:ff,fontSize:"clamp(36px,5vw,64px)",color:"#fff",lineHeight:1.07,maxWidth:780,margin:mob?"0 0 18px":"0 0 24px"}}>{T("Your whole financial life.")}<br/><span style={{color:C.birch}}>{T("Under one Birch.")}</span></h1></Fade>
+        <Fade delay={0.08}><h1 className="hero-h1" style={{fontFamily:ff,fontSize:"clamp(36px,5vw,64px)",color:"#fff",lineHeight:1.07,maxWidth:780,margin:mob?"0 0 18px":"0 0 24px"}}>{T("Your whole financial life.")}<br/><span style={{color:C.birch}}>{T("Under one Birch.")}</span></h1></Fade>
         {mob?<>{ctas}{contact}{intro}</>:<>{intro}{ctas}{contact}</>}
       </div>
     </section>
