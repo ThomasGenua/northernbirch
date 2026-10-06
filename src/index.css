@@ -104,3 +104,20 @@ input[type=range]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 
    wide card inside a single-column layout pushed the whole page sideways
    before hydration. Track definitions above are unaffected. */
 [class^="grid-"]>*{min-width:0}
+
+/* ============ SHORT PHONES (e.g. 375x667) ============
+   With the cookie bar up there is ~540px above it. At the normal sizes the last
+   row of hero buttons ends at ~533px, exactly where the round chat button has to
+   sit (it must stay reachable with the bar up). So on a short phone everything
+   above it gets a little tighter instead of the button being hidden: a leaner
+   banner, a smaller headline, compact buttons, and a smaller chat button that
+   sits closer to the bar. Measured by tests/browser/landing-first-screen.mjs. */
+@media (max-width:480px) and (max-height:700px){
+  .proposal-banner{padding:64px 16px 8px !important}
+  .proposal-banner p{font-size:12px !important;line-height:1.45 !important}
+  .hero-inner{padding-top:14px !important;padding-bottom:28px !important}
+  .hero-h1{font-size:30px !important;margin-bottom:12px !important}
+  .hero-ctas{gap:8px !important}
+  .hero-ctas button{padding:12px 10px !important;font-size:13px !important}
+  .chat-launcher{width:48px !important;height:48px !important;margin-bottom:-14px}
+}

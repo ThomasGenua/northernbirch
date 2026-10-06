@@ -163,7 +163,7 @@ function ChatWidget({bottomInset=0}){const mob=useMob();
     setLoading(false);
   };
   return(<>
-    {!open&&<Clickable onClick={()=>setOpen(true)} label="Open the Northern Birch AI assistant" style={{position:"fixed",bottom:24+bottomInset,right:24,width:60,height:60,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 4px 20px rgba(46,134,193,0.4)",zIndex:1500,animation:"pulse 2s infinite"}}>
+    {!open&&<Clickable className="chat-launcher" onClick={()=>setOpen(true)} label="Open the Northern Birch AI assistant" style={{position:"fixed",bottom:24+bottomInset,right:24,width:60,height:60,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.purple})`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 4px 20px rgba(46,134,193,0.4)",zIndex:1500,animation:"pulse 2s infinite"}}>
       <span aria-hidden="true" style={{fontSize:24,color:"#fff"}}>&#9889;</span>
     </Clickable>}
     {open&&<div style={{position:"fixed",bottom:24+bottomInset,right:24,width:mob?"calc(100vw - 32px)":400,height:mob?440:560,background:"#fff",borderRadius:20,boxShadow:"0 8px 40px rgba(0,0,0,0.15)",zIndex:1500,display:"flex",flexDirection:"column",overflow:"hidden"}}>
@@ -417,7 +417,7 @@ function ProposalBanner({setPage}){
   // background -- a light band made the nav's own text invisible (13 axe
   // contrast failures, white on #FFF8E6). On the light pages the nav is
   // opaque and covers the band entirely, so the dark treatment costs nothing.
-  return <div role="note" style={{background:C.navy,borderBottom:`1px solid ${C.birch}44`,padding:"72px 24px 12px"}}>
+  return <div role="note" className="proposal-banner" style={{background:C.navy,borderBottom:`1px solid ${C.birch}44`,padding:"72px 24px 12px"}}>
     <p style={{maxWidth:1320,margin:"0 auto",fontFamily:fs,fontSize:13,color:C.amberOnDark,lineHeight:1.6}}>
       <strong style={{fontWeight:700}}>Demonstration only &mdash; an illustrative proposal prepared by Oodler Inc.</strong>{" "}
       <span style={{color:"rgba(255,255,255,0.78)"}}>

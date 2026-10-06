@@ -48,7 +48,17 @@ export const BANKING=[
 // translated pages that has no entry yet. None of it is reviewed by a native
 // speaker -- see the files' "reviewed" field.
 const TX={est:etStrings.strings,lat:lvStrings.strings};
-export function t(key,lang){if(!lang||lang==="en")return key;return TX[lang==="est"?"est":"lat"][key]||key;}
+// A string with no entry falls back to English. That is the right fallback, but
+// it was silent, and the build check can only see keys written as literals. The
+// misses are recorded so tests/browser/i18n-coverage.mjs can read what a page
+// really tried to translate and could not.
+export function t(key,lang){
+  if(!lang||lang==="en")return key;
+  const hit=TX[lang==="est"?"est":"lat"][key];
+  if(hit)return hit;
+  if(typeof window!=="undefined"&&typeof key==="string"&&key.trim())(window.__nbMisses||(window.__nbMisses=new Set())).add(key);
+  return key;
+}
 
 // The language switcher only lived in React state, so a refresh, a bookmark or
 // a shared link always came back in English -- the choice was silently thrown
@@ -58,7 +68,7 @@ export const LANG_KEY="nb-lang";
 // The pages that actually read the translation table. Everything else renders
 // English regardless of the switcher, so it is marked lang="en" rather than
 // inheriting the selected language and being read out with the wrong voice.
-export const TRANSLATED_PAGES=new Set(["home","mortgages","cards","accounts"]);
+export const TRANSLATED_PAGES=new Set(["home","mortgages","cards","accounts","borrowing","keskus"]);
 export const LANG_TAG={en:"en",est:"et",lat:"lv"};
 export function readLang(){
   try{const v=window.localStorage.getItem(LANG_KEY);return v==="est"||v==="lat"?v:"en"}catch(e){return "en"}
